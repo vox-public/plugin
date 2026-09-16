@@ -1,8 +1,8 @@
 # vox.ai Plugin
 
-vox.ai의 원격 MCP 연결과 음성 업무 스킬을 배포하는 독립 저장소 후보입니다.
+vox.ai의 원격 MCP 연결과 음성 업무 스킬을 배포하는 [공개 저장소](https://github.com/vox-public/plugin)입니다.
 MCP 서버 구현은 `fleek-fitness/vox-mcp`에 있으며 이 저장소에는 포함하지 않습니다.
-로컬 작업 이름은 `vox-ai`입니다. 새 공개 GitHub 저장소 생성·게시와 호스트 설치 검증은 아직 수행하지 않았습니다.
+Plugin 이름은 `vox-ai`입니다. 현재는 구현 후보이며 외부 호스트 설치·로그인·업무 완주 검증은 아직 수행하지 않았습니다.
 
 공통 스킬 26개는 general 8 / mcp 2 / architect 16으로 구성되며 `catalog.json`에 분류합니다.
 Codex와 Claude Code가 모두 발견할 수 있도록 `skills/<name>/SKILL.md`에 배치합니다.
