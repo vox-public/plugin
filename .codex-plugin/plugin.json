@@ -1,0 +1,26 @@
+{
+  "name": "vox-ai",
+  "version": "0.1.0",
+  "description": "vox.ai 음성 에이전트 설계·구축·운영을 위한 MCP 연결과 공통 스킬",
+  "author": {
+    "name": "vox.ai",
+    "url": "https://vox.ai"
+  },
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "vox.ai",
+    "shortDescription": "vox.ai 에이전트를 만들고 개선하세요.",
+    "longDescription": "자료에서 Manual을 만들고, 에이전트에 연결하고, 저장 결과와 실제 시험을 확인합니다.",
+    "developerName": "vox.ai",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "자료로 첫 음성 에이전트를 만들어줘.",
+      "기존 에이전트의 응대 매뉴얼을 개선해줘."
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "version": "0.1.0",
+  "skills_count": 26,
+  "sha256": "d538bc34a71e1216a749c4fca617241c91b28b17527387fbbdf6658e29314370",
+  "capability_directories": [
+    "/workspace/vox-ai/skills"
+  ],
+  "files": {
+    "references/elevenlabs-adaptation.md": "9a651cbe092b375a3e9effa3f570d9fa85a7d92a1b3cbf59c02eda970f74e442",
+    "references/execution-contract.md": "d691330cf4fd0294e520bb6a83eaf2e11ccd456b022cad24cf261ec85a3a22b3",
+    "references/fde-decisions.md": "dc91fd25cdd9d10582f82f43f56410991cd2283cab109ea05d2ae521ea1de386",
+    "references/fde-evaluation-cases.json": "3a3ee5534ccfb99d66bb592a1e635adce40fd4b4ec4915f8fb23460e0aec7331",
+    "references/host-adapters.md": "89668da717f106b63a46cca8c9a955405fbcf166dce53307c0995b42f4112695",
+    "references/voice-test-cases.md": "5c39d32be44e60f58a6f1f00d2c89ec8d5e88f19ca151827e0796af0a2fc8add",
+    "references/workflow-examples.md": "8efacce3d391d200f1e5e5f2f0c7ad700d0ba30ac61762b915286045623d3ba7",
+    "skills/agents-platform/SKILL.md": "28c4ff23887230d91dc33e516228ab681810b1fa9fb75b260d7fd5738314c617",
+    "skills/build-first-voice-agent/SKILL.md": "e5dc2fb0df2dbfa952ca4461e2bfe78546a2333bb484dc50e92fd64b0f9d9348",
+    "skills/cli-authoring/SKILL.md": "894bbf1c1357f84b524e81bb7decf8cb8df3cba532da79b0e39e41e585cf3fba",
+    "skills/configure-call-results/SKILL.md": "0e503c7bbe96f7b3b57b7dbe77677bb320c8584cac39768a6347e2b0c163587b",
+    "skills/configure-supporting-channel/SKILL.md": "347fd1934fd4d7272463ba50969bd98842809dfca5ab6e0b438fa0dc133acc1e",
+    "skills/connect-agent-tools/SKILL.md": "ddc3c037c29e9d2c5c03e26f008eefdffb66275e8f22a35d406493769a00e692",
+    "skills/connect-phone-service/SKILL.md": "2f57acddb98673e83c3408dbcac5c58e39e3cb0464289e9f077f3661625dd0f8",
+    "skills/dashboard-navigation/SKILL.md": "14ff4a54a954a946f88bfe74a2fc7bcdcfa16190bd1c5da116c574f637999666",
+    "skills/edit-manual-safely/SKILL.md": "62bfac6f130b198e2ce90403f8cf8c6e71679a4ce5f43add8bce88636e2cbd03",
+    "skills/explore-agent-context/SKILL.md": "a41b00a0e3d3d705200b4e2f4ffd13dffd49c790eef762cc2b44fcf6588c5219",
+    "skills/inspect-call-evidence/SKILL.md": "80573f0e4c4f1d0c9f25b232b801e45e17f21a1fa1f1a1a4603bef6f4e831eda",
+    "skills/knowledge-grounding/SKILL.md": "e74ff87d80bdba19f57a20fe33b88163070f8ab89d13c16941fe692ca6483ad1",
+    "skills/manual-authoring/SKILL.md": "3c77f81d9b549657fcb702e852533e51120499ca9edeac8c2250f30d68e601d2",
+    "skills/operate-outbound-and-followup/SKILL.md": "979bb1eaf713bf06f2feaebae25b357074e8660226674e85d7a7b306157210e0",
+    "skills/post-call-result-design/SKILL.md": "153df296cd0170a9b363c3c242fc7d77047889dbe319d9e736d0aa5da238b14d",
+    "skills/prepare-voice-test/SKILL.md": "c2a9236c6355ff78224b2619c2bbfb1eceda1155d2b32c735aea3628fefe107d",
+    "skills/product-documentation/SKILL.md": "923620db9656a89aa48aa6dd2b29e0744b26550f1b40a97168aefbeb96b7be1c",
+    "skills/resume-agent-work/SKILL.md": "fbd82dc443459360f7459ec40be1572aa83ff9425b31b8e51cdad21ec606349a",
+    "skills/review-call-performance/SKILL.md": "249dda9dba41269af434b03fe0cffffa3ac785fe354464631e989d2281a301dd",
+    "skills/review-shared-impact/SKILL.md": "261215d31acaca289e4accf98fc526d391c5d6aaa776e7172603a2fd258bb8b5",
+    "skills/tool-integration-design/SKILL.md": "023d36e1b59f303c034de1aed0def86b5679c1136afe75721f2026eb31b4c1a0",
+    "skills/troubleshoot-agent-tool/SKILL.md": "eb3a2326ba3e670f0e04d749fbf0d9a32e5d8114a7cd19a2a0e93ef86f60d9a7",
+    "skills/try-and-improve-voice-agent/SKILL.md": "8176fcc5114ca3760f455e7e7c56e2bcb98d9a77c9d9599a565f353cb1e353e5",
+    "skills/tune-voice-behavior/SKILL.md": "92ec0c5a141c55c47cefde529de6a7ababbf7bf2aba09106ac7c3a33bd7c962a",
+    "skills/voice-agent-design/SKILL.md": "95fbabfdff15a758e0b386e80c12465d923431a7489803091b66141caeacb707",
+    "skills/voice-interaction-design/SKILL.md": "2f2801ab1a7f20cb87a9245f5c4e3886cc609e10a002bae9491deb12e988023e"
+  }
+}
