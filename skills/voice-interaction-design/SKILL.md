@@ -4,7 +4,7 @@ description: "vox.ai 음성 대화의 모델·언어·목소리·응답 속도·
 metadata:
   product: vox.ai
   layer: general
-  status: authoring-draft-not-runtime-verified
+  status: preview
 ---
 
 # voice-interaction-design

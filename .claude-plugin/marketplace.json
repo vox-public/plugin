@@ -1,0 +1,15 @@
+{
+  "name": "vox-ai",
+  "owner": {
+    "name": "vox.ai"
+  },
+  "plugins": [
+    {
+      "name": "vox-ai",
+      "source": "./"
+    }
+  ],
+  "metadata": {
+    "description": "vox.ai MCP connection and voice agent skills"
+  }
+}

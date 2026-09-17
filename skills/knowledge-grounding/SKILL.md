@@ -4,7 +4,7 @@ description: "홈페이지·파일·기존 업무 자료를 vox.ai 에이전트�
 metadata:
   product: vox.ai
   layer: general
-  status: authoring-draft-not-runtime-verified
+  status: preview
 ---
 
 # knowledge-grounding

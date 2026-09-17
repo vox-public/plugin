@@ -4,12 +4,12 @@ description: "기존 vox.ai 에이전트의 설정·Manual·도구·버전을 �
 metadata:
   product: vox.ai
   layer: architect
-  status: authoring-draft-not-runtime-verified
+  status: preview
 ---
 
 # explore-agent-context
 
-제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구명은 출시 설계이며 연결된 서버의 실제 도구·스키마 확인 후 사용한다.
+제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구는 연결된 서버가 제공하는 실제 이름과 스키마를 확인한 뒤 사용한다.
 
 ## 필요한 상태부터 읽는다
 이름이면 `list_agents`로 찾고 후보가 여러 개면 정확한 대상을 확정한다. 현재 화면의 agent ID는 힌트이며 연결 조직과 조회 결과로 확인한다. `get_agent`에서 요청에 필요한 설정과 참조만 읽고 이미 가진 값을 위해 반복 조회하지 않는다.

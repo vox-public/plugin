@@ -1,6 +1,6 @@
 # 업무 호출 예와 ID 흐름
 
-도구명은 AC1 출시 설계 117개에서 가져왔다. 아직 배포된 117개라는 뜻이 아니다. 아래 JSON은 대표 6개 계약의 **합성 비실행 예제**이며 다른 도구의 payload를 추정하지 않는다. 실제 연결 schema와 일치하는지 확인 후 사용한다.
+아래 JSON은 입력 구조를 설명하는 합성 예제다. 실행 전에 연결된 서버의 실제 도구·스키마와 일치하는지 확인한다. 다른 도구의 payload를 이 예제로 추정하지 않는다.
 
 ## 구축: Manual → agent → 재조회
 
@@ -37,4 +37,4 @@ Manual 저장만 성공했으면 ID를 보존하고 연결 단계부터 이어�
 | SMS | send_sms/send_sms_batch → get_sms/get_sms_batch | 접수와 전달 상태 분리 |
 | 위젯/채팅 | get_widget → save_widget → 별도 publish_widget; create_chat/create_chat_message/get_chat | 설정·게시·대화 성공 분리 |
 
-전체 도구 입력을 이 파일에 복제하지 않는다. authoritative design은 도구 원장 (제품 계약은 연결된 MCP의 실제 스키마를 확인), 예제 정본은 대표 예제 JSON (제품 계약은 연결된 MCP의 실제 스키마를 확인)이다. 원고 변경 시 이 세 합성 입력을 대표 schema로 재검증한다.
+예제를 변경할 때 해당 도구의 실제 입력 스키마로 검증한다.

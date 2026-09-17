@@ -4,18 +4,18 @@ description: "vox.ai 일정 기간의 완료 통화를 집계하고 이상 집�
 metadata:
   product: vox.ai
   layer: architect
-  status: authoring-draft-not-runtime-verified
+  status: preview
 ---
 
 # review-call-performance
 
-제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구명은 출시 설계이며 연결된 서버의 실제 도구·스키마 확인 후 사용한다.
+제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구는 연결된 서버가 제공하는 실제 이름과 스키마를 확인한 뒤 사용한다.
 
 ## 범위
 agent, 기간, 시간대, 업무/방향을 확인한다. 사용자가 지정하지 않았으면 합리적인 분석 기간을 밝히고 읽기를 시작할 수 있다. `list_calls`의 실제 필터·cursor로 범위를 순회하고 페이지 누락/상한을 표시한다. 통화가 없다는 결과는 품질 통과가 아니다.
 
 ## 집계와 상세
-목록이 실제 반환하는 상태·종료·기간 등의 필드만 집계한다. ElevenLabs의 summary_mode나 termination_reason 필드가 그대로 존재한다고 가정하지 않는다. 이상 집단이나 보고된 실패를 먼저 고르고 [통화 근거](../inspect-call-evidence/SKILL.md)를 읽는다.
+목록이 실제 반환하는 상태·종료·기간 등의 필드만 집계한다. 응답에 없는 요약·종료 사유 필드를 추정하지 않는다. 이상 집단이나 보고된 실패를 먼저 고르고 [통화 근거](../inspect-call-evidence/SKILL.md)를 읽는다.
 
 전체 모수 N, 목록 확인 범위, 상세 표본 n을 구분한다. 상세에서만 알 수 있는 추출 성공률을 전체 성공률로 보고하지 않는다. 같은 원인으로 묶을 때 복수 사례로 뒷받침하고 한 건이면 가설로 표시한다. 이전 기간 기준선이 실제 있을 때만 변화량을 계산한다.
 

@@ -4,7 +4,7 @@ description: "vox.ai 음성 에이전트의 목적·대상·방향·채널·완�
 metadata:
   product: vox.ai
   layer: general
-  status: authoring-draft-not-runtime-verified
+  status: preview
 ---
 
 # voice-agent-design
@@ -24,4 +24,4 @@ metadata:
 
 실제 구축은 [build-first-voice-agent](../build-first-voice-agent/SKILL.md), 대화 원고 작성은 [manual-authoring](../manual-authoring/SKILL.md)로 연결한다.
 
-업무가 여러 개이거나 고객 목표가 바뀌면 [FDE 판단 기준](../../references/fde-decisions.md)의 업무 선택·질문 기준을 적용한다. ‘A/B’, ‘예약’, ‘접수’ 같은 단어를 도구명으로 바로 번역하지 말고 대상과 실제 결과의 의미를 먼저 맞춘다. 잠정 제안과 사용자 결정은 출처를 구분한다.
+업무가 여러 개이거나 고객 목표가 바뀌면 [업무 판단 기준](../../references/workflow-guidance.md)의 업무 선택·질문 기준을 적용한다. ‘A/B’, ‘예약’, ‘접수’ 같은 단어를 도구명으로 바로 번역하지 말고 대상과 실제 결과의 의미를 먼저 맞춘다. 잠정 제안과 사용자 결정은 출처를 구분한다.

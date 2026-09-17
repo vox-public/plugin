@@ -4,7 +4,7 @@ description: "vox.ai 대시보드 사용법·설정 위치·통화 재생·제�
 metadata:
   product: vox.ai
   layer: general
-  status: authoring-draft-not-runtime-verified
+  status: preview
 ---
 
 # dashboard-navigation

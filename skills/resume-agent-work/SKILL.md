@@ -4,12 +4,12 @@ description: "vox.ai 구축·운영 작업이 연결 단절·권한 만료·부�
 metadata:
   product: vox.ai
   layer: architect
-  status: authoring-draft-not-runtime-verified
+  status: preview
 ---
 
 # resume-agent-work
 
-제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구명은 출시 설계이며 연결된 서버의 실제 도구·스키마 확인 후 사용한다.
+제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구는 연결된 서버가 제공하는 실제 이름과 스키마를 확인한 뒤 사용한다.
 
 ## 복귀 자료
 현재 연결 조직·주체를 확인하고 이전 목표, 완료 리소스 ID, 실행 키, 응답 상태를 읽는다. 내장은 접근 가능한 Thread 기록, 외부는 같은 호스트의 대화/허용된 작업 기록을 쓴다. 외부가 내장 Thread DB에 접근할 필요는 없다.
@@ -29,4 +29,4 @@ MCP의 동일 키 재호출 계약이 확인되고 허용하는 경우에만 같
 ## 결과
 지금까지 확인된 완료, 미확인 동작, 현재 막힌 이유, 가능한 다음 조회/사용자 행동을 구분한다. 콜이 이미 접수됐으면 연결을 끊거나 대화를 취소해도 전화가 자동 취소된다고 말하지 않는다. 파일·모델 요약은 제품 상태의 정본이 아니다.
 
-복귀 시 [FDE 판단 기준](../../references/fde-decisions.md)의 작은 업무 요약에서 목표·사용자 결정·완료 참조·다음 행동을 읽는다. 모델 요약만으로 실행 권한이나 제품 상태를 확정하지 않는다. delivery.reference는 원문 읽기를, delivery.unavailable은 알려진 결과 조회를 이어간다. 새 환경이 생겨도 이미 시도한 발신·구매·생성을 다시 실행하지 않는다.
+복귀 시 [업무 판단 기준](../../references/workflow-guidance.md)의 작은 업무 요약에서 목표·사용자 결정·완료 참조·다음 행동을 읽는다. 모델 요약만으로 실행 권한이나 제품 상태를 확정하지 않는다. delivery.reference는 원문 읽기를, delivery.unavailable은 알려진 결과 조회를 이어간다. 새 환경이 생겨도 이미 시도한 발신·구매·생성을 다시 실행하지 않는다.
