@@ -4,12 +4,12 @@ description: "vox.ai 에이전트에 보유 번호를 연결하거나 번호 확
 metadata:
   product: vox.ai
   layer: architect
-  status: authoring-draft-not-runtime-verified
+  status: preview
 ---
 
 # connect-phone-service
 
-제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구명은 출시 설계이며 연결된 서버의 실제 도구·스키마 확인 후 사용한다.
+제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구는 연결된 서버가 제공하는 실제 이름과 스키마를 확인한 뒤 사용한다.
 
 ## 먼저 확인
 보유 번호인지 새 번호/대표번호/발신표기번호가 필요한지 구분한다. `list_numbers/get_number`와 실제 신청 조회로 소유·상태·연결 agent/버전을 읽는다. 원하는 변경이 명확하면 이미 위임된 범위를 다시 승인받지 않는다. 구매 종류·대상·비용 등 결과를 바꾸는 미확정 입력은 확정해야 한다.

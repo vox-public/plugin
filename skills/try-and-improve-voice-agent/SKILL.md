@@ -4,12 +4,12 @@ description: "vox.ai 에이전트를 직접 말해 보고 피드백·실패 통�
 metadata:
   product: vox.ai
   layer: architect
-  status: authoring-draft-not-runtime-verified
+  status: preview
 ---
 
 # try-and-improve-voice-agent
 
-제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구명은 출시 설계이며 연결된 서버의 실제 도구·스키마 확인 후 사용한다.
+제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구는 연결된 서버가 제공하는 실제 이름과 스키마를 확인한 뒤 사용한다.
 
 ## 시험 또는 증거부터
 아직 통화가 없으면 [시험 준비](../prepare-voice-test/SKILL.md)로 진입한다. 실패 통화나 callId가 있으면 [통화 근거](../inspect-call-evidence/SKILL.md)를 먼저 읽는다. 기대 결과와 실제 결과의 차이를 한 가지 이상 구체적으로 적는다.
@@ -30,4 +30,4 @@ metadata:
 
 ## 피드백을 다음 작업으로 바꾸기
 
-[FDE 판단 기준](../../references/fde-decisions.md)의 피드백 표로 원고·연결·결과 저장·시험 조건 중 변경할 범위를 좁힌다. ‘대시보드 우선’ 결정은 전달 위치와 결과 설정의 변경일 수 있으며 모든 외부 도구를 제거하라는 뜻은 아니다. 현재 목표·확인한 근거·변경한 대상·다음 시험을 작업 요약에 갱신하고, 이미 저장한 리소스는 재사용한다.
+[업무 판단 기준](../../references/workflow-guidance.md)의 피드백 표로 원고·연결·결과 저장·시험 조건 중 변경할 범위를 좁힌다. ‘대시보드 우선’ 결정은 전달 위치와 결과 설정의 변경일 수 있으며 모든 외부 도구를 제거하라는 뜻은 아니다. 현재 목표·확인한 근거·변경한 대상·다음 시험을 작업 요약에 갱신하고, 이미 저장한 리소스는 재사용한다.

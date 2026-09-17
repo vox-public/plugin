@@ -4,12 +4,12 @@ description: "기존 vox.ai Manual이나 agent의 긴 prompt 문구를 일부 �
 metadata:
   product: vox.ai
   layer: architect
-  status: authoring-draft-not-runtime-verified
+  status: preview
 ---
 
 # edit-manual-safely
 
-제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구명은 출시 설계이며 연결된 서버의 실제 도구·스키마 확인 후 사용한다.
+제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구는 연결된 서버가 제공하는 실제 이름과 스키마를 확인한 뒤 사용한다.
 
 ## 쓰기 전
 [get_agent/get_manual의 실제 결과](../explore-agent-context/SKILL.md)에서 완전한 원문을 확보한다. 사용자 요청 부분과 보존할 규칙을 구분한다. 공유 리소스라면 [영향 범위](../review-shared-impact/SKILL.md)를 먼저 확인한다.

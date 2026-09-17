@@ -4,12 +4,12 @@ description: "vox.ai 채팅·위젯을 구성하거나 음성 업무를 보조 �
 metadata:
   product: vox.ai
   layer: architect
-  status: authoring-draft-not-runtime-verified
+  status: preview
 ---
 
 # configure-supporting-channel
 
-제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구명은 출시 설계이며 연결된 서버의 실제 도구·스키마 확인 후 사용한다.
+제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구는 연결된 서버가 제공하는 실제 이름과 스키마를 확인한 뒤 사용한다.
 
 ## 재사용 범위
 업무 지식·수집 항목은 재사용할 수 있지만 음성의 무응답·끼어들기·전화 전환·종료 계약을 채팅에 그대로 적용하지 않는다. agent/Manual의 채널 지원은 실제 제품 계약에서 확인한다. 자동 고객 식별·음성→채팅 맥락 인계는 이번 출시의 완성 기능으로 가정하지 않는다.

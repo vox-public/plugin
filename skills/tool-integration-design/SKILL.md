@@ -4,7 +4,7 @@ description: "vox.ai 음성 에이전트가 외부 API로 실제 조회·예약�
 metadata:
   product: vox.ai
   layer: general
-  status: authoring-draft-not-runtime-verified
+  status: preview
 ---
 
 # tool-integration-design
@@ -18,7 +18,7 @@ endpoint·method·인증 방식·필수 입력·응답/오류 예·부작용·�
 입력값의 출처를 고객 발화, 사전 정보, 고정 설정, 이전 도구 결과로 구분한다. 반환값은 다음 판단과 사용자 설명에 필요한 필드를 중심으로 설계한다. 도구 설명에는 언제 호출하고 언제 호출하지 않을지, 오류 시 무슨 말을 할지 적는다.
 
 ## 실행 위치
-음성 agent가 통화 중 호출하는 도구와 코파일럿이 agent를 관리하는 MCP 도구를 구분한다. 브라우저 동작이 필요하다고 ElevenLabs client tool이나 code sandbox가 vox.ai에도 있다고 가정하지 않는다. vox.ai에서 실제 지원하는 도구 종류·스키마로 표현 가능한지 확인한다.
+음성 agent가 통화 중 호출하는 도구와 코파일럿이 agent를 관리하는 MCP 도구를 구분한다. 브라우저 동작이 필요한 경우 제품이 제공하는 실행 환경부터 확인한다. vox.ai에서 실제 지원하는 도구 종류·스키마로 표현 가능한지 확인한다.
 
 반복·불명 결과의 처리와 인증 오류를 정상 결과와 구분한다. 외부 실행이 불명일 때 새 요청을 보내는 정책을 임의로 만들지 않는다.
 

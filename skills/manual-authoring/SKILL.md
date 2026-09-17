@@ -4,13 +4,13 @@ description: "vox.ai Single용 Manual의 질문·조건·정정·도구 사용·
 metadata:
   product: vox.ai
   layer: general
-  status: authoring-draft-not-runtime-verified
+  status: preview
 ---
 
 # manual-authoring
 
 ## Manual의 역할
-Manual은 고객과 대화하는 음성 에이전트의 업무 절차다. 코파일럿을 위한 SKILL.md와 다르다. 초기에는 완결된 Manual 하나를 만들고 독립 재사용·시험 가치가 생길 때 분리한다. Flow나 ElevenLabs의 procedure draft/compile을 도입하지 않는다.
+Manual은 고객과 대화하는 음성 에이전트의 업무 절차다. 코파일럿을 위한 SKILL.md와 다르다. 초기에는 완결된 Manual 하나를 만들고 독립 재사용·시험 가치가 생길 때 분리한다. 현재 에이전트 유형에서 지원하는 Manual 형식으로 작성한다.
 
 ## 작성 순서
 1. 시작 조건과 처리 범위를 적고 알려진 사전 정보를 확인한다. 아웃바운드는 연락 이유·통화 가능 여부·거절을, 인바운드는 문의 목적·분류를 포함한다.

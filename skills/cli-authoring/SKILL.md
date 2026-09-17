@@ -4,7 +4,7 @@ description: "사용자가 vox.ai 리소스를 저장소 파일·git·CI로 관�
 metadata:
   product: vox.ai
   layer: general
-  status: authoring-draft-not-runtime-verified
+  status: preview
 ---
 
 # cli-authoring

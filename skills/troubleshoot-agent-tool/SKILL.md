@@ -4,12 +4,12 @@ description: "vox.ai 통화 중 외부 도구가 호출되지 않거나 오류·
 metadata:
   product: vox.ai
   layer: architect
-  status: authoring-draft-not-runtime-verified
+  status: preview
 ---
 
 # troubleshoot-agent-tool
 
-제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구명은 출시 설계이며 연결된 서버의 실제 도구·스키마 확인 후 사용한다.
+제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구는 연결된 서버가 제공하는 실제 이름과 스키마를 확인한 뒤 사용한다.
 
 ## 증거
 오류가 저장 시점인지 통화 실행 시점인지 구분한다. 실행 문제면 [당시 통화](../inspect-call-evidence/SKILL.md)의 도구 입력·응답·버전·관련 발화를 읽는다. tool 저장 오류면 실제 오류 필드와 현재 config를 비교한다.

@@ -4,12 +4,12 @@ description: "특정 vox.ai 에이전트의 Manual·지식·도구 변경이 다
 metadata:
   product: vox.ai
   layer: architect
-  status: authoring-draft-not-runtime-verified
+  status: preview
 ---
 
 # review-shared-impact
 
-제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구명은 출시 설계이며 연결된 서버의 실제 도구·스키마 확인 후 사용한다.
+제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구는 연결된 서버가 제공하는 실제 이름과 스키마를 확인한 뒤 사용한다.
 
 ## 범위와 실제 참조
 사용자가 바꾸려는 agent와 공유 리소스의 현재 참조를 조회한다. 전용 dependency 조회가 없으면 지원되는 agent 조회·목록의 범위만 사용하고 확인하지 못한 영향 범위를 표시한다. 공유됨과 현재 버전 참조의 의미를 새 draft처럼 설명하지 않는다.

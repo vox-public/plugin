@@ -4,12 +4,12 @@ description: "vox.ai 특정 통화의 발화·도구·추출 결과와 당시 �
 metadata:
   product: vox.ai
   layer: architect
-  status: authoring-draft-not-runtime-verified
+  status: preview
 ---
 
 # inspect-call-evidence
 
-제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구명은 출시 설계이며 연결된 서버의 실제 도구·스키마 확인 후 사용한다.
+제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구는 연결된 서버가 제공하는 실제 이름과 스키마를 확인한 뒤 사용한다.
 
 ## 순서
 1. 사용자 또는 실제 조회 결과에서 callId를 확보한다. `get_call`로 상태와 당시 agent 버전·지원되는 분석 결과를 읽고 필요한 경우 transcript를 요청한다.
