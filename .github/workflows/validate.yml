@@ -1,0 +1,27 @@
+name: Validate plugin bundles
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-build.txt
+      - run: python -m pip install -r requirements-build.txt
+      - run: python -m unittest discover -s tests -v
+      - run: python scripts/build.py
+      - name: Check committed bundle manifest
+        run: git diff --exit-code -- bundle-manifest.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vox-ai-candidate-bundles
+          path: dist/*.zip
+          if-no-files-found: error
