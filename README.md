@@ -7,7 +7,7 @@ Codex와 Claude Code에서 vox.ai에 연결하고 음성 에이전트를 설계�
 
 ## 설치
 
-아래 명령은 marketplace 파일이 포함된 변경이 `main`에 병합된 뒤 사용할 수 있습니다.
+아래 명령으로 GitHub 저장소의 marketplace를 추가합니다.
 
 Claude Code:
 
@@ -32,7 +32,7 @@ Codex의 업데이트 방법은 설치된 버전의 `codex plugin marketplace --
 
 ## 연결
 
-플러그인은 `https://mcp.tryvox.co/mcp`에 연결합니다. 호스트에서 제공하는 OAuth 로그인 절차를 따르고 작업할 조직을 확인합니다.
+플러그인은 `https://mcp.services.tryvox.co/mcp`에 연결합니다. 호스트에서 제공하는 OAuth 로그인 절차를 따르고 작업할 조직을 확인합니다.
 키나 토큰을 대화에 붙여 넣거나 설치 파일에 저장하지 않습니다.
 
 설치 후 연결된 서버의 도구 목록과 입력 스키마를 확인합니다. 필요한 도구가 없으면 준비한 초안과 남은 작업을 안내합니다. 설치 성공만으로 로그인이나 제품 작업이 완료된 것은 아닙니다.

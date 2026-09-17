@@ -55,7 +55,7 @@ def validate(root):
     require(codex['skills'] == './skills/' and codex['mcpServers'] == './.mcp.json',
             'Unexpected component paths')
     connection = load_json(root / '.mcp.json')['mcpServers']['vox-ai']
-    require(connection == {'type': 'http', 'url': 'https://mcp.tryvox.co/mcp'},
+    require(connection == {'type': 'http', 'url': 'https://mcp.services.tryvox.co/mcp'},
             'Public bundle must use the reviewed public MCP connection without credentials')
     for host, location in [('codex', '.agents/plugins/marketplace.json'),
                            ('claude', '.claude-plugin/marketplace.json')]:
