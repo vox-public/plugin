@@ -59,7 +59,9 @@
         "list_models",
         "list_schemas",
         "get_schema",
+        "list_agents",
         "get_agent",
+        "list_manuals",
         "get_manual",
         "save_agent",
         "save_manual",
@@ -77,6 +79,7 @@
       "tools": [
         "list_agents",
         "get_agent",
+        "list_manuals",
         "get_manual",
         "get_tool",
         "get_call",
@@ -87,10 +90,11 @@
       "name": "review-shared-impact",
       "layer": "architect",
       "path": "skills/review-shared-impact/SKILL.md",
-      "description": "특정 vox.ai 에이전트의 Manual·지식·도구 변경이 다른 에이전트에 영향을 줄 수 있을 때 사용한다. 제품이 보장하지 않는 격리나 자동 복제를 약속하지 않는다.",
+      "description": "특정 vox.ai Single의 Manual·지식·도구 변경 범위를 확인할 때 사용한다. 제품이 보장하지 않는 격리나 자동 복제를 약속하지 않는다.",
       "tools": [
         "list_agents",
         "get_agent",
+        "list_manuals",
         "get_manual",
         "save_manual",
         "save_agent",
@@ -214,6 +218,7 @@
       "tools": [
         "list_agents",
         "get_agent",
+        "list_manuals",
         "get_manual",
         "save_manual",
         "save_agent",

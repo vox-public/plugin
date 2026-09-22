@@ -17,15 +17,15 @@ metadata:
 ## 연결과 발견
 호스트에서 제공하는 인증 절차를 사용한다. 키나 토큰을 프롬프트/파일에 요구하지 않는다. 연결 조직은 고정이며 모델 인자로 전환하지 않는다. 조직 변경은 호스트의 연결 UX로 처리한다.
 
-호스트가 실제 제공한 MCP 도구 이름과 스키마를 먼저 확인한다. 이름 검색 후 정확한 ID를 확보한다. `list_models`, `list_schemas`, `get_schema`는 제품 설정 탐색용이며 호스트의 MCP 도구 발견 기능과 혼동하지 않는다. 여러 서버가 있으면 연결 식별자와 제품 모듈을 함께 확인한다.
+호스트가 실제 제공한 MCP 도구 이름과 스키마를 먼저 확인한다. 이름 검색 후 정확한 ID를 확보한다. `list_models`, `list_schemas`, `get_schema`는 제품 설정 탐색용이며 호스트의 MCP 도구 발견 기능과 혼동하지 않는다. 여러 서버가 있으면 연결 식별자와 제품 모듈을 함께 확인한다. Manual은 Single에 귀속되므로 `list_agents`로 대상을 정하고 `list_manuals` 또는 `get_manual`로 같은 `agent_id` 범위의 현재 Manual을 읽는다.
 
 ## 도구 선택
-- 구축: `get_agent`, `get_manual`, `save_agent`, `save_manual`. 생성/수정 mode와 API payload를 사용한다.
+- 구축: `list_agents`, `get_agent`, `list_manuals`, `get_manual`, `save_agent`, `save_manual`. 생성/수정 mode와 연결된 서버의 실제 payload를 사용한다. Manual 저장에는 `agent_id`와 현재 `head_revision`에 해당하는 `expected_head_revision`을 포함한다. Agent 수정에도 현재 `head_revision`을 사용한다.
 - 통화: `list_calls`, `get_call`; 실제 발신은 별도 `place_call`. agent 저장이 실고객 발신을 허가하지 않는다.
 - 번호·캠페인·SMS·채팅·위젯은 [업무 호출 예](../../references/workflow-examples.md)의 목적별 도구를 실제 스키마로 확인한다.
 - 직접 음성은 `open_voice_test_session`의 구현된 진입/결과 계약을 확인한다. 마이크를 MCP가 처리하지 않는다.
 
 ## 응답과 복귀
-저장/접수/최종 완료/부분 실패/불명을 분리한다. 저장 성공 뒤 조회가 실패했다면 받은 ID부터 이어간다. 실행 응답이 불명이면 [resume-agent-work](../resume-agent-work/SKILL.md)를 사용한다. OAuth 만료를 조직 전체 키나 직접 REST로 우회하지 않는다.
+저장/접수/최종 완료/부분 실패/불명을 분리한다. 저장 성공 뒤 조회가 실패했다면 받은 `agent_id`와 `manual_id`부터 이어간다. `409` conflict는 현재 상태를 다시 읽고 사용자의 변경 의도를 다시 적용할 때만 처리하며 무조건 재시도하지 않는다. 쓰기 응답이 불명이면 새 생성이나 같은 쓰기를 반복하지 말고 [resume-agent-work](../resume-agent-work/SKILL.md)로 지원되는 조회를 이어간다. OAuth 만료를 조직 전체 키나 직접 REST로 우회하지 않는다.
 
 스킬 부재를 제품 접근 차단 사유로 만들지 않는다. 도구 설명·스키마만으로도 지원 업무를 수행할 수 있어야 한다. 세부 업무 판단은 관련 Architect 스킬, 개념·작성 품질은 general을 필요할 때 읽는다.
