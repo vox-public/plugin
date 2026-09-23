@@ -16,12 +16,12 @@ metadata:
 
 ## 구축
 1. [Manual 작성](../manual-authoring/SKILL.md)으로 정상·정정·거절·범위 밖·마무리를 갖춘 본문을 준비한다. 외부 동작이 필수라면 [도구 연결](../connect-agent-tools/SKILL.md)의 의존성을 먼저 확인한다.
-2. `save_manual(mode=create)`의 반환 ID를 보존한다. 이를 `save_agent(mode=create)`의 실제 manualIds 표현에 사용한다. Single 및 필수 설정은 실제 schema에서 확인한다.
-3. [결과 설정](../configure-call-results/SKILL.md)으로 내부 추출·저장을 포함하고 agent/Manual을 재조회한다. 구체 입력·ID 흐름은 [대표 호출 예](../../references/workflow-examples.md)에 있다.
+2. 먼저 `save_agent(mode=create)`로 Single을 만들고 반환된 `agent_id`를 보존한다. `get_agent` 또는 `list_manuals`로 현재 `head_revision`을 읽은 뒤 `save_manual(mode=create)`에 같은 `agent_id`와 `payload.expected_head_revision`을 전달한다. Manual은 해당 Single에 저장되며 폐기된 `manualIds`를 agent payload에 만들지 않는다.
+3. Manual 생성 응답의 `manual_id`를 보존하고 `get_manual(agent_id, manual_id)`와 `get_agent(agent_id)`로 본문·참조·현재 revision을 재조회한다. [결과 설정](../configure-call-results/SKILL.md)으로 내부 추출·저장을 포함한다. 구체 입력·ID 흐름은 [대표 호출 예](../../references/workflow-examples.md)에 있다.
 4. [직접 음성 시험](../prepare-voice-test/SKILL.md)으로 이어간다. 번호 구매와 CRM 구축은 첫 브라우저 체험의 필수 단계가 아니다.
 
 ## 부분 성공과 전달
-Manual만 저장됐다면 그 ID에서 연결을 계속한다. agent 저장 성공을 시험 성공으로 보고하지 않는다. 실제 예약이 목표인데 연동이 없으면 그 결손을 알리고 사용자 목표를 유지한다.
+Single만 저장됐다면 그 `agent_id`에서 Manual 생성 단계를 계속한다. Manual 저장 성공 뒤에는 같은 `agent_id`·`manual_id`로 확인한다. `409` revision conflict는 최신 상태를 다시 읽고 의도를 다시 적용할 때만 처리하며, unknown 응답은 새 Single·Manual 생성이나 같은 쓰기로 자동 재시도하지 않는다. Agent 저장 성공을 시험 성공으로 보고하지 않는다. 실제 예약이 목표인데 연동이 없으면 그 결손을 알리고 사용자 목표를 유지한다.
 
 전달은 agent/Manual 참조, 처리 범위, 시험 상황, 결과 위치, 현재 완료 단계와 남은 의존성으로 구성한다. 사용자가 변경 의견을 주면 해당 전문 스킬을 읽어 필요한 부분만 고친다.
 

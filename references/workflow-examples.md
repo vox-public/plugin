@@ -1,30 +1,50 @@
-# 업무 호출 예와 ID 흐름
+# 업무 호출 예와 ID·revision 흐름
 
 아래 JSON은 입력 구조를 설명하는 합성 예제다. 실행 전에 연결된 서버의 실제 도구·스키마와 일치하는지 확인한다. 다른 도구의 payload를 이 예제로 추정하지 않는다.
 
-## 구축: Manual → agent → 재조회
+## 구축: Single → agent-scoped Manual → 재조회
 
 ```json
-{"tool":"save_manual","arguments":{"mode":"create","payload":{"name":"샘플 견적 접수","content":"청소 유형과 희망일을 확인하고 내용을 요약한다. 마무리 후 @tool:end_call","built_in_tools":[{"toolType":"end_call","name":"end_call"}]}}}
+{"tool":"save_agent","arguments":{"mode":"create","payload":{"name":"샘플 견적 접수"}}}
 ```
 
-Manual 응답의 실제 ID를 다음 agent payload의 실제 `manualIds` 스키마에 맞춰 전달한다. 이 문서의 UUID 예시를 실사용 ID로 복사하지 않는다. Single 설정, 필수 모델/음성, postCall의 구체 형식은 `get_schema`와 공개 도구 입력으로 확인한다.
+반환된 실제 `agent_id`를 보존하고 `get_agent` 또는 `list_manuals`로 현재 `head_revision`을 읽는다. Manual은 전역 리소스가 아니라 이 Single에 귀속되므로, Manual 생성에도 같은 `agent_id`와 읽은 revision을 사용한다.
 
-`save_manual(create)` → 반환 Manual ID → `save_agent(create, payload)` → 반환 agent ID → `get_agent/get_manual` → 실제 지원 시 `open_voice_test_session` → 실제 callId → `get_call`.
+```json
+{"tool":"save_manual","arguments":{"mode":"create","agent_id":"<agent-id>","payload":{"expected_head_revision":12,"name":"샘플 견적 접수","content":"청소 유형과 희망일을 확인하고 내용을 요약한다. 마무리 후 @tool:end_call","built_in_tools":[{"toolType":"end_call","name":"end_call"}]}}}
+```
 
-Manual 저장만 성공했으면 ID를 보존하고 연결 단계부터 이어간다. 두 리소스를 처음부터 다시 만들지 않는다. 시험 미실행이면 저장과 시험 준비까지만 보고한다.
+`expected_head_revision`의 `12`는 예시값이다. 항상 쓰기 직전에 읽은 현재 값으로 바꾸며 임의의 기본값을 넣지 않는다. 반환된 실제 `manual_id`와 `agent_id`를 사용해 다음처럼 재조회한다.
+
+```json
+{"tool":"get_manual","arguments":{"agent_id":"<agent-id>","manual_id":"<manual-id>"}}
+```
+
+`save_agent(create)` → 반환 `agent_id` → `get_agent/list_manuals` → `save_manual(create, agent_id, expected_head_revision)` → 반환 `manual_id` → `get_agent/get_manual` → 실제 지원 시 `open_voice_test_session` → 실제 `call_id` → `get_call`.
+
+Single만 저장됐으면 그 `agent_id`에서 Manual 단계를 이어간다. Manual 저장만 성공했으면 두 리소스를 처음부터 다시 만들지 않고 같은 `agent_id`·`manual_id`로 재조회한다. 시험 미실행이면 저장과 시험 준비까지만 보고한다.
 
 ## 기존 조회·수정 예
 
 ```json
-{"tool":"get_agent","arguments":{"agent_id":"00000000-0000-4000-8000-000000000001"}}
+{"tool":"list_agents","arguments":{}}
 ```
 
 ```json
-{"tool":"save_manual","arguments":{"mode":"update","manual_id":"00000000-0000-4000-8000-000000000002","payload":{"config":{"tool_call_sound":null}}}}
+{"tool":"list_manuals","arguments":{"agent_id":"<agent-id>"}}
 ```
 
-두 번째는 허용된 config 옵션의 null 예제이며 content를 null로 지우라는 뜻이 아니다. `get_manual`의 본문과 관련 설정을 읽고 전체 본문을 보존하는 편집은 해당 계약을 따른다. 파생 `tool_ids`를 save_manual 입력으로 보내지 않는다.
+```json
+{"tool":"get_agent","arguments":{"agent_id":"<agent-id>"}}
+```
+
+```json
+{"tool":"save_manual","arguments":{"mode":"update","agent_id":"<agent-id>","manual_id":"<manual-id>","payload":{"expected_head_revision":13,"config":{"tool_call_sound":null}}}}
+```
+
+마지막 revision도 직전 조회에서 얻은 값으로 바꾼다. `config.tool_call_sound=null`은 허용된 옵션을 끄는 예시이며 content를 null로 지우라는 뜻이 아니다. Manual `content`를 바꾸면 전체 본문을 보내고, 파생 `tool_ids`·`linked_manual_ids`·`manualIds`를 save payload에 넣지 않는다. Agent 설정을 수정할 때는 `save_agent(mode=update)` payload에도 현재 `expected_head_revision`을 포함하고, `data.manuals`를 보낼 경우 현재 UUID-keyed 값을 보존한다.
+
+409 revision conflict가 나오면 현재 agent와 Manual을 다시 읽어 사용자의 의도를 다시 적용한다. 저장 응답이 unknown이거나 재조회가 실패하면 같은 쓰기를 자동 재실행하거나 새 리소스를 만들지 않고 지원되는 조회로 상태를 확인한다.
 
 ## 나머지 업무: 구체 schema는 연결 도구에서 읽는다
 
