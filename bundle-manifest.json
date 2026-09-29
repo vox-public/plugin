@@ -1,14 +1,14 @@
 {
   "version": "0.1.4",
   "skills_count": 26,
-  "sha256": "e6c98931265cd2b5041081d73a492e2adb6e8bca64d1f95e824bb532448fcae6",
+  "sha256": "e2dd4ee03ff3ffeb683b7a068e2e7b9e881bcef4a00593be15517da2375fd8ef",
   "capability_directories": [
     "/workspace/vox-ai/skills"
   ],
   "files": {
     "references/execution-contract.md": "3685c134ec00c75a66b10209336be8511d1b1a1daf03a013513797e7a9cfe493",
     "references/host-adapters.md": "b92bf4aa6278bbb49be14a09f6c33f16fe7ceed7b6f3ba90567c617e821549c5",
-    "references/implemented-tools.snapshot.json": "3916d41fca0caa60b07ba7868373008b7cbda119a2be4be07e50be9e00ce46a4",
+    "references/implemented-tools.snapshot.json": "f37ed95bd3934e6afc3acf891d38dd954f41d761963d073025ab69e39a049743",
     "references/tool-schemas/get_agent.json": "d57b2f7863e40dcb996487cbf9c7013697ffd0100ec094600931e3c7473286b0",
     "references/tool-schemas/get_manual.json": "6976815614df1b243387730ed281fcb129b2b206ebebe9246dd5d8952f4a8de5",
     "references/tool-schemas/get_organization.json": "09b23d825afd3eead2746ba7c22a63abf3c42125ca53a7335b2000f17a72b779",
