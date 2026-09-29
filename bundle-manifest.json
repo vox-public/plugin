@@ -1,14 +1,14 @@
 {
-  "version": "0.1.9",
+  "version": "0.1.10",
   "skills_count": 26,
-  "sha256": "04d52834976b304fe50dff29e72681f413d0e44ab6f50bb675194928dec94c29",
+  "sha256": "404eff2f1891224bf21f28a5ec577b660259d0added5bd656422b99059f26981",
   "capability_directories": [
     "/workspace/vox-ai/skills"
   ],
   "files": {
     "references/execution-contract.md": "11318df0d87b56c7a660ec44f10a4b9f0147430665de06ebc7d6e3df86f54a34",
     "references/host-adapters.md": "b92bf4aa6278bbb49be14a09f6c33f16fe7ceed7b6f3ba90567c617e821549c5",
-    "references/implemented-tools.snapshot.json": "0a499193fde510e6c5cec0c891280350cc31054c76fa0c39ef544362672d9809",
+    "references/implemented-tools.snapshot.json": "1e935aaf1b1353f3964b5636a13fcea95a8b04a684a47d6b31b1ce3cb47f320b",
     "references/tool-schemas/get_agent.json": "d57b2f7863e40dcb996487cbf9c7013697ffd0100ec094600931e3c7473286b0",
     "references/tool-schemas/get_manual.json": "6976815614df1b243387730ed281fcb129b2b206ebebe9246dd5d8952f4a8de5",
     "references/tool-schemas/get_organization.json": "09b23d825afd3eead2746ba7c22a63abf3c42125ca53a7335b2000f17a72b779",
@@ -25,7 +25,7 @@
     "references/tool-schemas/save_work_record.json": "c5b6ecf6004f8addc9103f40f0474d73d7664edd047e628c3f5341f375ebdcab",
     "references/voice-test-cases.md": "1d135f2b0b7b84d6e223700c1fb9c346f15ba88fdc7be38485e3cb5edc17cd21",
     "references/workflow-capabilities.json": "65ea8fc543c154d75f6a337d82dfa11aa27ceeb94046b6f39ca00575b472ff23",
-    "references/workflow-examples.md": "1651bfa69c279dd841ea03642e45833c4f667be86fbcac0e32077808c1d901e8",
+    "references/workflow-examples.md": "5373ac916bd38016b30bae1d43f84bd1006ce75a04e1ed52f12a6ca94834f8d0",
     "references/workflow-guidance.md": "6912c622d344d145d124c4ba5ce40ed51f538fc654e20e5aa938b2137343cd11",
     "skills/agents-platform/SKILL.md": "fd2582492bcf6f6a1a356101a9d8fb3fb652d200426d0ef5de75b5ca5d035790",
     "skills/build-first-voice-agent/SKILL.md": "85ce01d4d50a867115d2a2344752b54bbdc9841d287423004bd7864b6b4ec154",

@@ -122,6 +122,13 @@ class WorkflowExampleTests(unittest.TestCase):
             f'"source_id":"{holdout_source["source_message_id"]}","source_thread_id":"{holdout_source["source_thread_id"]}"',
             examples_text,
         )
+        # Negative example: routine-only fields on a holdout are rejected field by field.
+        self.assertIn("잘못된 예", examples_text)
+        self.assertIn("INVALID_ARGUMENTS", examples_text)
+        self.assertIn("details.problems", examples_text)
+        negative = next(line for line in examples_text.splitlines() if line.startswith("잘못된 예"))
+        self.assertIn("register_holdout: true", negative)
+        self.assertIn("expected_settings_revision", negative)
         self.assertIn("no provider execution", holdout_payload["observed_result"].lower())
 
         api_root = Path(os.environ.get("VOX_API_ROOT", ROOT.parent / "api")).resolve()
