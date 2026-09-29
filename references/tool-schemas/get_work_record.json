@@ -1,0 +1,142 @@
+{
+  "name": "get_work_record",
+  "inputSchema": {
+    "type": "object",
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "record_type": {
+            "const": "list"
+          },
+          "agent_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cursor": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "required": [
+          "record_type"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "record_type": {
+            "const": "case"
+          },
+          "case_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "claim_cursor": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "evidence_cursor": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "record_type",
+          "case_id"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "record_type": {
+            "const": "events"
+          },
+          "case_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cursor": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "required": [
+          "record_type",
+          "case_id"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "record_type": {
+            "const": "proposals"
+          },
+          "case_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cursor": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "required": [
+          "record_type",
+          "case_id"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "record_type": {
+            "const": "runs"
+          },
+          "case_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cursor": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "required": [
+          "record_type",
+          "case_id"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  }
+}

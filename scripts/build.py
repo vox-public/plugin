@@ -53,7 +53,18 @@ def validate_tool_snapshot(root, catalog):
             'Tool contract lock must pin the source manifest SHA-256')
     require(sorted(lock.get('implemented_tools', [])) == sorted(implemented),
             'Implemented-tools snapshot disagrees with the source contract lock')
-    require(source == {key: lock[key] for key in ('mcp_commit', 'manifest_sha256', 'source_manifest_sha256')},
+    require(lock.get('source_state') in {'clean_commit', 'dirty_worktree_candidate'},
+            'Tool contract lock must identify whether contracts come from a clean commit or dirty candidate')
+    dirty_contracts = lock.get('dirty_contracts')
+    require(isinstance(dirty_contracts, list)
+            and all(isinstance(name, str) and name for name in dirty_contracts)
+            and len(dirty_contracts) == len(set(dirty_contracts)),
+            'Tool contract lock has invalid dirty contract names')
+    require((lock['source_state'] == 'dirty_worktree_candidate') == bool(dirty_contracts),
+            'Tool contract lock dirty state and dirty contract list disagree')
+    provenance_keys = ('mcp_commit', 'manifest_sha256', 'source_manifest_sha256',
+                       'source_state', 'dirty_contracts')
+    require(source == {key: lock[key] for key in provenance_keys},
             'Bundled tool snapshot provenance disagrees with the source contract lock')
     schema_hashes = lock.get('input_schema_sha256', {})
     require(set(schema_hashes) == set(implemented),
@@ -218,10 +229,26 @@ def crosscheck_mcp_source(root, mcp_root=None, manifest_path=None):
         require(canonical_sha256(contract.get('inputSchema')) == expected_digest,
                 f'Supplied MCP input schema does not match the pinned source for {name}')
     if mcp_root:
-        result = subprocess.run(['git', '-C', str(Path(mcp_root).resolve()), 'rev-parse', 'HEAD'],
+        checkout = str(Path(mcp_root).resolve())
+        result = subprocess.run(['git', '-C', checkout, 'rev-parse', 'HEAD'],
                                 check=True, capture_output=True, text=True)
         require(result.stdout.strip() == lock['mcp_commit'],
                 'Supplied MCP checkout commit does not match the pinned source')
+        changed = subprocess.run(
+            ['git', '-C', checkout, 'diff', '--name-only', 'HEAD', '--', 'src/vox_mcp/contracts'],
+            check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        untracked = subprocess.run(
+            ['git', '-C', checkout, 'ls-files', '--others', '--exclude-standard',
+             '--', 'src/vox_mcp/contracts'],
+            check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        dirty_contracts = sorted(Path(path).stem for path in {*changed, *untracked}
+                                 if path.endswith('.json'))
+        require(dirty_contracts == lock['dirty_contracts'],
+                'Supplied MCP dirty contract set does not match the candidate snapshot')
+        require((lock['source_state'] == 'dirty_worktree_candidate') == bool(dirty_contracts),
+                'Supplied MCP checkout state does not match the candidate snapshot')
 
 
 def validate(root):

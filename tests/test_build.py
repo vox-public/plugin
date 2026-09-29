@@ -148,8 +148,11 @@ class BuildTests(unittest.TestCase):
             self.run_build()
 
     def test_unavailable_designed_tools_need_a_fallback(self):
-        self.change_json('references/workflow-capabilities.json', lambda c:
-                         c['workflows'][0].update(designed_unavailable_fallback=''))
+        def remove_fallback(c):
+            workflow = c['workflows'][0]
+            workflow['designed']['optional_tools'].append('open_voice_test_session')
+            workflow['designed_unavailable_fallback'] = ''
+        self.change_json('references/workflow-capabilities.json', remove_fallback)
         with self.assertRaisesRegex(ValueError, 'needs a fallback'):
             self.run_build()
 

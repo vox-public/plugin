@@ -1,29 +1,39 @@
 {
-  "mcp_commit": "e55dfc9ba4e241d9e27babb0a92f6181fb471b20",
-  "manifest_sha256": "2d47cb831b49dcf3bef93c50ceb751b5c58285055ef8858da977b9027b19f2e3",
+  "mcp_commit": "b32a3ccef749b4226384d7ecb28f7f8f9527b1e8",
+  "manifest_sha256": "aa201cb7f43b134f9e316a57f3159c39bfd2363017749e0df04fd841d8f46f4d",
   "source_manifest_sha256": "f7c583c38b19d9d910233c285f012783acb840f0aa027dd9821e42d919224c3c",
+  "source_state": "clean_commit",
+  "dirty_contracts": [],
   "implemented_tools": [
     "get_agent",
     "get_manual",
     "get_organization",
     "get_schema",
+    "get_work_context",
+    "get_work_operation",
+    "get_work_record",
     "list_agents",
     "list_manuals",
     "list_models",
     "list_schemas",
     "save_agent",
-    "save_manual"
+    "save_manual",
+    "save_work_record"
   ],
   "input_schema_sha256": {
     "get_agent": "5254bc374d8e7c843decf09c3394f09615e3734c681321017a4353e790e30ea9",
     "get_manual": "51cb642adfcb55345b5d967ae551a18a532347ac52c854a18a76aad022c9947c",
     "get_organization": "d746974fa9afd5e951f76f9af38954b0ad7f436f2120dc974da65e5ee39f856f",
     "get_schema": "789277d15774453a626e9575ba78c391f94f60bb3fe79c449b1b891dbf808590",
+    "get_work_context": "d77dee09c2daf09cf2c325170f0c15d4bb229047617a80c93429aee58ca9282c",
+    "get_work_operation": "8c2574ce37d138a76d5659f69012a8e95affc2b2ee8345e986f6b364ad6ba878",
+    "get_work_record": "5303d39e6cadeaf68d64b0372ea58e4116a227e54571551e73c0cca90a5d1af9",
     "list_agents": "b45e2bc5e04b7dcfdbb6fb03e42fa4d0d428bf8acde9fcc0a998833ae11c7ec9",
     "list_manuals": "20014e7fb31e92c85c6a9c563c20764de1b19b4f95cad2c04d0eb963a97477c9",
     "list_models": "08a290c606fc9cda60570c8dc7a01a0eb08407774b83df5fde6a3258a40aa114",
     "list_schemas": "8d81377d1ae2f903515f0e3b98a1ad38f09136d88bb96fcdc13ba62b3dde4124",
-    "save_agent": "bb5cb4843c118935d025429be9633ab7329f925e21b85de92a72c6a5332b0534",
-    "save_manual": "cc3ad0365aeee7a96ba19ed325d5e6d59e1f2e9a7e6a50a30f575e36e75dbe71"
+    "save_agent": "eaf6cfe4590c1f56d71bf3d825b1ad5552f9e8592324e06878753f799fa83d27",
+    "save_manual": "925ea71430c479e688527230debd1b56e5cb68e168754d9516168acb3e7ce061",
+    "save_work_record": "c259afa96fff11bc76541052eb838e473935b70212bf96c8cb3e9d466b259719"
   }
 }

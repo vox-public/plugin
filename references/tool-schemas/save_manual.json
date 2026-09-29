@@ -22,6 +22,12 @@
         "type": "string",
         "format": "uuid",
         "title": "Manual Id"
+      },
+      "context_receipt": {
+        "type": "string",
+        "minLength": 43,
+        "maxLength": 128,
+        "description": "For user-principal saves, copy the token from the recent get_work_context result context_receipt.token. MCP checks current context before dispatch and never sends this value to the product API. Organization API-key callers may omit it."
       }
     },
     "required": [
@@ -45,6 +51,12 @@
           },
           "payload": {
             "$ref": "#/$defs/CreateAgentManualRequest"
+          },
+          "context_receipt": {
+            "type": "string",
+            "minLength": 43,
+            "maxLength": 128,
+            "description": "For user-principal saves, copy the token from the recent get_work_context result context_receipt.token. MCP checks current context before dispatch and never sends this value to the product API. Organization API-key callers may omit it."
           }
         },
         "required": [
@@ -73,6 +85,12 @@
           },
           "payload": {
             "$ref": "#/$defs/UpdateAgentManualRequest"
+          },
+          "context_receipt": {
+            "type": "string",
+            "minLength": 43,
+            "maxLength": 128,
+            "description": "For user-principal saves, copy the token from the recent get_work_context result context_receipt.token. MCP checks current context before dispatch and never sends this value to the product API. Organization API-key callers may omit it."
           }
         },
         "required": [

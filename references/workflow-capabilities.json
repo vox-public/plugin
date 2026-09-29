@@ -6,33 +6,32 @@
       "id": "authoring",
       "implemented": {
         "required_tools": [
-          "save_agent",
           "get_agent",
-          "save_manual",
-          "get_manual"
+          "get_manual",
+          "get_work_context",
+          "save_agent",
+          "save_manual"
         ],
         "optional_tools": [
           "get_organization",
+          "get_schema",
+          "get_work_operation",
+          "get_work_record",
           "list_agents",
           "list_manuals",
           "list_models",
           "list_schemas",
-          "get_schema"
+          "save_work_record"
         ]
       },
       "designed": {
         "required_tools": [],
-        "optional_tools": [
-          "get_work_context",
-          "get_work_record",
-          "save_work_record",
-          "get_work_operation"
-        ]
+        "optional_tools": []
       },
       "host_actions": [
         "The user or assistant supplies source material through a file, URL, or conversation supported by that host."
       ],
-      "designed_unavailable_fallback": "Use the current host's accessible conversation or a user-supplied handoff. Do not claim shared improvement memory or cross-host continuity."
+      "designed_unavailable_fallback": "If get_work_context or its receipt is unavailable, prepare the draft and explain that user-principal product saves require the receipt. Keep continuity in the current accessible conversation or a user-provided handoff."
     },
     {
       "id": "refinement",
@@ -40,25 +39,24 @@
         "required_tools": [
           "get_agent",
           "get_manual",
+          "get_work_context",
           "save_manual"
         ],
         "optional_tools": [
+          "get_schema",
+          "get_work_operation",
+          "get_work_record",
           "list_manuals",
           "save_agent",
-          "get_schema"
+          "save_work_record"
         ]
       },
       "designed": {
         "required_tools": [],
-        "optional_tools": [
-          "get_work_context",
-          "get_work_record",
-          "save_work_record",
-          "get_work_operation"
-        ]
+        "optional_tools": []
       },
       "host_actions": [],
-      "designed_unavailable_fallback": "Use the current host's accessible conversation or a user-supplied handoff. Re-read current product state before editing and do not claim shared improvement memory."
+      "designed_unavailable_fallback": "Re-read current product state before editing. If get_work_context or its receipt is unavailable, prepare a draft and do not attempt a user-principal product save."
     },
     {
       "id": "customer_direct_test",
@@ -66,23 +64,22 @@
         "required_tools": [],
         "optional_tools": [
           "get_agent",
-          "get_manual"
+          "get_manual",
+          "get_work_context",
+          "get_work_operation",
+          "get_work_record",
+          "save_work_record"
         ]
       },
       "designed": {
         "required_tools": [],
-        "optional_tools": [
-          "get_work_context",
-          "get_work_record",
-          "save_work_record",
-          "get_work_operation"
-        ]
+        "optional_tools": []
       },
       "host_actions": [
         "The customer performs the voice test in the existing vox.ai product UI.",
         "The customer reports the observed result and any relevant call reference."
       ],
-      "designed_unavailable_fallback": "Keep the test report in the current host's accessible conversation or user-supplied handoff. Label it customer-reported; do not imply that MCP launched or independently verified the test."
+      "designed_unavailable_fallback": "Keep customer test feedback labeled as reported. If shared record tools are unavailable or the user directly asks not to save, retain only the current accessible conversation; never imply MCP launched or independently verified the test. The current contract does not expose the saved product UI recording setting to the host."
     },
     {
       "id": "operate",
@@ -90,22 +87,21 @@
         "required_tools": [],
         "optional_tools": [
           "get_agent",
-          "get_manual"
+          "get_manual",
+          "get_work_context",
+          "get_work_operation",
+          "get_work_record",
+          "save_work_record"
         ]
       },
       "designed": {
         "required_tools": [],
-        "optional_tools": [
-          "get_work_context",
-          "get_work_record",
-          "save_work_record",
-          "get_work_operation"
-        ]
+        "optional_tools": []
       },
       "host_actions": [
         "For live use, the customer operates the configured agent through the existing vox.ai product UI and reports the outcome."
       ],
-      "designed_unavailable_fallback": "The current MCP baseline only reads and saves agent and Manual configuration. Use the product UI for live operation; do not claim MCP call, campaign, SMS, or call-history access. Keep follow-up evidence host-local or user-supplied."
+      "designed_unavailable_fallback": "The current tool contract candidates only read and save agent and Manual configuration plus work records. Use the product UI for live operation; do not claim MCP call, campaign, SMS, or call-history access."
     },
     {
       "id": "resume",
@@ -116,23 +112,23 @@
         ],
         "optional_tools": [
           "get_organization",
+          "get_work_context",
+          "get_work_operation",
+          "get_work_record",
           "list_agents",
-          "list_manuals"
+          "list_manuals",
+          "save_work_record"
         ]
       },
       "designed": {
         "required_tools": [],
-        "optional_tools": [
-          "get_work_context",
-          "get_work_record",
-          "save_work_record",
-          "get_work_operation"
-        ]
+        "optional_tools": []
       },
       "host_actions": [
         "When shared-work tools are unavailable and the host cannot access the original conversation, the user provides prior resource IDs and the latest decision."
       ],
-      "designed_unavailable_fallback": "Resume from same-host history or a user-supplied handoff, then verify the supplied IDs and current revisions. Never infer that another thread or host was searched."
+      "designed_unavailable_fallback": "Resume from same-host history or a user-provided handoff, then verify supplied IDs and current revisions. Never infer that another thread or host was searched."
     }
-  ]
+  ],
+  "scope_note": "The bundle documents 14 tool schema candidates. This does not prove a connected host exposes them; inspect the live tool list and schemas."
 }

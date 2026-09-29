@@ -73,25 +73,29 @@
       "name": "agents-platform",
       "layer": "mcp",
       "path": "skills/agents-platform/SKILL.md",
-      "description": "연결된 vox.ai Agents MCP에서 조직·현재 도구 capability를 확인하고 agent·Manual 작업을 수행할 때 적용한다. 상담원의 실시간 통화 업무에는 적용하지 않는다.",
+      "description": "연결된 vox.ai Agents MCP에서 조직·현재 도구 capability와 작업 context를 확인하고 agent·Manual 작업을 수행할 때 적용한다. 상담원의 실시간 통화 업무에는 적용하지 않는다.",
       "tools": {
         "implemented": [
+          "get_agent",
+          "get_manual",
           "get_organization",
+          "get_schema",
+          "get_work_context",
+          "get_work_operation",
+          "get_work_record",
+          "list_agents",
+          "list_manuals",
           "list_models",
           "list_schemas",
-          "get_schema",
-          "list_agents",
-          "get_agent",
-          "list_manuals",
-          "get_manual",
           "save_agent",
-          "save_manual"
+          "save_manual",
+          "save_work_record"
         ],
         "designed_only": [
           "get_call",
-          "place_call",
+          "list_calls",
           "open_voice_test_session",
-          "list_calls"
+          "place_call"
         ]
       }
     },
@@ -102,14 +106,14 @@
       "description": "기존 vox.ai 에이전트의 설정·Manual·도구·버전을 파악하거나 변경 대상을 식별할 때 사용한다. 전체 통화 성과 분석은 별도 운영 분석 스킬로 처리한다.",
       "tools": {
         "implemented": [
-          "list_agents",
           "get_agent",
-          "list_manuals",
-          "get_manual"
+          "get_manual",
+          "list_agents",
+          "list_manuals"
         ],
         "designed_only": [
-          "get_tool",
           "get_call",
+          "get_tool",
           "list_agent_versions"
         ]
       }
@@ -121,12 +125,16 @@
       "description": "특정 vox.ai Single의 Manual·지식·도구 변경 범위를 확인할 때 사용한다. 제품이 보장하지 않는 격리나 자동 복제를 약속하지 않는다.",
       "tools": {
         "implemented": [
-          "list_agents",
           "get_agent",
-          "list_manuals",
           "get_manual",
+          "get_work_context",
+          "get_work_operation",
+          "get_work_record",
+          "list_agents",
+          "list_manuals",
+          "save_agent",
           "save_manual",
-          "save_agent"
+          "save_work_record"
         ],
         "designed_only": [
           "get_tool",
@@ -143,8 +151,9 @@
         "implemented": [
           "get_agent",
           "get_manual",
-          "save_manual",
-          "save_agent"
+          "get_work_context",
+          "save_agent",
+          "save_manual"
         ],
         "designed_only": []
       }
@@ -157,13 +166,14 @@
       "tools": {
         "implemented": [
           "get_agent",
+          "get_work_context",
           "save_agent"
         ],
         "designed_only": [
           "get_call",
-          "list_sheets",
+          "get_customer",
           "get_sheet",
-          "get_customer"
+          "list_sheets"
         ]
       }
     },
@@ -176,14 +186,15 @@
         "implemented": [
           "get_agent",
           "get_manual",
-          "save_manual",
-          "save_agent"
+          "get_work_context",
+          "save_agent",
+          "save_manual"
         ],
         "designed_only": [
-          "list_tools",
+          "get_call",
           "get_tool",
-          "save_tool",
-          "get_call"
+          "list_tools",
+          "save_tool"
         ]
       }
     },
@@ -211,8 +222,9 @@
       "tools": {
         "implemented": [
           "get_agent",
-          "list_models",
           "get_schema",
+          "get_work_context",
+          "list_models",
           "save_agent"
         ],
         "designed_only": [
@@ -228,11 +240,15 @@
       "tools": {
         "implemented": [
           "get_agent",
-          "get_manual"
+          "get_manual",
+          "get_work_context",
+          "get_work_operation",
+          "get_work_record",
+          "save_work_record"
         ],
         "designed_only": [
-          "open_voice_test_session",
-          "get_call"
+          "get_call",
+          "open_voice_test_session"
         ]
       }
     },
@@ -259,16 +275,20 @@
       "description": "vox.ai 구축·운영 작업이 연결 단절·권한 만료·부분 성공·불명 응답으로 끊겼을 때 완료된 단계를 보존하고 이어간다.",
       "tools": {
         "implemented": [
-          "get_organization",
           "get_agent",
-          "get_manual"
+          "get_manual",
+          "get_organization",
+          "get_work_context",
+          "get_work_operation",
+          "get_work_record",
+          "save_work_record"
         ],
         "designed_only": [
           "get_call",
-          "get_sms",
-          "get_sms_batch",
           "get_campaign",
           "get_number",
+          "get_sms",
+          "get_sms_batch",
           "list_service_requests"
         ]
       }
@@ -280,14 +300,18 @@
       "description": "URL·파일·설명으로 vox.ai의 첫 Single 음성 에이전트를 만들고 Manual·결과 저장·직접 시험까지 연결할 때 사용한다.",
       "tools": {
         "implemented": [
-          "list_agents",
           "get_agent",
-          "list_manuals",
           "get_manual",
-          "save_manual",
-          "save_agent",
+          "get_schema",
+          "get_work_context",
+          "get_work_operation",
+          "get_work_record",
+          "list_agents",
+          "list_manuals",
           "list_models",
-          "get_schema"
+          "save_agent",
+          "save_manual",
+          "save_work_record"
         ],
         "designed_only": [
           "open_voice_test_session"
@@ -303,8 +327,12 @@
         "implemented": [
           "get_agent",
           "get_manual",
+          "get_work_context",
+          "get_work_operation",
+          "get_work_record",
+          "save_agent",
           "save_manual",
-          "save_agent"
+          "save_work_record"
         ],
         "designed_only": [
           "get_call",
@@ -320,16 +348,16 @@
       "tools": {
         "implemented": [],
         "designed_only": [
-          "list_numbers",
+          "get_call",
           "get_number",
-          "list_available_numbers",
-          "purchase_number",
-          "request_uan_number",
-          "request_presentation_number",
-          "set_number_agents",
-          "list_service_requests",
           "get_organization_verification",
-          "get_call"
+          "list_available_numbers",
+          "list_numbers",
+          "list_service_requests",
+          "purchase_number",
+          "request_presentation_number",
+          "request_uan_number",
+          "set_number_agents"
         ]
       }
     },
@@ -341,22 +369,26 @@
       "tools": {
         "implemented": [
           "get_agent",
-          "get_organization"
+          "get_organization",
+          "get_work_context",
+          "get_work_operation",
+          "get_work_record",
+          "save_work_record"
         ],
         "designed_only": [
-          "get_number",
-          "place_call",
-          "get_call",
-          "launch_campaign",
-          "get_campaign",
-          "pause_campaign",
-          "resume_campaign",
           "cancel_campaign",
-          "transfer_call",
+          "get_call",
+          "get_campaign",
+          "get_number",
+          "get_sms",
+          "get_sms_batch",
+          "launch_campaign",
+          "pause_campaign",
+          "place_call",
+          "resume_campaign",
           "send_sms",
           "send_sms_batch",
-          "get_sms",
-          "get_sms_batch"
+          "transfer_call"
         ]
       }
     },
@@ -371,9 +403,9 @@
           "get_manual"
         ],
         "designed_only": [
-          "list_calls",
           "get_call",
-          "get_tool"
+          "get_tool",
+          "list_calls"
         ]
       }
     },
@@ -387,14 +419,14 @@
           "get_agent"
         ],
         "designed_only": [
-          "list_widgets",
-          "get_widget",
-          "save_widget",
-          "publish_widget",
           "create_chat",
           "create_chat_message",
+          "end_chat",
           "get_chat",
-          "end_chat"
+          "get_widget",
+          "list_widgets",
+          "publish_widget",
+          "save_widget"
         ]
       }
     },

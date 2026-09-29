@@ -1,6 +1,6 @@
 ---
 name: agents-platform
-description: "연결된 vox.ai Agents MCP에서 조직·현재 도구 capability를 확인하고 agent·Manual 작업을 수행할 때 적용한다. 상담원의 실시간 통화 업무에는 적용하지 않는다."
+description: "연결된 vox.ai Agents MCP에서 조직·현재 도구 capability와 작업 context를 확인하고 agent·Manual 작업을 수행할 때 적용한다. 상담원의 실시간 통화 업무에는 적용하지 않는다."
 metadata:
   product: vox.ai
   layer: mcp
@@ -21,8 +21,14 @@ metadata:
 
 ## 도구 선택
 - 구축: `list_agents`, `get_agent`, `list_manuals`, `get_manual`, `save_agent`, `save_manual`. 생성/수정 mode와 연결된 서버의 실제 payload를 사용한다. Manual 저장에는 `agent_id`와 현재 `head_revision`에 해당하는 `expected_head_revision`을 포함한다. Agent 수정에도 현재 `head_revision`을 사용한다.
-- 현재 구현 snapshot: 조직·agent·Manual·모델·설정 schema의 10개 tool이다. 직접 음성 시험, call history, 발신, 번호, 캠페인, SMS, 채팅과 위젯 동작은 이 snapshot에 포함되지 않는다. 예제와 schema 검증은 [합성 고객 여정](../../references/workflow-examples.md)을 따른다.
+- 현재 번들에는 조직·agent·Manual·모델·설정 schema 10개와 work context·record·operation 도구 4개의 schema 후보가 있다. 실제 사용 가능 여부는 연결된 서버의 목록과 schema로 확인한다. 직접 음성 시험, call history, 발신, 번호, 캠페인, SMS, 채팅과 위젯 동작은 포함되지 않는다. 예제와 schema 검증은 [합성 고객 여정](../../references/workflow-examples.md)을 따른다.
 - 호스트가 추가 tool을 실제로 노출하면 그 tool list와 입력 schema를 확인한 뒤 해당 업무를 진행한다. agent 저장이 실고객 발신을 허가하지 않고, plugin의 skill 목록만으로 구현 여부를 추정하지 않는다.
+
+## Context와 기록
+
+다음 작업에 영향을 줄 결정, 고객 피드백, 확인된 제품 변경, 미완료 다음 단계가 생기면 get_work_context와 get_work_record로 관련 case를 확인하고 save_work_record로 필요한 요약을 기록한다. “기억해” 같은 키워드를 요구하지 않는다. get_work_context의 background_settings로 자동 기록 상태와 revision/epoch를 확인하고 routine case/event에 최신 값을 전달한다. 기본은 켜짐이며 OFF이면 routine 자동 기록을 중단한다. 사용자가 명시적으로 요청한 기존 기록 조회·정정·삭제는 OFF와 별개로 지원한다. 사용자가 현재 대화에서 저장하지 말라고 직접 요청하면 기록하지 않는다. 외부 통화 transcript 전체를 수집하지 않고 간결한 보고와 최소 locator만 남긴다. 고객 음성 결과는 reported evidence로 유지하며 text_contract 평가를 고객 voice 결과로 표시하지 않는다.
+
+user-principal save_agent 또는 save_manual을 호출하기 직전에 매번 get_work_context를 실행하고, 결과의 context_receipt.token을 다음 한 번의 저장에 최상위 context_receipt로 전달한다. receipt를 재사용하지 않는다. 실제 도구 목록이나 schema에 context/receipt가 없으면 초안만 준비하고 제품 쓰기는 하지 않는다.
 
 ## 응답과 복귀
 저장/접수/최종 완료/부분 실패/불명을 분리한다. 저장 성공 뒤 조회가 실패했다면 받은 `agent_id`와 `manual_id`부터 이어간다. `409` conflict는 현재 상태를 다시 읽고 사용자의 변경 의도를 다시 적용할 때만 처리하며 무조건 재시도하지 않는다. 쓰기 응답이 불명이면 새 생성이나 같은 쓰기를 반복하지 말고 [resume-agent-work](../resume-agent-work/SKILL.md)로 지원되는 조회를 이어간다. OAuth 만료를 조직 전체 키나 직접 REST로 우회하지 않는다.

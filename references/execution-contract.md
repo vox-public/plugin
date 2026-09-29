@@ -16,8 +16,16 @@
 3. Manual 본문은 전체 교체이며 참조·내장 도구 설정도 확인한다. 특정 Single 변경 요청을 다른 agent의 Manual 변경으로 확대하지 않는다. Agent 설정에서 `data.manuals`를 보낼 때는 UUID 키와 현재 값을 보존하고, 폐기된 `manualIds`를 만들지 않는다.
 4. 발신·발송·게시·구매·신청은 별도 실행이다. 사용자의 의도와 기존 권한/심사/한도를 보존한다. 명확한 위임을 매번 다시 묻는 별도 MCP 승인 절차는 추가하지 않는다.
 5. `outcome=ok/error/unknown`과 제품 data의 실제 상태를 구분한다. 저장 성공 후 재조회/음성 시험은 별도이며 접수는 최종 성공이 아니다. 실제 배포 응답과 초안이 다르면 호환성 결손을 밝힌다. `409` revision conflict는 현재 agent/Manual을 다시 읽은 뒤 의도를 다시 적용할 때만 처리하며, 무조건 재시도하지 않는다. unknown 쓰기는 동일 요청을 재실행하지 않고 지원되는 조회로 상태를 확인한다.
-6. 실행 키의 필수 여부와 재사용 의미는 연결된 도구의 계약을 따른다. 모델은 도구에 공개된 입력만 전달한다. 미지원 키나 직접 API 헤더를 발명하지 않는다. 불명 결과는 지원되는 동일 요청/결과 확인 계약으로만 처리하고 새 키나 직접 API로 재시도하지 않는다. 전 제품 공통 operation 조회 도구를 가정하지 않는다.
+6. 실행 키의 필수 여부와 재사용 의미는 연결된 도구의 계약을 따른다. 모델은 도구에 공개된 입력만 전달한다. 미지원 키나 직접 API 헤더를 발명하지 않는다. 이 번들의 save_work_record 결과가 unknown이면 같은 UUID operation_id로 get_work_operation을 조회한다. save_work_record POST를 반복하거나 새 operation ID로 대체하지 않는다.
 7. 권한 만료/철회·조직 변경 시 재인증 후 현재 상태를 확인한다. 이미 접수된 전화는 인증 해제나 대화 취소로 취소되지 않는다.
+
+## 공유 작업 기록과 사용자 선택
+
+vox.ai 구축·개선 중 이후 작업에 영향을 줄 사용자 결정, 중요한 피드백, 확인된 변경, 미완료 다음 단계가 생기면 관련 기록이 있는지 확인하고 필요한 내용을 save_work_record로 짧게 기록한다. 사용자가 “기억해” 같은 키워드를 말할 때까지 기다리지 않는다. 단발 질문이나 다음 작업에 쓸 가치가 없는 세부 동작은 저장하지 않는다. `get_work_context.background_settings`에서 자동 기록 상태와 revision/epoch를 확인한다. 기본값은 켜짐이며 사용자가 끄면 routine case/event 자동 기록을 중단한다. routine 쓰기에는 최신 revision/epoch를 넣고 API가 설정 변경을 거부하면 재시도하지 말고 상태를 다시 확인한다. 사용자가 명시적으로 요청한 기존 기록 조회·정정·삭제는 OFF와 별개로 계속 지원한다. 사용자가 현재 대화에서 저장하지 말라고 직접 요청하면 기록하지 않는다. 사용자가 공유 context 조회도 금지하면 조회·제품 저장은 중단하고 초안만 제공한다.
+
+제품 설정을 저장하는 user-principal save_agent 또는 save_manual 호출마다 직전에 정확한 조직/agent 범위로 get_work_context를 호출한다. 반환된 context_receipt.token을 최상위 context_receipt에 복사해 바로 다음 한 번의 저장에만 쓴다. receipt를 다른 저장에 재사용하지 않는다. context 도구나 receipt를 얻지 못하면 제품 저장을 시도하지 않고 초안 상태로 설명한다.
+
+기존 작업은 get_work_context와 get_work_record로 확인한 뒤 현재 version에 맞춰 갱신한다. 기록은 결정이나 피드백의 짧은 요약과 필요한 최소 출처 locator만 담는다. 외부 통화 transcript 전체나 파일 전체를 수집·복사하지 않는다. 고객이 말한 음성 시험은 feedback_reported 또는 evaluation_reported의 customer_voice_report로 기록하고 계속 “고객 보고”로 표시한다. 제품 조회 결과도 독립적인 현재 read가 확인되기 전에는 reported evidence다. 기록 쓰기 결과가 unknown이면 같은 operation_id로 get_work_operation만 조회한다.
 
 ## 데이터와 실행 증거
 

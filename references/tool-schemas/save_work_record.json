@@ -1,0 +1,1295 @@
+{
+  "name": "save_work_record",
+  "inputSchema": {
+    "type": "object",
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "action": {
+            "const": "create"
+          },
+          "payload": {
+            "$ref": "#/$defs/AutomaticImprovementCaseCreateInput"
+          }
+        },
+        "required": [
+          "action",
+          "payload"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "action": {
+            "const": "event"
+          },
+          "case_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "payload": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/AutomaticImprovementEventAppendInput"
+              },
+              {
+                "$ref": "#/$defs/ImprovementEventAppendInput"
+              }
+            ]
+          }
+        },
+        "required": [
+          "action",
+          "case_id",
+          "payload"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "action": {
+            "const": "delete_case"
+          },
+          "case_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "payload": {
+            "$ref": "#/$defs/ImprovementDeleteInput"
+          }
+        },
+        "required": [
+          "action",
+          "payload",
+          "case_id"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "action": {
+            "const": "delete_source"
+          },
+          "source_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "payload": {
+            "$ref": "#/$defs/ImprovementSourceDeleteInput"
+          }
+        },
+        "required": [
+          "action",
+          "payload",
+          "source_id"
+        ],
+        "additionalProperties": false
+      }
+    ],
+    "$defs": {
+      "ImprovementSourceInput": {
+        "additionalProperties": false,
+        "description": "Caller-provided source locator; repository validation owns its meaning.",
+        "properties": {
+          "source_host": {
+            "enum": [
+              "embedded",
+              "codex",
+              "claude",
+              "api"
+            ],
+            "title": "Source Host",
+            "type": "string"
+          },
+          "source_thread_id": {
+            "anyOf": [
+              {
+                "maxLength": 36,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Thread Id"
+          },
+          "host_session_ref": {
+            "anyOf": [
+              {
+                "maxLength": 256,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Host Session Ref"
+          },
+          "source_message_id": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Message Id"
+          },
+          "source_artifact_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Artifact Id"
+          },
+          "source_sha256": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "minLength": 64,
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Sha256"
+          },
+          "observed_at": {
+            "maximum": 253402300799999,
+            "minimum": 0,
+            "title": "Observed At",
+            "type": "integer"
+          },
+          "explicit_quote": {
+            "anyOf": [
+              {
+                "maxLength": 4096,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Explicit Quote"
+          }
+        },
+        "required": [
+          "source_host",
+          "observed_at"
+        ],
+        "title": "ImprovementSourceInput",
+        "type": "object"
+      },
+      "ImprovementCaseCreateInput": {
+        "additionalProperties": false,
+        "properties": {
+          "operation_id": {
+            "format": "uuid",
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Agent Id"
+          },
+          "expected_agent_head_revision": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Expected Agent Head Revision"
+          },
+          "goal": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Goal",
+            "type": "string"
+          },
+          "success_criteria": {
+            "default": "",
+            "maxLength": 4096,
+            "title": "Success Criteria",
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/$defs/ImprovementSourceInput"
+          }
+        },
+        "required": [
+          "operation_id",
+          "goal",
+          "source"
+        ],
+        "title": "ImprovementCaseCreateInput",
+        "type": "object"
+      },
+      "AutomaticImprovementCaseCreateInput": {
+        "additionalProperties": false,
+        "description": "Typed case command guarded by the current background settings version.",
+        "properties": {
+          "operation_id": {
+            "format": "uuid",
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Agent Id"
+          },
+          "expected_agent_head_revision": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Expected Agent Head Revision"
+          },
+          "goal": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Goal",
+            "type": "string"
+          },
+          "success_criteria": {
+            "default": "",
+            "maxLength": 4096,
+            "title": "Success Criteria",
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/$defs/ImprovementSourceInput"
+          },
+          "expected_settings_revision": {
+            "minimum": 1,
+            "title": "Expected Settings Revision",
+            "type": "integer",
+            "description": "Copy this value from the latest get_work_context.data.background_settings. The API accepts the write only while background processing remains enabled at this exact revision/epoch."
+          },
+          "expected_settings_epoch": {
+            "minimum": 1,
+            "title": "Expected Settings Epoch",
+            "type": "integer",
+            "description": "Copy this value from the latest get_work_context.data.background_settings. The API accepts the write only while background processing remains enabled at this exact revision/epoch."
+          }
+        },
+        "required": [
+          "operation_id",
+          "goal",
+          "source",
+          "expected_settings_revision",
+          "expected_settings_epoch"
+        ],
+        "title": "AutomaticImprovementCaseCreateInput",
+        "type": "object"
+      },
+      "CaseUpdatedPayload": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "case_updated",
+            "title": "Kind",
+            "type": "string"
+          },
+          "goal": {
+            "anyOf": [
+              {
+                "maxLength": 4096,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Goal"
+          },
+          "success_criteria": {
+            "anyOf": [
+              {
+                "maxLength": 4096,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Success Criteria"
+          },
+          "current_summary": {
+            "anyOf": [
+              {
+                "maxLength": 4096,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Current Summary"
+          },
+          "next_action": {
+            "anyOf": [
+              {
+                "maxLength": 4096,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Next Action"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "open",
+                  "waiting_for_customer_test",
+                  "resolved",
+                  "cancelled"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "title": "CaseUpdatedPayload",
+        "type": "object"
+      },
+      "ClaimCorrectedPayload": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "claim_corrected",
+            "title": "Kind",
+            "type": "string"
+          },
+          "supersedes_claim_id": {
+            "format": "uuid",
+            "title": "Supersedes Claim Id",
+            "type": "string"
+          },
+          "claim_kind": {
+            "enum": [
+              "decision",
+              "preference"
+            ],
+            "title": "Claim Kind",
+            "type": "string"
+          },
+          "statement": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Statement",
+            "type": "string"
+          },
+          "applicability": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "title": "Applicability",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "supersedes_claim_id",
+          "claim_kind",
+          "statement",
+          "applicability"
+        ],
+        "title": "ClaimCorrectedPayload",
+        "type": "object"
+      },
+      "DecisionSetPayload": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "decision_set",
+            "title": "Kind",
+            "type": "string"
+          },
+          "statement": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Statement",
+            "type": "string"
+          },
+          "applicability": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "title": "Applicability",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "statement",
+          "applicability"
+        ],
+        "title": "DecisionSetPayload",
+        "type": "object"
+      },
+      "EvaluationReportedPayload": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "evaluation_reported",
+            "title": "Kind",
+            "type": "string"
+          },
+          "scenario": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Scenario",
+            "type": "string"
+          },
+          "expected_result": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Expected Result",
+            "type": "string"
+          },
+          "observed_result": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Observed Result",
+            "type": "string"
+          },
+          "evaluation_kind": {
+            "enum": [
+              "text_contract",
+              "customer_voice_report",
+              "call_review"
+            ],
+            "title": "Evaluation Kind",
+            "type": "string"
+          },
+          "proposal_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Proposal Id"
+          },
+          "evidence_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 32,
+            "title": "Evidence Ids",
+            "type": "array"
+          },
+          "agent_revision": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Agent Revision"
+          },
+          "rubric_version": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Rubric Version"
+          },
+          "register_holdout": {
+            "default": false,
+            "title": "Register Holdout",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "kind",
+          "scenario",
+          "expected_result",
+          "observed_result",
+          "evaluation_kind"
+        ],
+        "title": "EvaluationReportedPayload",
+        "type": "object"
+      },
+      "FeedbackReportedPayload": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "feedback_reported",
+            "title": "Kind",
+            "type": "string"
+          },
+          "statement": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Statement",
+            "type": "string"
+          },
+          "customer_tested": {
+            "title": "Customer Tested",
+            "type": "boolean",
+            "description": "Set true only when the customer directly completed the voice test; the MCP never places or simulates calls."
+          },
+          "call_id": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Call Id"
+          }
+        },
+        "required": [
+          "kind",
+          "statement",
+          "customer_tested"
+        ],
+        "title": "FeedbackReportedPayload",
+        "type": "object"
+      },
+      "HypothesisCandidatePayload": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "hypothesis_candidate",
+            "title": "Kind",
+            "type": "string"
+          },
+          "statement": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Statement",
+            "type": "string"
+          },
+          "source_evidence_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 32,
+            "minItems": 1,
+            "title": "Source Evidence Ids",
+            "type": "array"
+          },
+          "applicability": {
+            "default": "",
+            "maxLength": 1024,
+            "title": "Applicability",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "statement",
+          "source_evidence_ids"
+        ],
+        "title": "HypothesisCandidatePayload",
+        "type": "object"
+      },
+      "PreferenceSetPayload": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "preference_set",
+            "title": "Kind",
+            "type": "string"
+          },
+          "statement": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Statement",
+            "type": "string"
+          },
+          "applicability": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "title": "Applicability",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "statement",
+          "applicability"
+        ],
+        "title": "PreferenceSetPayload",
+        "type": "object"
+      },
+      "ProductReadbackReportedPayload": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "product_readback_reported",
+            "title": "Kind",
+            "type": "string"
+          },
+          "resource_type": {
+            "enum": [
+              "agent",
+              "manual",
+              "call"
+            ],
+            "title": "Resource Type",
+            "type": "string"
+          },
+          "resource_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Resource Id",
+            "type": "string"
+          },
+          "observed_revision": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Observed Revision"
+          }
+        },
+        "required": [
+          "kind",
+          "resource_type",
+          "resource_id"
+        ],
+        "title": "ProductReadbackReportedPayload",
+        "type": "object"
+      },
+      "ProposalAcceptedPayload": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "proposal_accepted",
+            "title": "Kind",
+            "type": "string"
+          },
+          "proposal_id": {
+            "format": "uuid",
+            "title": "Proposal Id",
+            "type": "string"
+          },
+          "approved_agent_revision": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Approved Agent Revision"
+          },
+          "approved_scope": {
+            "enum": [
+              "agent",
+              "personal"
+            ],
+            "title": "Approved Scope",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "proposal_id",
+          "approved_scope"
+        ],
+        "title": "ProposalAcceptedPayload",
+        "type": "object"
+      },
+      "ProposalCandidatePayload": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "proposal_candidate",
+            "title": "Kind",
+            "type": "string"
+          },
+          "source_claim_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 32,
+            "minItems": 1,
+            "title": "Source Claim Ids",
+            "type": "array"
+          },
+          "target_agent_revision": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Target Agent Revision"
+          },
+          "target_manual_id": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Target Manual Id"
+          },
+          "scope": {
+            "enum": [
+              "agent",
+              "personal"
+            ],
+            "title": "Scope",
+            "type": "string"
+          },
+          "change_summary": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Change Summary",
+            "type": "string"
+          },
+          "expected_effect": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Expected Effect",
+            "type": "string"
+          },
+          "plugin_digest": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Plugin Digest"
+          },
+          "instructions_version": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Instructions Version"
+          },
+          "tool_schema_version": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Tool Schema Version"
+          },
+          "model_id": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Id"
+          },
+          "evaluation_rubric_version": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Evaluation Rubric Version"
+          }
+        },
+        "required": [
+          "kind",
+          "source_claim_ids",
+          "scope",
+          "change_summary",
+          "expected_effect"
+        ],
+        "title": "ProposalCandidatePayload",
+        "type": "object"
+      },
+      "ProposalRejectedPayload": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "proposal_rejected",
+            "title": "Kind",
+            "type": "string"
+          },
+          "proposal_id": {
+            "format": "uuid",
+            "title": "Proposal Id",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "proposal_id",
+          "reason"
+        ],
+        "title": "ProposalRejectedPayload",
+        "type": "object"
+      },
+      "RunCancelledPayload": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "run_cancelled",
+            "title": "Kind",
+            "type": "string"
+          },
+          "run_id": {
+            "format": "uuid",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "run_id",
+          "reason"
+        ],
+        "title": "RunCancelledPayload",
+        "type": "object"
+      },
+      "RunRequestedPayload": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "run_requested",
+            "title": "Kind",
+            "type": "string"
+          },
+          "purpose": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "title": "Purpose",
+            "type": "string"
+          },
+          "run_kind": {
+            "const": "dream",
+            "default": "dream",
+            "title": "Run Kind",
+            "type": "string"
+          },
+          "budget_tokens": {
+            "maximum": 200000,
+            "minimum": 1,
+            "title": "Budget Tokens",
+            "type": "integer"
+          },
+          "deadline_at": {
+            "maximum": 253402300799999,
+            "minimum": 0,
+            "title": "Deadline At",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind",
+          "purpose",
+          "budget_tokens",
+          "deadline_at"
+        ],
+        "title": "RunRequestedPayload",
+        "type": "object"
+      },
+      "SourceRetractedPayload": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "source_retracted",
+            "title": "Kind",
+            "type": "string"
+          },
+          "source_id": {
+            "format": "uuid",
+            "title": "Source Id",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "source_id",
+          "reason"
+        ],
+        "title": "SourceRetractedPayload",
+        "type": "object"
+      },
+      "VisibilityChangedPayload": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "visibility_changed",
+            "title": "Kind",
+            "type": "string"
+          },
+          "visibility": {
+            "enum": [
+              "private",
+              "shared"
+            ],
+            "title": "Visibility",
+            "type": "string"
+          },
+          "shared_explanation": {
+            "default": "",
+            "maxLength": 4096,
+            "title": "Shared Explanation",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "visibility"
+        ],
+        "title": "VisibilityChangedPayload",
+        "type": "object"
+      },
+      "ImprovementEventAppendInput": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_version": {
+            "minimum": 1,
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "operation_id": {
+            "format": "uuid",
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/$defs/ImprovementSourceInput"
+          },
+          "payload": {
+            "discriminator": {
+              "mapping": {
+                "case_updated": "#/$defs/CaseUpdatedPayload",
+                "claim_corrected": "#/$defs/ClaimCorrectedPayload",
+                "proposal_accepted": "#/$defs/ProposalAcceptedPayload",
+                "proposal_rejected": "#/$defs/ProposalRejectedPayload",
+                "run_cancelled": "#/$defs/RunCancelledPayload",
+                "source_retracted": "#/$defs/SourceRetractedPayload",
+                "visibility_changed": "#/$defs/VisibilityChangedPayload"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/ProposalRejectedPayload"
+              },
+              {
+                "$ref": "#/$defs/SourceRetractedPayload"
+              },
+              {
+                "$ref": "#/$defs/ClaimCorrectedPayload"
+              },
+              {
+                "$ref": "#/$defs/VisibilityChangedPayload"
+              },
+              {
+                "$ref": "#/$defs/ProposalAcceptedPayload"
+              },
+              {
+                "$ref": "#/$defs/CaseUpdatedPayload"
+              },
+              {
+                "$ref": "#/$defs/RunCancelledPayload"
+              }
+            ],
+            "title": "Payload"
+          }
+        },
+        "required": [
+          "expected_version",
+          "operation_id",
+          "source",
+          "payload"
+        ],
+        "title": "ImprovementEventAppendInput",
+        "type": "object"
+      },
+      "AutomaticImprovementEventAppendInput": {
+        "additionalProperties": false,
+        "description": "Typed event command guarded by the current background settings version.",
+        "properties": {
+          "expected_version": {
+            "minimum": 1,
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "operation_id": {
+            "format": "uuid",
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/$defs/ImprovementSourceInput"
+          },
+          "payload": {
+            "discriminator": {
+              "mapping": {
+                "decision_set": "#/$defs/DecisionSetPayload",
+                "evaluation_reported": "#/$defs/EvaluationReportedPayload",
+                "feedback_reported": "#/$defs/FeedbackReportedPayload",
+                "hypothesis_candidate": "#/$defs/HypothesisCandidatePayload",
+                "preference_set": "#/$defs/PreferenceSetPayload",
+                "product_readback_reported": "#/$defs/ProductReadbackReportedPayload",
+                "proposal_candidate": "#/$defs/ProposalCandidatePayload",
+                "run_requested": "#/$defs/RunRequestedPayload"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/DecisionSetPayload"
+              },
+              {
+                "$ref": "#/$defs/PreferenceSetPayload"
+              },
+              {
+                "$ref": "#/$defs/FeedbackReportedPayload"
+              },
+              {
+                "$ref": "#/$defs/HypothesisCandidatePayload"
+              },
+              {
+                "$ref": "#/$defs/ProductReadbackReportedPayload"
+              },
+              {
+                "$ref": "#/$defs/EvaluationReportedPayload"
+              },
+              {
+                "$ref": "#/$defs/RunRequestedPayload"
+              },
+              {
+                "$ref": "#/$defs/ProposalCandidatePayload"
+              }
+            ],
+            "title": "Payload"
+          },
+          "expected_settings_revision": {
+            "minimum": 1,
+            "title": "Expected Settings Revision",
+            "type": "integer",
+            "description": "Copy this value from the latest get_work_context.data.background_settings. The API accepts the write only while background processing remains enabled at this exact revision/epoch."
+          },
+          "expected_settings_epoch": {
+            "minimum": 1,
+            "title": "Expected Settings Epoch",
+            "type": "integer",
+            "description": "Copy this value from the latest get_work_context.data.background_settings. The API accepts the write only while background processing remains enabled at this exact revision/epoch."
+          }
+        },
+        "required": [
+          "expected_version",
+          "operation_id",
+          "source",
+          "payload",
+          "expected_settings_revision",
+          "expected_settings_epoch"
+        ],
+        "title": "AutomaticImprovementEventAppendInput",
+        "type": "object"
+      },
+      "ImprovementDeleteInput": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_version": {
+            "minimum": 1,
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "operation_id": {
+            "format": "uuid",
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "expected_version",
+          "operation_id",
+          "reason"
+        ],
+        "title": "ImprovementDeleteInput",
+        "type": "object"
+      },
+      "ImprovementSourceDeleteInput": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_version": {
+            "minimum": 1,
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "operation_id": {
+            "format": "uuid",
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          },
+          "case_id": {
+            "format": "uuid",
+            "title": "Case Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "expected_version",
+          "operation_id",
+          "reason",
+          "case_id"
+        ],
+        "title": "ImprovementSourceDeleteInput",
+        "type": "object"
+      }
+    }
+  }
+}

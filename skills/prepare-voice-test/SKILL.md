@@ -19,7 +19,7 @@ agent·대상 버전·해당 Single의 agent-scoped Manual을 확인한다. 현�
 ## 고객 직접 시험과 결과
 고객은 기존 vox.ai 제품 UI에서 대상 agent와 버전을 확인해 음성 시험을 직접 실행한다. `open_voice_test_session`은 호스트의 실시간 도구 목록에 있고 입력 스키마가 확인된 경우에만 선택한다. 현재 구현 baseline에는 시험 시작/통화 조회 도구가 없다. 제공되지 않으면 시험할 대상·발화·기대 결과를 안내하고 고객의 작업을 기다린다. 임의 URL이나 토큰 포함 링크를 만들지 않는다.
 
-고객이 알려준 결과는 `customer_reported`로 표시한다. 실제 call 원문·분석·저장 결과는 호스트가 call 조회 도구를 제공하고 응답에서 확인한 경우에만 독립 call evidence로 기록한다. ID가 없거나 조회되지 않으면 추측하지 않는다. 음성 연결 실패와 업무 응답 실패를 구분한다. 합성 시나리오의 기대 결과를 실제 call 결과로 바꾸지 않는다.
+고객이 알려준 결과는 customer_reported로 표시한다. 이후 작업에 영향을 줄 결과는 사용자가 별도 기억 키워드를 말하지 않아도 feedback_reported 또는 evaluation_reported의 customer_voice_report로 짧게 기록한다. get_work_context에서 자동 기록의 enabled/revision/epoch를 확인하고 routine event에 최신 CAS 값을 전달한다. 사용자가 OFF로 바꾼 상태라면 자동 기록을 중단하며, 사용자가 현재 대화에서 저장하지 말라고 직접 요청해도 기록하지 않는다. OFF와 별개로 사용자가 명시적으로 요청한 기존 기록 조회·정정·삭제는 지원한다. 외부 call transcript 전체를 수집하지 않는다. text_contract holdout은 고객의 voice test가 아니다. 실제 call 원문·분석·저장 결과는 호스트가 call 조회 도구를 제공하고 응답에서 확인한 경우에만 독립 call evidence로 기록한다. ID가 없거나 조회되지 않으면 추측하지 않는다.
 
 ## 완료 표시
 ‘시험 상황 작성’, ‘음성 시험 준비’, ‘실제 대화 수행’, ‘결과 확인’은 다른 단계다. 하나가 완료됐다고 뒤 단계를 완료로 표시하지 않는다. 수정이 필요하면 증거와 함께 해당 전문 스킬로 연결한다.

@@ -17,6 +17,12 @@
         "format": "uuid",
         "description": "Agent UUID returned as `agent_id`.",
         "title": "Agent Id"
+      },
+      "context_receipt": {
+        "type": "string",
+        "minLength": 43,
+        "maxLength": 128,
+        "description": "For user-principal saves, copy the token from the recent get_work_context result context_receipt.token. MCP checks current context before dispatch and never sends this value to the product API. Organization API-key callers may omit it."
       }
     },
     "required": [
@@ -33,6 +39,12 @@
           },
           "payload": {
             "$ref": "#/$defs/CreateAgentRequest"
+          },
+          "context_receipt": {
+            "type": "string",
+            "minLength": 43,
+            "maxLength": 128,
+            "description": "For user-principal saves, copy the token from the recent get_work_context result context_receipt.token. MCP checks current context before dispatch and never sends this value to the product API. Organization API-key callers may omit it."
           }
         },
         "required": [
@@ -55,6 +67,12 @@
           },
           "payload": {
             "$ref": "#/$defs/UpdateAgentRequest"
+          },
+          "context_receipt": {
+            "type": "string",
+            "minLength": 43,
+            "maxLength": 128,
+            "description": "For user-principal saves, copy the token from the recent get_work_context result context_receipt.token. MCP checks current context before dispatch and never sends this value to the product API. Organization API-key callers may omit it."
           }
         },
         "required": [

@@ -31,6 +31,14 @@
 
 사용자의 직접 요청·답변, 자료의 사실, 모델의 제안은 출처를 구분한다. 업무 요약의 문장만으로 발신·구매 권한을 새로 만들지 않는다. 호스트의 대화 기록과 허용된 작업 파일을 사용한다.
 
+## 관련 결정과 피드백은 다음 작업을 위해 기록한다
+
+vox.ai 구축·개선 중 이후 작업에 영향을 줄 방향, 성공 기준, 고객 피드백, 확인된 변경, 열린 다음 행동이 생기면 사용자가 별도 “기억해” 요청을 하지 않아도 shared-work case에 자동 기록한다. 먼저 get_work_context로 현재 사용자와 agent에 맞는 결정·열린 case를 보고, get_work_record로 기존 record와 version을 확인한다. 관련 case가 없으면 목표와 완료 기준을 담은 case를 만들고, 결정이나 피드백은 typed event로 남긴다. 한 번의 질문이나 다음 작업과 관계없는 세부사항은 저장하지 않는다.
+
+기록은 짧은 사실 요약과 필요한 최소 source locator로 제한한다. 고객이 직접 말한 시험 결과는 feedback_reported로, 고객이 직접 수행한 voice evaluation은 customer_voice_report로 저장하며 계속 “고객 보고”로 표시한다. call ID가 있으면 조회에 쓸 locator로만 취급하고 독립 확인된 call evidence라고 바꾸지 않는다. 외부 통화 transcript 전체나 파일 전체를 가져오거나 기록하지 않는다. get_work_context는 자동 기록의 enabled/revision/epoch를 제공한다. 기본값은 켜짐이며 OFF이면 routine case/event 자동 기록을 중단한다. routine 쓰기에는 최신 revision/epoch가 필요하고 API가 설정 변경을 거부하면 재시도하지 않는다. 사용자가 명시적으로 요청한 기존 기록 조회·정정·삭제는 OFF와 별개로 지원한다. 사용자가 현재 대화에서 저장하지 말라고 직접 요청하면 기록하지 않는다. text_contract holdout은 텍스트 설정 기준의 독립 평가 입력일 뿐 실제 agent 실행이나 고객 voice test 결과가 아니다.
+
+각 case 변경에는 get_work_record에서 읽은 현재 version과 새 UUID operation_id를 사용한다. save_work_record 결과가 unknown이면 같은 operation_id로 get_work_operation을 조회하고 POST를 반복하지 않는다. 도구를 현재 호스트가 제공하지 않거나 사용자가 현재 대화에서 기록 금지를 직접 요청하면 쓰기 없이 현재 대화에서 이어간다. 저장된 UI 설정을 호스트가 확인할 수 있는지는 현재 연동의 미지원 영역이다.
+
 ## 피드백이 왔을 때 변경 범위를 잡는다
 
 | 피드백 | 먼저 볼 근거 | 변경·확인할 범위 |
