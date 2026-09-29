@@ -18,6 +18,7 @@ from pydantic import ValidationError
 from app.dto.improvement import (
     AutomaticImprovementCaseCreateInput,
     AutomaticImprovementEventAppendInput,
+    ImprovementEventAppendInput,
 )
 
 examples = json.load(sys.stdin)
@@ -30,7 +31,12 @@ for example in examples:
             AutomaticImprovementCaseCreateInput.model_validate(arguments["payload"])
         elif action == "event":
             uuid.UUID(arguments["case_id"])
-            AutomaticImprovementEventAppendInput.model_validate(arguments["payload"])
+            body = arguments["payload"]["payload"]
+            if body["kind"] == "evaluation_reported" and body.get("register_holdout") is True:
+                # Holdout registration is accepted only by the explicit events API.
+                ImprovementEventAppendInput.model_validate(arguments["payload"])
+            else:
+                AutomaticImprovementEventAppendInput.model_validate(arguments["payload"])
         else:
             raise ValueError("unsupported save_work_record action")
     except ValidationError as error:
@@ -65,9 +71,15 @@ class WorkflowExampleTests(unittest.TestCase):
         calls = [call for call in load_calls() if call["tool"] == "save_work_record"]
         self.assertEqual([call["arguments"]["action"] for call in calls], ["create", "event", "event", "event"])
 
+        def is_holdout(call):
+            body = call["arguments"]["payload"].get("payload", {})
+            return body.get("kind") == "evaluation_reported" and body.get("register_holdout") is True
+
         for call in calls:
             source = call["arguments"]["payload"]["source"]
             self.assertTrue(source["explicit_quote"].strip())
+            if is_holdout(call):
+                continue
             self.assertNotIn("source_thread_id", source)
 
         feedback = next(
@@ -87,6 +99,12 @@ class WorkflowExampleTests(unittest.TestCase):
         )
         holdout_payload = holdout["arguments"]["payload"]["payload"]
         self.assertTrue(holdout_payload["register_holdout"])
+        holdout_command = holdout["arguments"]["payload"]
+        self.assertNotIn("expected_settings_revision", holdout_command)
+        self.assertNotIn("expected_settings_epoch", holdout_command)
+        holdout_source = holdout_command["source"]
+        self.assertEqual(holdout_source["source_host"], "embedded")
+        self.assertTrue(holdout_source["source_thread_id"] and holdout_source["source_message_id"])
         self.assertEqual(holdout_payload["evaluation_kind"], "text_contract")
         self.assertIn("no provider execution", holdout_payload["observed_result"].lower())
 

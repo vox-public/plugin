@@ -37,7 +37,7 @@ Codex의 업데이트 방법은 설치된 버전의 `codex plugin marketplace --
 
 설치 후 연결된 서버의 도구 목록과 입력 스키마를 확인합니다. 번들에는 agent/Manual 작성·조회 도구 10개와 work context·record·operation 도구 4개의 schema 후보가 있습니다. 실제 호스트의 노출 도구와 권한은 다를 수 있습니다. workflow별 capability는 [workflow-capabilities.json](references/workflow-capabilities.json), 입력 schema와 출처 상태는 [implemented-tools.snapshot.json](references/implemented-tools.snapshot.json)에 있습니다. `get_work_context`는 자동 기록이 기본 켜짐인지와 현재 settings revision/epoch를 반환합니다. routine case/event를 저장하기 전 최신 값을 읽고 둘을 요청에 복사하며, 꺼져 있거나 값이 바뀌면 automatic API가 쓰기를 거부하므로 저장하지 말고 설정 변경 또는 새 context를 기다립니다. 사용자가 현재 대화에서 저장하지 말라고 직접 요청하면 설정과 무관하게 기록하지 않습니다. OFF는 자동 수집·기록을 중지하지만 사용자가 명시적으로 요청한 기존 기록 조회·정정·삭제는 지원합니다. user-principal `save_agent`/`save_manual`에는 별도로 직전 `get_work_context`의 일회용 receipt가 필요합니다. 필요한 도구나 receipt가 없으면 초안을 안내합니다. 설치 성공만으로 로그인, 도구 노출 또는 제품 작업이 완료된 것은 아닙니다.
 
-`get_work_context`의 각 항목은 일반 claim/case/evidence에 `guidance: null`을 포함하고, guidance 항목에는 종류·상태·현재 지침·보존 조건·버전이 든 typed object를 포함합니다. `evaluation_reported.register_holdout`은 별도 text-contract 사례 등록에만 사용합니다. 등록이나 자동 text 비교는 실제 voice test가 아니며, 고객이 직접 수행한 시험 결과는 계속 고객 보고로 표시합니다.
+`get_work_context`의 각 항목은 일반 claim/case/evidence에 `guidance: null`을 포함하고, guidance 항목에는 종류·상태·현재 지침·보존 조건·버전이 든 typed object를 포함합니다. `evaluation_reported.register_holdout`은 별도 text-contract 사례 등록에만 사용하며, 사용자가 현재 임베디드 Copilot 대화에서 직접 입력한 본인의 말을 출처로 명시적 경로에서만 등록됩니다(외부 호스트에서는 등록할 수 없습니다). 등록이나 자동 text 비교는 실제 voice test가 아니며, 고객이 직접 수행한 시험 결과는 계속 고객 보고로 표시합니다.
 
 ## 사용 예
 

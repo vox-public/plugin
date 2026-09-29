@@ -447,105 +447,6 @@
         "title": "DecisionSetPayload",
         "type": "object"
       },
-      "EvaluationReportedPayload": {
-        "additionalProperties": false,
-        "properties": {
-          "kind": {
-            "const": "evaluation_reported",
-            "title": "Kind",
-            "type": "string"
-          },
-          "scenario": {
-            "maxLength": 4096,
-            "minLength": 1,
-            "title": "Scenario",
-            "type": "string"
-          },
-          "expected_result": {
-            "maxLength": 4096,
-            "minLength": 1,
-            "title": "Expected Result",
-            "type": "string"
-          },
-          "observed_result": {
-            "maxLength": 4096,
-            "minLength": 1,
-            "title": "Observed Result",
-            "type": "string"
-          },
-          "evaluation_kind": {
-            "enum": [
-              "text_contract",
-              "customer_voice_report",
-              "call_review"
-            ],
-            "title": "Evaluation Kind",
-            "type": "string"
-          },
-          "proposal_id": {
-            "anyOf": [
-              {
-                "format": "uuid",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": null,
-            "title": "Proposal Id"
-          },
-          "evidence_ids": {
-            "items": {
-              "format": "uuid",
-              "type": "string"
-            },
-            "maxItems": 32,
-            "title": "Evidence Ids",
-            "type": "array"
-          },
-          "agent_revision": {
-            "anyOf": [
-              {
-                "minimum": 0,
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": null,
-            "title": "Agent Revision"
-          },
-          "rubric_version": {
-            "anyOf": [
-              {
-                "maxLength": 128,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": null,
-            "title": "Rubric Version"
-          },
-          "register_holdout": {
-            "default": false,
-            "title": "Register Holdout",
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "kind",
-          "scenario",
-          "expected_result",
-          "observed_result",
-          "evaluation_kind"
-        ],
-        "title": "EvaluationReportedPayload",
-        "type": "object"
-      },
       "FeedbackReportedPayload": {
         "additionalProperties": false,
         "properties": {
@@ -1060,6 +961,7 @@
               "mapping": {
                 "case_updated": "#/$defs/CaseUpdatedPayload",
                 "claim_corrected": "#/$defs/ClaimCorrectedPayload",
+                "evaluation_reported": "#/$defs/HoldoutRegistrationPayload",
                 "proposal_accepted": "#/$defs/ProposalAcceptedPayload",
                 "proposal_rejected": "#/$defs/ProposalRejectedPayload",
                 "run_cancelled": "#/$defs/RunCancelledPayload",
@@ -1071,6 +973,9 @@
             "oneOf": [
               {
                 "$ref": "#/$defs/ProposalRejectedPayload"
+              },
+              {
+                "$ref": "#/$defs/HoldoutRegistrationPayload"
               },
               {
                 "$ref": "#/$defs/SourceRetractedPayload"
@@ -1124,7 +1029,7 @@
             "discriminator": {
               "mapping": {
                 "decision_set": "#/$defs/DecisionSetPayload",
-                "evaluation_reported": "#/$defs/EvaluationReportedPayload",
+                "evaluation_reported": "#/$defs/AutomaticEvaluationReportedPayload",
                 "feedback_reported": "#/$defs/FeedbackReportedPayload",
                 "hypothesis_candidate": "#/$defs/HypothesisCandidatePayload",
                 "preference_set": "#/$defs/PreferenceSetPayload",
@@ -1151,7 +1056,7 @@
                 "$ref": "#/$defs/ProductReadbackReportedPayload"
               },
               {
-                "$ref": "#/$defs/EvaluationReportedPayload"
+                "$ref": "#/$defs/AutomaticEvaluationReportedPayload"
               },
               {
                 "$ref": "#/$defs/RunRequestedPayload"
@@ -1247,6 +1152,200 @@
         ],
         "title": "ImprovementSourceDeleteInput",
         "type": "object"
+      },
+      "AutomaticEvaluationReportedPayload": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "evaluation_reported",
+            "title": "Kind",
+            "type": "string"
+          },
+          "scenario": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Scenario",
+            "type": "string"
+          },
+          "expected_result": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Expected Result",
+            "type": "string"
+          },
+          "observed_result": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Observed Result",
+            "type": "string"
+          },
+          "evaluation_kind": {
+            "enum": [
+              "text_contract",
+              "customer_voice_report",
+              "call_review"
+            ],
+            "title": "Evaluation Kind",
+            "type": "string"
+          },
+          "proposal_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Proposal Id"
+          },
+          "evidence_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 32,
+            "title": "Evidence Ids",
+            "type": "array"
+          },
+          "agent_revision": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Agent Revision"
+          },
+          "rubric_version": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Rubric Version"
+          },
+          "register_holdout": {
+            "default": false,
+            "title": "Register Holdout",
+            "type": "boolean",
+            "const": false,
+            "description": "Always false on the automatic route. Holdout registration uses the explicit event route (register_holdout=true with an explicit-command payload that has no expected_settings fields)."
+          }
+        },
+        "required": [
+          "kind",
+          "scenario",
+          "expected_result",
+          "observed_result",
+          "evaluation_kind"
+        ],
+        "title": "AutomaticEvaluationReportedPayload",
+        "type": "object"
+      },
+      "HoldoutRegistrationPayload": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "evaluation_reported",
+            "title": "Kind",
+            "type": "string"
+          },
+          "scenario": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Scenario",
+            "type": "string"
+          },
+          "expected_result": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Expected Result",
+            "type": "string"
+          },
+          "observed_result": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Observed Result",
+            "type": "string"
+          },
+          "evaluation_kind": {
+            "enum": [
+              "text_contract",
+              "customer_voice_report",
+              "call_review"
+            ],
+            "title": "Evaluation Kind",
+            "type": "string",
+            "const": "text_contract"
+          },
+          "proposal_id": {
+            "type": "null"
+          },
+          "evidence_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 0,
+            "title": "Evidence Ids",
+            "type": "array"
+          },
+          "agent_revision": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Agent Revision"
+          },
+          "rubric_version": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Rubric Version"
+          },
+          "register_holdout": {
+            "default": false,
+            "title": "Register Holdout",
+            "type": "boolean",
+            "const": true
+          }
+        },
+        "required": [
+          "kind",
+          "scenario",
+          "expected_result",
+          "observed_result",
+          "evaluation_kind",
+          "register_holdout"
+        ],
+        "title": "HoldoutRegistrationPayload",
+        "type": "object",
+        "description": "Register one independent text-contract holdout. scenario is a JSON-serialized string with exactly task_kind=agent_partial_edit, base_configuration, requested_change and required_preservation (1-6 strings). observed_result is required but replaced by the server. Only the user's own explicit words in the current embedded Copilot conversation may be the source (source_host=embedded with that conversation's source_thread_id and source_message_id); external hosts cannot register holdouts."
       }
     }
   }

@@ -1,6 +1,6 @@
 {
-  "mcp_commit": "7d0a64261af20dbdeab974a632232de12d7891bd",
-  "manifest_sha256": "d12c1b1703ce6d13d96812dfe6ddea5d3bc9d5e719c161e0b383521e2c88c728",
+  "mcp_commit": "66de131998fcfda499ba0659e4d67b0720af1c2b",
+  "manifest_sha256": "a43c3f931a49ca57641f776ebad3d9c1d8bb1ee446bba711f4d9d3f6c624eb18",
   "source_manifest_sha256": "f7c583c38b19d9d910233c285f012783acb840f0aa027dd9821e42d919224c3c",
   "source_state": "clean_commit",
   "dirty_contracts": [],
@@ -34,6 +34,6 @@
     "list_schemas": "8d81377d1ae2f903515f0e3b98a1ad38f09136d88bb96fcdc13ba62b3dde4124",
     "save_agent": "eaf6cfe4590c1f56d71bf3d825b1ad5552f9e8592324e06878753f799fa83d27",
     "save_manual": "925ea71430c479e688527230debd1b56e5cb68e168754d9516168acb3e7ce061",
-    "save_work_record": "3e344c439c91c66e5240364c035be6099b430a6c05b337fa6eef3aef6029f3e9"
+    "save_work_record": "1507f7f195e3b242430ef040016d26976bb3dadaa8f59f2ae11414c334f4e6eb"
   }
 }
