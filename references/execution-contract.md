@@ -23,6 +23,10 @@
 
 vox.ai 구축·개선 중 이후 작업에 영향을 줄 사용자 결정, 중요한 피드백, 확인된 변경, 미완료 다음 단계가 생기면 관련 기록이 있는지 확인하고 필요한 내용을 save_work_record로 짧게 기록한다. 사용자가 “기억해” 같은 키워드를 말할 때까지 기다리지 않는다. 단발 질문이나 다음 작업에 쓸 가치가 없는 세부 동작은 저장하지 않는다. `get_work_context.background_settings`에서 자동 기록 상태와 revision/epoch를 확인한다. 기본값은 켜짐이며 사용자가 끄면 routine case/event 자동 기록을 중단한다. routine 쓰기에는 최신 revision/epoch를 넣고 API가 설정 변경을 거부하면 재시도하지 말고 상태를 다시 확인한다. 사용자가 명시적으로 요청한 기존 기록 조회·정정·삭제는 OFF와 별개로 계속 지원한다. 사용자가 현재 대화에서 저장하지 말라고 직접 요청하면 기록하지 않는다. 사용자가 공유 context 조회도 금지하면 조회·제품 저장은 중단하고 초안만 제공한다.
 
+get_work_context가 `context.pending_recent_inputs[]`(source_id·text·truncated·status pending|processing·elapsed_seconds)를 주면 같은 사용자의 아직 정리 전 최근 입력이다. 이어서 작업할 때 참고하되 확정된 기억이나 결정처럼 단정하지 말고, 작업에 영향을 주면 사용자에게 확인한다. 응답이 크기 제한으로 이 필드를 `omitted_fields`에 담아 빼면 없는 것이 아니라 읽지 못한 것이다. guidance에 `evaluated_agent_revision`과 `current_agent_revision`이 있고 current가 evaluated보다 크면 평가 이후 agent가 바뀐 것이다. 현재 agent를 다시 읽고, guidance는 그대로 복사하지 말고 현재 설정에 맞는 절차로만 적용한다.
+
+`evaluation_reported.register_holdout`은 고객이 다음 작업에 쓸 독립 사례(요청 변경, 기대 결과, 보존해야 할 조건)를 명시적으로 주었거나 확인한 경우에만 등록한다. 모델이 스스로 만든 사례는 holdout으로 등록하지 않는다. 이 플러그인은 외부 호스트 대화를 자동으로 수집하지 않으며, 기록은 현재 대화에서 사용자가 준 내용과 도구 응답에 한정한다.
+
 제품 설정을 저장하는 user-principal save_agent 또는 save_manual 호출마다 직전에 정확한 조직/agent 범위로 get_work_context를 호출한다. 반환된 context_receipt.token을 최상위 context_receipt에 복사해 바로 다음 한 번의 저장에만 쓴다. receipt를 다른 저장에 재사용하지 않는다. context 도구나 receipt를 얻지 못하면 제품 저장을 시도하지 않고 초안 상태로 설명한다.
 
 기존 작업은 get_work_context와 get_work_record로 확인한 뒤 현재 version에 맞춰 갱신한다. 기록은 결정이나 피드백의 짧은 요약과 필요한 최소 출처 locator만 담는다. 외부 통화 transcript 전체나 파일 전체를 수집·복사하지 않는다. 고객이 말한 음성 시험은 feedback_reported 또는 evaluation_reported의 customer_voice_report로 기록하고 계속 “고객 보고”로 표시한다. 제품 조회 결과도 독립적인 현재 read가 확인되기 전에는 reported evidence다. 기록 쓰기 결과가 unknown이면 같은 operation_id로 get_work_operation만 조회한다.
