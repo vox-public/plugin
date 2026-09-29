@@ -122,6 +122,25 @@ class WorkflowExampleTests(unittest.TestCase):
             f'"source_id":"{holdout_source["source_message_id"]}","source_thread_id":"{holdout_source["source_thread_id"]}"',
             examples_text,
         )
+        # Eligibility is an observable rule, never a host-name rule: an embedded Copilot runtime
+        # (Codex-based) once refused to register because guidance called Codex an "external host".
+        prohibition = re.compile(r"(외부 호스트|external hosts?)[^.]{0,80}(등록할 수 없|사용할 수 없|cannot register)")
+        for path in (
+            "references/workflow-examples.md",
+            "references/workflow-guidance.md",
+            "references/execution-contract.md",
+            "skills/resume-agent-work/SKILL.md",
+            "README.md",
+        ):
+            text = (ROOT / path).read_text()
+            self.assertIsNone(prohibition.search(text), path)
+            if path != "README.md":
+                self.assertIn("호스트 이름", text, path)
+                self.assertIn("get_work_context(agent_id)", text, path)
+                self.assertIn("해당 항목이 없으면 등록할 수 없다고 안내한다", text, path)
+        schema = json.loads((ROOT / "references/tool-schemas/save_work_record.json").read_text())
+        holdout_description = schema["inputSchema"]["$defs"]["HoldoutRegistrationPayload"]["description"]
+        self.assertIn("Do not decide eligibility from the host name", holdout_description)
         # Negative example: routine-only fields on a holdout are rejected field by field.
         self.assertIn("잘못된 예", examples_text)
         self.assertIn("INVALID_ARGUMENTS", examples_text)
