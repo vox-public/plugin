@@ -88,7 +88,51 @@ class BuildTests(unittest.TestCase):
             lock['implemented_tools'].remove('save_manual')
             lock['input_schema_sha256'].pop('save_manual')
         self.change_json('tool-contract-lock.json', remove_lock_entry)
-        with self.assertRaisesRegex(ValueError, 'requires or offers a tool absent'):
+        with self.assertRaisesRegex(ValueError, 'classifies unavailable tools as implemented'):
+            self.run_build()
+
+    def test_catalog_rejects_unpartitioned_skill_tool_references(self):
+        def remove_partition(catalog):
+            next(skill for skill in catalog['skills'] if skill['name'] == 'agents-platform')[
+                'tools'] = ['get_organization']
+        self.change_json('catalog.json', remove_partition)
+        with self.assertRaisesRegex(ValueError, 'must explicitly partition'):
+            self.run_build()
+
+    def test_catalog_rejects_duplicate_skill_tool_references(self):
+        def add_duplicate(catalog):
+            skill = next(skill for skill in catalog['skills'] if skill['name'] == 'agents-platform')
+            skill['tools']['implemented'].append('get_organization')
+        self.change_json('catalog.json', add_duplicate)
+        with self.assertRaisesRegex(ValueError, 'duplicate implemented tool references'):
+            self.run_build()
+
+    def test_catalog_rejects_unavailable_tool_as_implemented(self):
+        def misclassify(catalog):
+            skill = next(skill for skill in catalog['skills'] if skill['name'] == 'agents-platform')
+            tools = skill['tools']
+            tools['designed_only'].remove('get_call')
+            tools['implemented'].append('get_call')
+        self.change_json('catalog.json', misclassify)
+        with self.assertRaisesRegex(ValueError, 'classifies unavailable tools as implemented'):
+            self.run_build()
+
+    def test_catalog_rejects_implemented_tool_as_designed_only(self):
+        def misclassify(catalog):
+            skill = next(skill for skill in catalog['skills'] if skill['name'] == 'agents-platform')
+            tools = skill['tools']
+            tools['implemented'].remove('save_manual')
+            tools['designed_only'].append('save_manual')
+        self.change_json('catalog.json', misclassify)
+        with self.assertRaisesRegex(ValueError, 'classifies implemented tools as designed-only'):
+            self.run_build()
+
+    def test_catalog_rejects_unclassified_designed_tool(self):
+        def add_unclassified(catalog):
+            skill = next(skill for skill in catalog['skills'] if skill['name'] == 'agents-platform')
+            skill['tools']['designed_only'].append('get_call_v2')
+        self.change_json('catalog.json', add_unclassified)
+        with self.assertRaisesRegex(ValueError, 'unclassified designed-only tools'):
             self.run_build()
 
     def test_designed_work_tools_cannot_be_hard_required(self):

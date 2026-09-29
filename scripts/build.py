@@ -130,6 +130,44 @@ def validate_workflow_capabilities(root, catalog, implemented_tools):
                     f"Workflow {workflow['id']} needs a fallback while designed tools are unavailable")
 
 
+def validate_skill_tool_references(catalog, implemented_tools):
+    designed_registry = catalog.get('designed_tool_references')
+    require(isinstance(designed_registry, list)
+            and all(isinstance(name, str) and name for name in designed_registry),
+            'Catalog designed_tool_references must be a list of tool names')
+    require(len(designed_registry) == len(set(designed_registry)),
+            'Catalog designed_tool_references contains duplicate tools')
+    designed_registry = set(designed_registry)
+    require(not designed_registry.intersection(implemented_tools),
+            'Catalog classifies an implemented tool as designed-only')
+
+    referenced_designed = set()
+    for skill in catalog['skills']:
+        name = skill['name']
+        tools = skill.get('tools')
+        require(isinstance(tools, dict) and set(tools) == {'implemented', 'designed_only'},
+                f'Skill {name} must explicitly partition tools into implemented and designed_only')
+        implemented = tools['implemented']
+        designed_only = tools['designed_only']
+        for label, names in [('implemented', implemented), ('designed_only', designed_only)]:
+            require(isinstance(names, list) and all(isinstance(tool, str) and tool for tool in names),
+                    f'Skill {name} has an invalid {label} tool list')
+            require(len(names) == len(set(names)),
+                    f'Skill {name} has duplicate {label} tool references')
+        require(not set(implemented).intersection(designed_only),
+                f'Skill {name} has a tool classified as both implemented and designed-only')
+        require(set(implemented).issubset(implemented_tools),
+                f'Skill {name} classifies unavailable tools as implemented')
+        require(set(designed_only).isdisjoint(implemented_tools),
+                f'Skill {name} classifies implemented tools as designed-only')
+        unknown_designed = set(designed_only) - designed_registry
+        require(not unknown_designed,
+                f'Skill {name} has unclassified designed-only tools: {sorted(unknown_designed)}')
+        referenced_designed.update(designed_only)
+    require(referenced_designed == designed_registry,
+            'Catalog designed_tool_references must exactly cover skill designed-only references')
+
+
 def validate_tool_examples(root, implemented_tools, schemas):
     examples_path = root / 'references/workflow-examples.md'
     blocks = list(re.finditer(r'```mcp-call\s*\n(.*?)```', examples_path.read_text(), flags=re.DOTALL))
@@ -200,6 +238,7 @@ def validate(root):
             'Catalog layer counts do not match skills')
 
     implemented_tools, schemas = validate_tool_snapshot(root, catalog)
+    validate_skill_tool_references(catalog, implemented_tools)
     validate_workflow_capabilities(root, catalog, implemented_tools)
     validate_tool_examples(root, implemented_tools, schemas)
 

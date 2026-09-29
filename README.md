@@ -49,7 +49,7 @@ Claude Code에서는 `/vox-ai:voice-agent-design`처럼 스킬을 직접 호출�
 
 변경 전 대상 조직과 리소스를 확인하고, 저장 후 다시 조회해 결과를 확인합니다. 고객은 기존 vox.ai 제품 UI에서 직접 음성 시험과 실운영을 수행합니다. 현재 구현 snapshot은 시험 시작, call history, 전화 발신, 캠페인, 메시지 전송 도구를 포함하지 않으므로, 고객 보고를 서버에서 확인한 call 결과처럼 설명하지 않습니다.
 
-전체 스킬 목록은 [catalog.json](catalog.json), 실행 원칙은 [execution-contract.md](references/execution-contract.md)에 있습니다.
+전체 스킬 목록은 [catalog.json](catalog.json)에 있습니다. 각 스킬의 `tools.implemented`는 현재 snapshot에서 실행 가능한 도구이고 `tools.designed_only`는 지침에 남아 있는 설계 참조입니다. 상단 `designed_tool_references`가 해당 참조의 전체 목록입니다. 실행 원칙은 [execution-contract.md](references/execution-contract.md)에 있습니다.
 
 ## 빌드와 검증
 
