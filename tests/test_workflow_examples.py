@@ -106,6 +106,22 @@ class WorkflowExampleTests(unittest.TestCase):
         self.assertEqual(holdout_source["source_host"], "embedded")
         self.assertTrue(holdout_source["source_thread_id"] and holdout_source["source_message_id"])
         self.assertEqual(holdout_payload["evaluation_kind"], "text_contract")
+
+        # The holdout source ids come from a get_work_context pending_recent_inputs item,
+        # so the guidance and example must say to copy them instead of guessing.
+        examples_text = (ROOT / "references/workflow-examples.md").read_text()
+        for text in (
+            examples_text,
+            (ROOT / "references/workflow-guidance.md").read_text(),
+            (ROOT / "references/execution-contract.md").read_text(),
+            (ROOT / "skills/resume-agent-work/SKILL.md").read_text(),
+        ):
+            self.assertIn("pending_recent_inputs", text)
+            self.assertIn("source_thread_id", text)
+        self.assertIn(
+            f'"source_id":"{holdout_source["source_message_id"]}","source_thread_id":"{holdout_source["source_thread_id"]}"',
+            examples_text,
+        )
         self.assertIn("no provider execution", holdout_payload["observed_result"].lower())
 
         api_root = Path(os.environ.get("VOX_API_ROOT", ROOT.parent / "api")).resolve()

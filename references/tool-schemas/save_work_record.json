@@ -1345,7 +1345,7 @@
         ],
         "title": "HoldoutRegistrationPayload",
         "type": "object",
-        "description": "Register one independent text-contract holdout. scenario is a JSON-serialized string with exactly task_kind=agent_partial_edit, base_configuration, requested_change and required_preservation (1-6 strings). observed_result is required but replaced by the server. Only the user's own explicit words in the current embedded Copilot conversation may be the source (source_host=embedded with that conversation's source_thread_id and source_message_id); external hosts cannot register holdouts."
+        "description": "Register one independent text-contract holdout. scenario is a JSON-serialized string with exactly task_kind=agent_partial_edit, base_configuration, requested_change and required_preservation (1-6 strings). observed_result is required but replaced by the server. Only the user's own explicit words in the current embedded Copilot conversation may be the source (source.source_host=embedded; copy source_thread_id and source_id of the matching get_work_context.pending_recent_inputs item to source.source_thread_id and source.source_message_id, never guessed); external hosts cannot register holdouts."
       }
     }
   }
