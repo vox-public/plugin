@@ -1,5 +1,5 @@
 {
-  "mcp_commit": "8f916ff74436d4be65f58f4e9509eb050e9db3aa",
+  "mcp_commit": "7d0a64261af20dbdeab974a632232de12d7891bd",
   "manifest_sha256": "d12c1b1703ce6d13d96812dfe6ddea5d3bc9d5e719c161e0b383521e2c88c728",
   "source_manifest_sha256": "f7c583c38b19d9d910233c285f012783acb840f0aa027dd9821e42d919224c3c",
   "source_state": "clean_commit",
@@ -27,13 +27,13 @@
     "get_schema": "789277d15774453a626e9575ba78c391f94f60bb3fe79c449b1b891dbf808590",
     "get_work_context": "d77dee09c2daf09cf2c325170f0c15d4bb229047617a80c93429aee58ca9282c",
     "get_work_operation": "8c2574ce37d138a76d5659f69012a8e95affc2b2ee8345e986f6b364ad6ba878",
-    "get_work_record": "5303d39e6cadeaf68d64b0372ea58e4116a227e54571551e73c0cca90a5d1af9",
+    "get_work_record": "270097691ac49ef4422ef5167e1b7e02fd1f555a9c540d028858da4abae5e38e",
     "list_agents": "b45e2bc5e04b7dcfdbb6fb03e42fa4d0d428bf8acde9fcc0a998833ae11c7ec9",
     "list_manuals": "20014e7fb31e92c85c6a9c563c20764de1b19b4f95cad2c04d0eb963a97477c9",
     "list_models": "08a290c606fc9cda60570c8dc7a01a0eb08407774b83df5fde6a3258a40aa114",
     "list_schemas": "8d81377d1ae2f903515f0e3b98a1ad38f09136d88bb96fcdc13ba62b3dde4124",
     "save_agent": "eaf6cfe4590c1f56d71bf3d825b1ad5552f9e8592324e06878753f799fa83d27",
     "save_manual": "925ea71430c479e688527230debd1b56e5cb68e168754d9516168acb3e7ce061",
-    "save_work_record": "c259afa96fff11bc76541052eb838e473935b70212bf96c8cb3e9d466b259719"
+    "save_work_record": "3e344c439c91c66e5240364c035be6099b430a6c05b337fa6eef3aef6029f3e9"
   }
 }

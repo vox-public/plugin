@@ -2,94 +2,52 @@
   "name": "save_work_record",
   "inputSchema": {
     "type": "object",
-    "oneOf": [
-      {
-        "type": "object",
-        "properties": {
-          "action": {
-            "const": "create"
-          },
-          "payload": {
+    "properties": {
+      "action": {
+        "enum": [
+          "create",
+          "event",
+          "delete_case",
+          "delete_source"
+        ],
+        "description": "create: 새 case 생성(payload=case 입력, case_id·source_id 금지). event: 기존 case에 event 추가(case_id 필수, payload=event 입력, source_id 금지). delete_case: case 삭제(case_id 필수, source_id 금지). delete_source: source 삭제(source_id 필수, case_id 금지)."
+      },
+      "case_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "action이 event 또는 delete_case이면 필수이고 create, delete_source에서는 사용할 수 없습니다."
+      },
+      "source_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "action=delete_source에서만 필수이고 다른 action에서는 사용할 수 없습니다."
+      },
+      "payload": {
+        "anyOf": [
+          {
             "$ref": "#/$defs/AutomaticImprovementCaseCreateInput"
-          }
-        },
-        "required": [
-          "action",
-          "payload"
-        ],
-        "additionalProperties": false
-      },
-      {
-        "type": "object",
-        "properties": {
-          "action": {
-            "const": "event"
           },
-          "case_id": {
-            "type": "string",
-            "format": "uuid"
+          {
+            "$ref": "#/$defs/AutomaticImprovementEventAppendInput"
           },
-          "payload": {
-            "oneOf": [
-              {
-                "$ref": "#/$defs/AutomaticImprovementEventAppendInput"
-              },
-              {
-                "$ref": "#/$defs/ImprovementEventAppendInput"
-              }
-            ]
-          }
-        },
-        "required": [
-          "action",
-          "case_id",
-          "payload"
-        ],
-        "additionalProperties": false
-      },
-      {
-        "type": "object",
-        "properties": {
-          "action": {
-            "const": "delete_case"
+          {
+            "$ref": "#/$defs/ImprovementEventAppendInput"
           },
-          "case_id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "payload": {
+          {
             "$ref": "#/$defs/ImprovementDeleteInput"
-          }
-        },
-        "required": [
-          "action",
-          "payload",
-          "case_id"
-        ],
-        "additionalProperties": false
-      },
-      {
-        "type": "object",
-        "properties": {
-          "action": {
-            "const": "delete_source"
           },
-          "source_id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "payload": {
+          {
             "$ref": "#/$defs/ImprovementSourceDeleteInput"
           }
-        },
-        "required": [
-          "action",
-          "payload",
-          "source_id"
         ],
-        "additionalProperties": false
+        "description": "action에 맞는 입력입니다. create는 case 생성, event는 routine 또는 case 관리 event, delete_*는 삭제 입력입니다."
       }
+    },
+    "required": [
+      "action",
+      "payload"
     ],
+    "additionalProperties": false,
     "$defs": {
       "ImprovementSourceInput": {
         "additionalProperties": false,

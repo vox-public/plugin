@@ -31,7 +31,7 @@ get_work_context가 `context.pending_recent_inputs[]`(source_id·text·truncated
 
 제품 설정을 저장하는 user-principal save_agent 또는 save_manual 호출마다 직전에 정확한 조직/agent 범위로 get_work_context를 호출한다. 반환된 context_receipt.token을 최상위 context_receipt에 복사해 바로 다음 한 번의 저장에만 쓴다. receipt를 다른 저장에 재사용하지 않는다. context 도구나 receipt를 얻지 못하면 제품 저장을 시도하지 않고 초안 상태로 설명한다.
 
-기존 작업은 get_work_context와 get_work_record로 확인한 뒤 현재 version에 맞춰 갱신한다. 기록은 결정이나 피드백의 짧은 요약과 필요한 최소 출처 locator만 담는다. 외부 통화 transcript 전체나 파일 전체를 수집·복사하지 않는다. 고객이 말한 음성 시험은 feedback_reported 또는 evaluation_reported의 customer_voice_report로 기록하고 계속 “고객 보고”로 표시한다. 제품 조회 결과도 독립적인 현재 read가 확인되기 전에는 reported evidence다. 기록 쓰기 결과가 unknown이면 같은 operation_id로 get_work_operation만 조회한다.
+기존 작업은 get_work_context와 get_work_record로 확인한 뒤 현재 version에 맞춰 갱신한다. get_work_record의 record_type은 list, case, events, proposals, runs이며 단일 case는 record_type=case와 case_id로 조회하고 case_id는 list에서 쓰지 않는다. 기록은 결정이나 피드백의 짧은 요약과 필요한 최소 출처 locator만 담는다. 외부 통화 transcript 전체나 파일 전체를 수집·복사하지 않는다. 고객이 말한 음성 시험은 feedback_reported 또는 evaluation_reported의 customer_voice_report로 기록하고 계속 “고객 보고”로 표시한다. 제품 조회 결과도 독립적인 현재 read가 확인되기 전에는 reported evidence다. 기록 쓰기 결과가 unknown이면 같은 operation_id로 get_work_operation만 조회한다.
 
 ## 데이터와 실행 증거
 
