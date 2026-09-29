@@ -1,0 +1,1159 @@
+{
+  "name": "save_manual",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "agent_id": {
+        "type": "string",
+        "format": "uuid",
+        "title": "Agent Id",
+        "description": "Agent UUID returned as `agent_id`."
+      },
+      "mode": {
+        "enum": [
+          "create",
+          "update"
+        ]
+      },
+      "payload": {
+        "type": "object"
+      },
+      "manual_id": {
+        "type": "string",
+        "format": "uuid",
+        "title": "Manual Id"
+      }
+    },
+    "required": [
+      "agent_id",
+      "mode",
+      "payload"
+    ],
+    "additionalProperties": false,
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "agent_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Agent Id",
+            "description": "Agent UUID returned as `agent_id`."
+          },
+          "mode": {
+            "const": "create"
+          },
+          "payload": {
+            "$ref": "#/$defs/CreateAgentManualRequest"
+          }
+        },
+        "required": [
+          "agent_id",
+          "mode",
+          "payload"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "agent_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Agent Id",
+            "description": "Agent UUID returned as `agent_id`."
+          },
+          "manual_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Manual Id"
+          },
+          "mode": {
+            "const": "update"
+          },
+          "payload": {
+            "$ref": "#/$defs/UpdateAgentManualRequest"
+          }
+        },
+        "required": [
+          "agent_id",
+          "manual_id",
+          "mode",
+          "payload"
+        ],
+        "additionalProperties": false
+      }
+    ],
+    "$defs": {
+      "CreateAgentManualRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 128,
+            "title": "Name",
+            "default": "",
+            "description": "Human-readable resource name."
+          },
+          "trigger": {
+            "type": "string",
+            "title": "Trigger",
+            "default": ""
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 8096,
+            "title": "Content",
+            "default": "",
+            "description": "Text content for this flow node or message object."
+          },
+          "built_in_tools": {
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/EndCallTool"
+                },
+                {
+                  "$ref": "#/$defs/TransferCallTool"
+                },
+                {
+                  "$ref": "#/$defs/TransferAgentTool"
+                },
+                {
+                  "$ref": "#/$defs/SendSmsTool"
+                },
+                {
+                  "$ref": "#/$defs/SendDtmfTool"
+                },
+                {
+                  "$ref": "#/$defs/SearchAddressTool"
+                },
+                {
+                  "$ref": "#/$defs/SkillTool-Input"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Built In Tools"
+          },
+          "config": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "none",
+                    "typing",
+                    "elevator_1",
+                    "elevator_2",
+                    "elevator_3",
+                    "elevator_4"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "object",
+            "title": "Config"
+          },
+          "expected_head_revision": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Expected Head Revision"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_head_revision"
+        ],
+        "title": "CreateAgentManualRequest"
+      },
+      "EndCallTool": {
+        "properties": {
+          "speakDuringExecution": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/app__dto__builtin_tool__SpeakDuringExecution"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Speech messages played while the tool executes."
+          },
+          "allowInterruptionDuringExecution": {
+            "type": "boolean",
+            "title": "Allowinterruptionduringexecution",
+            "description": "Whether the user may interrupt speech while the tool executes.",
+            "default": false
+          },
+          "responseMode": {
+            "type": "string",
+            "enum": [
+              "wait",
+              "fire_and_forget"
+            ],
+            "title": "Responsemode",
+            "description": "`wait` blocks on tool completion. `fire_and_forget` starts the tool and lets the conversation continue.",
+            "default": "wait"
+          },
+          "toolType": {
+            "type": "string",
+            "const": "end_call",
+            "title": "Tool type",
+            "description": "Built-in tool type."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "default": "end_call",
+            "description": "Human-readable resource name."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Human-readable description."
+          }
+        },
+        "type": "object",
+        "required": [
+          "toolType"
+        ],
+        "title": "EndCallTool",
+        "additionalProperties": false
+      },
+      "app__dto__builtin_tool__SpeakDuringExecution": {
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled",
+            "default": false,
+            "description": "Whether this configuration is enabled."
+          },
+          "messages": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Messages",
+            "description": "Messages played while the tool is executing."
+          }
+        },
+        "type": "object",
+        "title": "SpeakDuringExecution",
+        "description": "Speech messages played while a tool executes.",
+        "additionalProperties": false
+      },
+      "TransferCallTool": {
+        "properties": {
+          "speakDuringExecution": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/app__dto__builtin_tool__SpeakDuringExecution"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Speech messages played while the tool executes."
+          },
+          "allowInterruptionDuringExecution": {
+            "type": "boolean",
+            "title": "Allowinterruptionduringexecution",
+            "description": "Whether the user may interrupt speech while the tool executes.",
+            "default": false
+          },
+          "responseMode": {
+            "type": "string",
+            "enum": [
+              "wait",
+              "fire_and_forget"
+            ],
+            "title": "Responsemode",
+            "description": "`wait` blocks on tool completion. `fire_and_forget` starts the tool and lets the conversation continue.",
+            "default": "wait"
+          },
+          "toolType": {
+            "type": "string",
+            "const": "transfer_call",
+            "title": "Tool type",
+            "description": "Built-in tool type."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Human-readable resource name."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Human-readable description."
+          },
+          "transferConfigurations": {
+            "items": {
+              "$ref": "#/$defs/TransferConfig"
+            },
+            "type": "array",
+            "title": "Transfer configurations",
+            "description": "Transfer destinations. The v3 API returns `transferConfigurations`; runtime/web singular `transferConfiguration` is accepted on input."
+          },
+          "transferType": {
+            "type": "string",
+            "enum": [
+              "cold",
+              "warm"
+            ],
+            "title": "Transfertype",
+            "description": "Call transfer mode: `cold` removes the agent as soon as the call is transferred and does not brief the operator; `warm` puts the customer on hold, briefs the operator with a conversation summary or static sentence, and then connects them. If the operator does not answer within 30 seconds, the agent resumes handling the customer.",
+            "default": "cold"
+          },
+          "transferMessageType": {
+            "type": "string",
+            "enum": [
+              "static",
+              "dynamic"
+            ],
+            "title": "Transfermessagetype",
+            "description": "Operator briefing mode for `warm` transfers: `static` reads `warmTransferStaticSentence` verbatim to the operator, while `dynamic` uses `warmTransferPrompt` as instructions for the LLM to generate a conversation summary. Ignored for `cold` transfers.",
+            "default": "static"
+          },
+          "warmTransferPrompt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warmtransferprompt",
+            "description": "Instructions for the LLM to generate a conversation summary for the operator during a `warm` transfer. Used only when `transferMessageType` is `dynamic`."
+          },
+          "warmTransferStaticSentence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warmtransferstaticsentence",
+            "description": "Sentence read verbatim to the operator during a `warm` transfer. Used only when `transferMessageType` is `static`."
+          },
+          "displayedCallerId": {
+            "type": "string",
+            "enum": [
+              "agent",
+              "user"
+            ],
+            "title": "Displayedcallerid",
+            "description": "Caller ID shown on the operator's phone for both `cold` and `warm` transfers. `agent` shows the vox agent's phone number; `user` shows the current customer's phone number.",
+            "default": "agent"
+          },
+          "sipHeaders": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/$defs/TransferCallSipHeader"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sipheaders"
+          }
+        },
+        "type": "object",
+        "required": [
+          "toolType",
+          "name"
+        ],
+        "title": "TransferCallTool",
+        "additionalProperties": false
+      },
+      "TransferConfig": {
+        "properties": {
+          "transferTo": {
+            "type": "string",
+            "title": "Transferto",
+            "description": "Phone number or SIP URI to transfer to. When `transferType` is `operator`, this is a display label shown to the operator, not a dialed destination."
+          },
+          "transferCondition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transfercondition",
+            "description": "Condition under which this transfer destination should be used."
+          },
+          "transferType": {
+            "type": "string",
+            "enum": [
+              "phone",
+              "sip",
+              "operator"
+            ],
+            "title": "Transfertype",
+            "description": "Destination type. Defaults to `phone`, matching agent-server runtime. `operator` routes to a live human operator via the takeover handoff control plane (warm-only; `transferTo` is a display label).",
+            "default": "phone"
+          }
+        },
+        "type": "object",
+        "required": [
+          "transferTo"
+        ],
+        "title": "TransferConfig",
+        "description": "Transfer destination for transfer_call.",
+        "additionalProperties": false
+      },
+      "TransferCallSipHeader": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 3,
+            "pattern": "^X-[A-Za-z0-9-]+$",
+            "title": "Name",
+            "description": "SIP header name. Must start with `X-`, be 3-128 characters, match `X-[A-Za-z0-9-]+`, and must not use reserved system headers."
+          },
+          "value": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Value",
+            "description": "SIP header value. Must be 1-256 characters and must not contain CR/LF or control characters other than TAB."
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "value"
+        ],
+        "title": "TransferCallSipHeader",
+        "description": "SIP header key-value pair for transfer_call.",
+        "additionalProperties": false
+      },
+      "TransferAgentTool": {
+        "properties": {
+          "speakDuringExecution": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/app__dto__builtin_tool__SpeakDuringExecution"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Speech messages played while the tool executes."
+          },
+          "allowInterruptionDuringExecution": {
+            "type": "boolean",
+            "title": "Allowinterruptionduringexecution",
+            "description": "Whether the user may interrupt speech while the tool executes.",
+            "default": false
+          },
+          "responseMode": {
+            "type": "string",
+            "enum": [
+              "wait",
+              "fire_and_forget"
+            ],
+            "title": "Responsemode",
+            "description": "`wait` blocks on tool completion. `fire_and_forget` starts the tool and lets the conversation continue.",
+            "default": "wait"
+          },
+          "toolType": {
+            "type": "string",
+            "const": "transfer_agent",
+            "title": "Tool type",
+            "description": "Built-in tool type."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Human-readable resource name."
+          },
+          "agent": {
+            "$ref": "#/$defs/AgentMapping",
+            "description": "Agent mapping object with `agent_id` and `agent_version`. Used by cross-resource references (calls / campaigns / telephone_numbers) and by `builtInTools.transfer_agent` / flow `transferAgent` node `data.agent` per v3 §2.7 AgentMapping."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Human-readable description."
+          },
+          "preserveChatContext": {
+            "type": "boolean",
+            "title": "Preservechatcontext",
+            "description": "Whether the target agent should receive prior conversation context.",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "toolType",
+          "name",
+          "agent"
+        ],
+        "title": "TransferAgentTool",
+        "description": "Built-in transfer_agent tool config.\n\nv3 §2.7 exposes the destination as a nested ``AgentMapping``. The same\nobject shape is used by flow transferAgent nodes and other v3 surfaces so\nclients can configure agent handoff consistently.",
+        "additionalProperties": false
+      },
+      "AgentMapping": {
+        "additionalProperties": false,
+        "description": "agent_id + agent_version 매핑.\n\n요청·응답 모두에서 에이전트 매핑이 필요한 경우 이 타입을 사용한다.\n요청 중 version 지정이 불필요한 엔드포인트는 flat `agent_id: UUID` 를 직접 받고,\n`AgentMapping` 을 쓰지 않는다.",
+        "properties": {
+          "agent_id": {
+            "description": "Agent UUID.",
+            "format": "uuid",
+            "title": "Agent Id",
+            "type": "string"
+          },
+          "agent_version": {
+            "default": "current",
+            "description": "에이전트 버전. 허용값: \"current\", \"production\", 또는 \"v{n}\" (n≥1). 미전송 시 \"current\"로 처리됩니다. null 전송은 거부.",
+            "title": "Agent Version",
+            "type": "string",
+            "pattern": "^(current|production|v[1-9][0-9]*)$",
+            "examples": [
+              "current",
+              "production",
+              "v1"
+            ]
+          }
+        },
+        "required": [
+          "agent_id"
+        ],
+        "title": "AgentMapping",
+        "type": "object"
+      },
+      "SendSmsTool": {
+        "properties": {
+          "speakDuringExecution": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/app__dto__builtin_tool__SpeakDuringExecution"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Speech messages played while the tool executes."
+          },
+          "allowInterruptionDuringExecution": {
+            "type": "boolean",
+            "title": "Allowinterruptionduringexecution",
+            "description": "Whether the user may interrupt speech while the tool executes.",
+            "default": false
+          },
+          "responseMode": {
+            "type": "string",
+            "enum": [
+              "wait",
+              "fire_and_forget"
+            ],
+            "title": "Responsemode",
+            "description": "`wait` blocks on the SMS send result. `fire_and_forget` dispatches the SMS request and lets the conversation continue.",
+            "default": "wait"
+          },
+          "toolType": {
+            "type": "string",
+            "const": "send_sms",
+            "title": "Tool type",
+            "description": "Built-in tool type."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Human-readable resource name."
+          },
+          "toolCallSound": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "typing",
+                  "elevator_1",
+                  "elevator_2",
+                  "elevator_3",
+                  "elevator_4"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Toolcallsound",
+            "description": "Sound played while the tool runs, so the line does not go silent. Omit or `none` to play nothing; `typing` or `elevator_1`..`elevator_4` to pick a preset."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Human-readable description."
+          },
+          "smsMessageType": {
+            "type": "string",
+            "enum": [
+              "static",
+              "dynamic"
+            ],
+            "title": "Smsmessagetype",
+            "description": "SMS content mode. `static` sends the configured title/body/image file keys. `dynamic` lets the agent generate the body from `smsMessagePrompt`.",
+            "default": "static"
+          },
+          "smsMessageStaticSentence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Smsmessagestaticsentence",
+            "description": "Static message body used when `smsMessageType=static`. Together with a title or image file keys, this is sent as LMS/MMS as applicable."
+          },
+          "smsMessageStaticTitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Smsmessagestatictitle",
+            "description": "Optional static message title used when `smsMessageType=static`. Omit or null to send without a title."
+          },
+          "smsMessageStaticImageFileKeys": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array",
+                "maxItems": 3
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Smsmessagestaticimagefilekeys",
+            "description": "Static MMS image attachment file keys. Values are opaque `file_key` strings returned by the file upload API. Provide up to 3 file keys; omit or null for text-only SMS/LMS."
+          },
+          "smsMessagePrompt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Smsmessageprompt",
+            "description": "Prompt used by the agent to generate the SMS body when `smsMessageType=dynamic`."
+          },
+          "smsFromNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Smsfromnumber",
+            "description": "Optional sender phone number override. It must be an SMS-send-capable number owned by the organization; omit or null to use the call context default."
+          }
+        },
+        "type": "object",
+        "required": [
+          "toolType",
+          "name"
+        ],
+        "title": "SendSmsTool",
+        "additionalProperties": false
+      },
+      "SendDtmfTool": {
+        "properties": {
+          "toolType": {
+            "type": "string",
+            "const": "send_dtmf",
+            "title": "Tool type",
+            "description": "Built-in tool type."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Human-readable resource name."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Human-readable description."
+          },
+          "speakDuringExecution": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/app__dto__builtin_tool__SpeakDuringExecution"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Speech messages played while the tool executes."
+          },
+          "responseMode": {
+            "type": "string",
+            "enum": [
+              "wait",
+              "fire_and_forget"
+            ],
+            "title": "Responsemode",
+            "description": "`wait` blocks on tool completion. `fire_and_forget` starts the tool and lets the conversation continue.",
+            "default": "wait"
+          },
+          "allowInterruption": {
+            "type": "boolean",
+            "title": "Allowinterruption",
+            "description": "Whether the user may interrupt speech while the DTMF tool executes. Runtime/web `allowInterruptionDuringExecution` is accepted on input.",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "toolType",
+          "name"
+        ],
+        "title": "SendDtmfTool",
+        "additionalProperties": false
+      },
+      "SearchAddressTool": {
+        "properties": {
+          "speakDuringExecution": {
+            "$ref": "#/$defs/app__dto__builtin_tool__SpeakDuringExecution",
+            "description": "도구 실행 중 사용자에게 재생할 TTS 메시지를 설정합니다."
+          },
+          "allowInterruptionDuringExecution": {
+            "type": "boolean",
+            "title": "Allowinterruptionduringexecution",
+            "description": "도구 실행 중 사용자의 발화 끼어들기를 허용할지 설정합니다.",
+            "default": false
+          },
+          "responseMode": {
+            "type": "string",
+            "enum": [
+              "wait",
+              "fire_and_forget"
+            ],
+            "title": "Responsemode",
+            "description": "`wait` blocks on tool completion. `fire_and_forget` starts the tool and lets the conversation continue.",
+            "default": "wait"
+          },
+          "toolType": {
+            "type": "string",
+            "const": "search_address",
+            "title": "Tool type",
+            "description": "Built-in tool type."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Human-readable resource name."
+          },
+          "toolCallSound": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "typing",
+                  "elevator_1",
+                  "elevator_2",
+                  "elevator_3",
+                  "elevator_4"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Toolcallsound",
+            "description": "Sound played while the tool runs, so the line does not go silent. Omit or `none` to play nothing; `typing` or `elevator_1`..`elevator_4` to pick a preset."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "도구의 역할과 호출 조건을 설명합니다. LLM이 이 설명을 바탕으로 도구 호출 여부를 판단합니다.",
+            "default": "Search Korean address candidates using OpenSearch and Kakao Local API. Use this when the caller provides Korean address clues such as region, road name and building number, jibun, or building/place name. The tool returns candidates, evidence, recommended_action, and timings; it does not confirm or commit the address."
+          }
+        },
+        "type": "object",
+        "required": [
+          "toolType",
+          "name"
+        ],
+        "title": "SearchAddressTool",
+        "additionalProperties": false
+      },
+      "SkillTool-Input": {
+        "properties": {
+          "speakDuringExecution": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/app__dto__builtin_tool__SpeakDuringExecution"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Speech messages played while the tool executes."
+          },
+          "allowInterruptionDuringExecution": {
+            "type": "boolean",
+            "title": "Allowinterruptionduringexecution",
+            "description": "Whether the user may interrupt speech while the tool executes.",
+            "default": false
+          },
+          "responseMode": {
+            "type": "string",
+            "enum": [
+              "wait",
+              "fire_and_forget"
+            ],
+            "title": "Responsemode",
+            "description": "`wait` blocks on tool completion. `fire_and_forget` starts the tool and lets the conversation continue.",
+            "default": "wait"
+          },
+          "toolType": {
+            "type": "string",
+            "const": "skill",
+            "title": "Tool type",
+            "description": "Built-in tool type."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Human-readable resource name."
+          },
+          "toolCallSound": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "typing",
+                  "elevator_1",
+                  "elevator_2",
+                  "elevator_3",
+                  "elevator_4"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Toolcallsound",
+            "description": "Sound played while the tool runs, so the line does not go silent. Omit or `none` to play nothing; `typing` or `elevator_1`..`elevator_4` to pick a preset."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Human-readable description."
+          },
+          "skill": {
+            "$ref": "#/$defs/SkillPayload",
+            "description": "Skill payload. The v3 API field is `skill`; it is stored as `skillPayload` when executing calls."
+          }
+        },
+        "type": "object",
+        "required": [
+          "toolType",
+          "name",
+          "skill"
+        ],
+        "title": "SkillTool",
+        "additionalProperties": false
+      },
+      "SkillPayload": {
+        "properties": {
+          "skills": {
+            "items": {
+              "$ref": "#/$defs/SkillItem"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Skills",
+            "description": "Skills available to this meta-tool. At least one skill is required."
+          },
+          "initSkillId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Initskillid",
+            "description": "Optional skill ID to start with before the LLM chooses another skill."
+          },
+          "initSkillName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Initskillname",
+            "description": "Optional skill name to start with before the LLM chooses another skill."
+          }
+        },
+        "type": "object",
+        "required": [
+          "skills"
+        ],
+        "title": "SkillPayload",
+        "description": "Skill 호출 payload.",
+        "additionalProperties": false
+      },
+      "SkillItem": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id",
+            "description": "Skill identifier unique within this tool."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Skill name exposed to the LLM."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "When the LLM should use this skill."
+          },
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "description": "Prompt or instruction content executed by this skill."
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "content"
+        ],
+        "title": "SkillItem",
+        "description": "Single skill definition inside a Skill built-in tool.",
+        "additionalProperties": false
+      },
+      "UpdateAgentManualRequest": {
+        "properties": {
+          "expected_head_revision": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Expected Head Revision"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 128
+              }
+            ],
+            "title": "Name",
+            "description": "Human-readable resource name."
+          },
+          "trigger": {
+            "anyOf": [
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Trigger"
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 8096
+              }
+            ],
+            "title": "Content",
+            "description": "Text content for this flow node or message object."
+          },
+          "built_in_tools": {
+            "anyOf": [
+              {
+                "items": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/$defs/EndCallTool"
+                    },
+                    {
+                      "$ref": "#/$defs/TransferCallTool"
+                    },
+                    {
+                      "$ref": "#/$defs/TransferAgentTool"
+                    },
+                    {
+                      "$ref": "#/$defs/SendSmsTool"
+                    },
+                    {
+                      "$ref": "#/$defs/SendDtmfTool"
+                    },
+                    {
+                      "$ref": "#/$defs/SearchAddressTool"
+                    },
+                    {
+                      "$ref": "#/$defs/SkillTool-Input"
+                    }
+                  ]
+                },
+                "type": "array"
+              }
+            ],
+            "title": "Built In Tools"
+          },
+          "config": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "typing",
+                        "elevator_1",
+                        "elevator_2",
+                        "elevator_3",
+                        "elevator_4"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "object"
+              }
+            ],
+            "title": "Config"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_head_revision"
+        ],
+        "title": "UpdateAgentManualRequest",
+        "anyOf": [
+          {
+            "required": [
+              "name"
+            ]
+          },
+          {
+            "required": [
+              "trigger"
+            ]
+          },
+          {
+            "required": [
+              "content"
+            ]
+          },
+          {
+            "required": [
+              "built_in_tools"
+            ]
+          },
+          {
+            "required": [
+              "config"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

@@ -15,7 +15,8 @@ class BuildTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name) / 'plugin'
-        shutil.copytree(ROOT, self.root, ignore=shutil.ignore_patterns('.git', 'dist', '__pycache__'))
+        shutil.copytree(ROOT, self.root,
+                        ignore=shutil.ignore_patterns('.git', 'dist', '.venv', '__pycache__'))
 
     def change_json(self, name, change):
         path = self.root / name
@@ -75,6 +76,77 @@ class BuildTests(unittest.TestCase):
         self.change_json('.mcp.json', lambda p: p['mcpServers']['vox-ai'].update(
             url='https://mcp.dev.services.tryvox.co/mcp'))
         with self.assertRaisesRegex(ValueError, 'Public bundle'):
+            self.run_build()
+
+    def test_required_workflow_tool_must_be_in_implemented_snapshot(self):
+        def remove_save_manual(snapshot):
+            snapshot['implemented_tools'].remove('save_manual')
+            snapshot['input_schemas'].pop('save_manual')
+        self.change_json('references/implemented-tools.snapshot.json', remove_save_manual)
+
+        def remove_lock_entry(lock):
+            lock['implemented_tools'].remove('save_manual')
+            lock['input_schema_sha256'].pop('save_manual')
+        self.change_json('tool-contract-lock.json', remove_lock_entry)
+        with self.assertRaisesRegex(ValueError, 'requires or offers a tool absent'):
+            self.run_build()
+
+    def test_designed_work_tools_cannot_be_hard_required(self):
+        self.change_json('references/workflow-capabilities.json', lambda c:
+                         c['workflows'][0]['designed']['required_tools'].append('get_work_context'))
+        with self.assertRaisesRegex(ValueError, 'Designed tools cannot be hard-required'):
+            self.run_build()
+
+    def test_implemented_tool_cannot_remain_classified_as_designed(self):
+        self.change_json('references/workflow-capabilities.json', lambda c:
+                         c['workflows'][0]['designed']['optional_tools'].append('list_agents'))
+        with self.assertRaisesRegex(ValueError, 'Designed optional tools must remain distinct'):
+            self.run_build()
+
+    def test_unavailable_designed_tools_need_a_fallback(self):
+        self.change_json('references/workflow-capabilities.json', lambda c:
+                         c['workflows'][0].update(designed_unavailable_fallback=''))
+        with self.assertRaisesRegex(ValueError, 'needs a fallback'):
+            self.run_build()
+
+    def test_invalid_mcp_call_json_is_rejected(self):
+        path = self.root / 'references/workflow-examples.md'
+        path.write_text(path.read_text().replace(
+            '{"tool":"get_organization","arguments":{}}', '{"tool":', 1))
+        with self.assertRaisesRegex(ValueError, 'Invalid mcp-call JSON'):
+            self.run_build()
+
+    def test_mcp_call_arguments_are_checked_against_input_schema(self):
+        path = self.root / 'references/workflow-examples.md'
+        path.write_text(path.read_text().replace(
+            '"expected_head_revision":7', '"expected_head_revision":"7"', 1))
+        with self.assertRaisesRegex(ValueError, 'Input schema validation failed for save_manual'):
+            self.run_build()
+
+    def test_mcp_call_requires_expected_head_revision(self):
+        path = self.root / 'references/workflow-examples.md'
+        path.write_text(path.read_text().replace('"expected_head_revision":7,', '', 1))
+        with self.assertRaisesRegex(ValueError, 'Input schema validation failed for save_manual'):
+            self.run_build()
+
+    def test_wrong_manual_target_field_is_rejected(self):
+        path = self.root / 'references/workflow-examples.md'
+        path.write_text(path.read_text().replace(
+            '"manual_id":"22222222-2222-4222-8222-222222222222"',
+            '"manual":"22222222-2222-4222-8222-222222222222"', 1))
+        with self.assertRaisesRegex(ValueError, 'Input schema validation failed for get_manual'):
+            self.run_build()
+
+    def test_schema_snapshot_digest_is_checked(self):
+        self.change_json('references/tool-schemas/get_manual.json', lambda contract:
+                         contract['inputSchema']['properties']['manual_id'].update(minLength=2))
+        with self.assertRaisesRegex(ValueError, 'Input schema digest mismatch for get_manual'):
+            self.run_build()
+
+    def test_bundled_snapshot_provenance_is_checked(self):
+        self.change_json('references/implemented-tools.snapshot.json', lambda snapshot:
+                         snapshot['source'].update(mcp_commit='0' * 40))
+        with self.assertRaisesRegex(ValueError, 'provenance disagrees'):
             self.run_build()
 
 

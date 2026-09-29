@@ -1,6 +1,6 @@
 ---
 name: agents-platform
-description: "연결된 vox.ai Agents MCP에서 조직·도구를 확인하고 에이전트·Manual·통화·번호·캠페인 업무 도구를 사용할 때 적용한다. 상담원의 실시간 통화 업무에는 적용하지 않는다."
+description: "연결된 vox.ai Agents MCP에서 조직·현재 도구 capability를 확인하고 agent·Manual 작업을 수행할 때 적용한다. 상담원의 실시간 통화 업무에는 적용하지 않는다."
 metadata:
   product: vox.ai
   layer: mcp
@@ -12,7 +12,7 @@ metadata:
 제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구는 연결된 서버가 제공하는 실제 이름과 스키마를 확인한 뒤 사용한다.
 
 ## 제품 모듈 선택
-이 스킬은 Agents 제품의 연결과 도구 사용을 안내한다. 사용자의 요청이 음성 agent 구축·시험·통신 운영이면 이 모듈을 선택한다. desk의 상담원 수신·이어받기·상담원 발신 요청을 비슷한 이름의 Agents 도구에 넘기지 않는다. 현재 연결에서 지원 여부를 확인하고 미지원 범위를 알려준다.
+이 스킬은 Agents 제품의 연결과 도구 사용을 안내한다. 사용자의 요청이 음성 agent 구축·시험·통신 운영이면 이 모듈을 선택한다. desk의 상담원 수신·이어받기·상담원 발신 요청을 비슷한 이름의 Agents 도구에 넘기지 않는다. 현재 연결에서 지원 여부를 확인하고 미지원 범위를 알려준다. 현재 번들의 구현 기준은 [워크플로 capability 표](../../references/workflow-capabilities.json)다.
 
 ## 연결과 발견
 호스트에서 제공하는 인증 절차를 사용한다. 키나 토큰을 프롬프트/파일에 요구하지 않는다. 연결 조직은 고정이며 모델 인자로 전환하지 않는다. 조직 변경은 호스트의 연결 UX로 처리한다.
@@ -21,9 +21,8 @@ metadata:
 
 ## 도구 선택
 - 구축: `list_agents`, `get_agent`, `list_manuals`, `get_manual`, `save_agent`, `save_manual`. 생성/수정 mode와 연결된 서버의 실제 payload를 사용한다. Manual 저장에는 `agent_id`와 현재 `head_revision`에 해당하는 `expected_head_revision`을 포함한다. Agent 수정에도 현재 `head_revision`을 사용한다.
-- 통화: `list_calls`, `get_call`; 실제 발신은 별도 `place_call`. agent 저장이 실고객 발신을 허가하지 않는다.
-- 번호·캠페인·SMS·채팅·위젯은 [업무 호출 예](../../references/workflow-examples.md)의 목적별 도구를 실제 스키마로 확인한다.
-- 직접 음성은 `open_voice_test_session`의 구현된 진입/결과 계약을 확인한다. 마이크를 MCP가 처리하지 않는다.
+- 현재 구현 snapshot: 조직·agent·Manual·모델·설정 schema의 10개 tool이다. 직접 음성 시험, call history, 발신, 번호, 캠페인, SMS, 채팅과 위젯 동작은 이 snapshot에 포함되지 않는다. 예제와 schema 검증은 [합성 고객 여정](../../references/workflow-examples.md)을 따른다.
+- 호스트가 추가 tool을 실제로 노출하면 그 tool list와 입력 schema를 확인한 뒤 해당 업무를 진행한다. agent 저장이 실고객 발신을 허가하지 않고, plugin의 skill 목록만으로 구현 여부를 추정하지 않는다.
 
 ## 응답과 복귀
 저장/접수/최종 완료/부분 실패/불명을 분리한다. 저장 성공 뒤 조회가 실패했다면 받은 `agent_id`와 `manual_id`부터 이어간다. `409` conflict는 현재 상태를 다시 읽고 사용자의 변경 의도를 다시 적용할 때만 처리하며 무조건 재시도하지 않는다. 쓰기 응답이 불명이면 새 생성이나 같은 쓰기를 반복하지 말고 [resume-agent-work](../resume-agent-work/SKILL.md)로 지원되는 조회를 이어간다. OAuth 만료를 조직 전체 키나 직접 REST로 우회하지 않는다.

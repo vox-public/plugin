@@ -1,0 +1,24 @@
+{
+  "name": "get_manual",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "agent_id": {
+        "type": "string",
+        "format": "uuid",
+        "title": "Agent Id",
+        "description": "Agent UUID returned as `agent_id`."
+      },
+      "manual_id": {
+        "type": "string",
+        "format": "uuid",
+        "title": "Manual Id"
+      }
+    },
+    "required": [
+      "agent_id",
+      "manual_id"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -1,7 +1,7 @@
 # vox.ai Plugin
 
 Codex와 Claude Code에서 vox.ai에 연결하고 음성 에이전트를 설계·개선하는 플러그인입니다.
-매뉴얼 작성, 도구 연결, 통화 결과 검토 등 업무별 지침 26개와 원격 MCP 연결 설정을 제공합니다.
+매뉴얼 작성·개선, 고객 직접 시험, 운영 판단 등 업무별 지침 26개와 원격 MCP 연결 설정을 제공합니다.
 
 현재 **preview**입니다. 스킬은 업무 진행 지침이며, 실행 가능한 기능은 연결된 서버가 제공하는 도구와 계정 권한에 따라 달라집니다. 로그인과 실제 업무 실행은 사용하는 환경에서 확인해야 합니다.
 
@@ -35,7 +35,7 @@ Codex의 업데이트 방법은 설치된 버전의 `codex plugin marketplace --
 플러그인은 `https://mcp.services.tryvox.co/mcp`에 연결합니다. 호스트에서 제공하는 OAuth 로그인 절차를 따르고 작업할 조직을 확인합니다.
 키나 토큰을 대화에 붙여 넣거나 설치 파일에 저장하지 않습니다.
 
-설치 후 연결된 서버의 도구 목록과 입력 스키마를 확인합니다. 필요한 도구가 없으면 준비한 초안과 남은 작업을 안내합니다. 설치 성공만으로 로그인이나 제품 작업이 완료된 것은 아닙니다.
+설치 후 연결된 서버의 도구 목록과 입력 스키마를 확인합니다. 이 번들 snapshot에는 agent/Manual 작성과 조회를 위한 10개 구현 도구가 기록되어 있습니다. 실제 호스트의 노출 도구와 권한은 다를 수 있습니다. workflow별 현재·설계 capability는 [`workflow-capabilities.json`](references/workflow-capabilities.json), 구현 tool/schema snapshot은 [`implemented-tools.snapshot.json`](references/implemented-tools.snapshot.json)에 있습니다. shared improvement context 도구는 현재 설계상 선택 capability이며 구현 도구처럼 호출하지 않습니다. 필요한 도구가 없으면 준비한 초안과 남은 작업을 안내합니다. 설치 성공만으로 로그인이나 제품 작업이 완료된 것은 아닙니다.
 
 ## 사용 예
 
@@ -43,23 +43,24 @@ Codex의 업데이트 방법은 설치된 버전의 `codex plugin marketplace --
 
 - “예약 문의를 받는 음성 에이전트의 매뉴얼을 작성해줘.”
 - “이 에이전트의 기존 설정을 확인하고 안내 문구를 수정해줘.”
-- “최근 통화에서 고객이 반복해서 되묻는 부분을 찾아 개선안을 제안해줘.”
+- “고객이 직접 시험한 결과에서 반복 질문을 발견했어. 이 피드백으로 Manual의 바뀔 부분을 제안해줘.”
 
 Claude Code에서는 `/vox-ai:voice-agent-design`처럼 스킬을 직접 호출할 수도 있습니다. Codex에서는 설치된 vox.ai 스킬을 선택하거나 관련 업무를 요청합니다.
 
-변경 전 대상 조직과 리소스를 확인하고, 저장 후 다시 조회해 결과를 확인합니다. 실제 전화 발신과 메시지 전송은 대상·비용·영향 범위를 확인한 뒤 진행합니다. 음성 시험과 실제 전화 운영의 성공 여부는 각각 확인합니다.
+변경 전 대상 조직과 리소스를 확인하고, 저장 후 다시 조회해 결과를 확인합니다. 고객은 기존 vox.ai 제품 UI에서 직접 음성 시험과 실운영을 수행합니다. 현재 구현 snapshot은 시험 시작, call history, 전화 발신, 캠페인, 메시지 전송 도구를 포함하지 않으므로, 고객 보고를 서버에서 확인한 call 결과처럼 설명하지 않습니다.
 
 전체 스킬 목록은 [catalog.json](catalog.json), 실행 원칙은 [execution-contract.md](references/execution-contract.md)에 있습니다.
 
 ## 빌드와 검증
 
 ```sh
-python3 -m pip install -r requirements-build.txt
-python3 -m unittest discover -s tests -v
-python3 scripts/build.py
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-build.txt
+.venv/bin/python -m unittest discover -s tests -v
+.venv/bin/python scripts/build.py
 ```
 
-빌드는 스킬 목록·경로·메타데이터, 문서 링크, 호스트 설정과 버전 일치를 검증합니다.
+빌드는 스킬 목록·경로·메타데이터, 문서 링크, 구현 tool/schema snapshot, 워크플로 required/optional capability, JSON 예제 입력 schema, 호스트 설정과 버전 일치를 검증합니다. `scripts/build.py --mcp-root <mcp-checkout>` 또는 `scripts/build.py --manifest <manifest.json>`을 주면 pinned MCP manifest와 tool schema digest도 대조합니다. 번들된 [구현 도구 스냅샷](references/implemented-tools.snapshot.json)은 원본 MCP commit·manifest digest와 각 입력 schema digest를 기록합니다.
 
 - `dist/vox-ai-plugin.zip`: 호스트 manifest, MCP 연결 설정, 스킬과 공통 문서.
 - `dist/vox-ai-skills.zip`: 같은 스킬과 공통 문서. 연결 설정과 호스트 manifest는 제외.

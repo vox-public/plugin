@@ -9,7 +9,7 @@ metadata:
 
 # operate-outbound-and-followup
 
-제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구는 연결된 서버가 제공하는 실제 이름과 스키마를 확인한 뒤 사용한다.
+제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구는 연결된 서버가 제공하는 실제 이름과 스키마를 확인한 뒤 사용한다. 현재 구현 capability는 [워크플로 capability 표](../../references/workflow-capabilities.json)에서 확인한다.
 
 ## 실행 전 상태
 실행 의도, agent/버전, 발신 번호, 대상, 사전 변수, 현재 권한·한도를 확인한다. ‘에이전트 만들어줘’나 ‘발신 계획을 짜줘’는 실제 발신 요청이 아니다. 이미 구체적인 실행을 위임받았다면 MCP 전용 반복 승인을 추가하지 않는다.
@@ -23,6 +23,8 @@ metadata:
 | SMS | `send_sms`/`send_sms_batch` → `get_sms`/`get_sms_batch` | 요청 수락·제공자 상태·확인 가능한 전달 결과 구분 |
 
 설정 저장과 실행 도구를 혼동하지 않는다. 정확한 ID와 반환된 결과 참조를 보존한다. 응답 불명은 [복귀](../resume-agent-work/SKILL.md)로 넘기며 새 키로 재발신/재발송하지 않는다. 지원되지 않는 예약 발신·상시 감시를 추가하지 않는다.
+
+현재 구현 도구 스냅샷은 agent/Manual 작성·조회와 조직·모델·설정 schema 조회를 제공한다. 단건 발신·캠페인·전환·SMS 도구는 이 baseline에 없다. 호스트가 실제로 제공하지 않으면 위 표의 실행을 호출하거나 성공했다고 말하지 않는다. 고객이 기존 vox.ai 제품 UI에서 운영하고 결과를 전달한 경우, 해당 정보는 고객 보고로 표시한다. 합성 예시는 [합성 고객 여정](../../references/workflow-examples.md)을 따른다.
 
 ## 결과와 후속
 모수와 성공/실패/미응답/불명/처리 중을 구분한다. 실패 대상만 재실행할 때도 실제 실행 여부를 먼저 확인하고 사용자 의도 범위 안에서 진행한다. 대상 목록이나 상세 통화는 필요한 접근 범위로만 사용한다. 내용 분석은 [통화 성과](../review-call-performance/SKILL.md)로 이어간다.

@@ -1,60 +1,103 @@
-# 업무 호출 예와 ID·revision 흐름
+# 합성 고객 여정: 만들기, 다듬기, 직접 시험, 운영, 재개
 
-아래 JSON은 입력 구조를 설명하는 합성 예제다. 실행 전에 연결된 서버의 실제 도구·스키마와 일치하는지 확인한다. 다른 도구의 payload를 이 예제로 추정하지 않는다.
+이 예시는 도구 호출 형식을 보이는 합성 자료다. 실제 요청 전에 연결된 호스트의 도구와 입력 스키마를 확인한다. 현재 번들 기준은 [구현 도구 스냅샷](implemented-tools.snapshot.json)과 [워크플로 capability 표](workflow-capabilities.json)다. 호스트가 필요한 도구를 제공하지 않으면 제품 쓰기 대신 초안과 빠진 capability를 안내한다.
 
-## 구축: Single → agent-scoped Manual → 재조회
+## 합성 요청과 완료 기준
 
-```json
-{"tool":"save_agent","arguments":{"mode":"create","payload":{"name":"샘플 견적 접수"}}}
+고객이 “샘플 홈케어 문의를 받는 음성 에이전트를 만들고 싶어요”라고 요청한다. 제공된 합성 자료에는 세 가지 업무가 있다.
+
+- 어떤 서비스를 원하는지와 가능한 날짜 범위를 접수한다.
+- 위치와 주소는 업무 범위를 파악한 뒤 한 번만 확인한다.
+- 가격표나 예약 API는 연결되어 있지 않으므로 가격·방문 시간·예약 확정을 약속하지 않는다. 접수 내용 요약과 담당자 확인이 다음 단계다.
+
+성공은 Manual에 접수 흐름과 제한이 저장되고 재조회되는 것이다. 이는 예약 기능 연결이나 고객 음성 시험 통과를 뜻하지 않는다.
+
+## 1. Authoring: 첫 Manual 저장
+
+조직이 의도한 곳인지 확인한 뒤, 반환된 ID만 후속 호출에 사용한다.
+
+```mcp-call
+{"tool":"get_organization","arguments":{}}
 ```
 
-반환된 실제 `agent_id`를 보존하고 `get_agent` 또는 `list_manuals`로 현재 `head_revision`을 읽는다. Manual은 전역 리소스가 아니라 이 Single에 귀속되므로, Manual 생성에도 같은 `agent_id`와 읽은 revision을 사용한다.
-
-```json
-{"tool":"save_manual","arguments":{"mode":"create","agent_id":"<agent-id>","payload":{"expected_head_revision":12,"name":"샘플 견적 접수","content":"청소 유형과 희망일을 확인하고 내용을 요약한다. 마무리 후 @tool:end_call","built_in_tools":[{"toolType":"end_call","name":"end_call"}]}}}
+```mcp-call
+{"tool":"save_agent","arguments":{"mode":"create","payload":{"name":"샘플 홈케어 문의"}}}
 ```
 
-`expected_head_revision`의 `12`는 예시값이다. 항상 쓰기 직전에 읽은 현재 값으로 바꾸며 임의의 기본값을 넣지 않는다. 반환된 실제 `manual_id`와 `agent_id`를 사용해 다음처럼 재조회한다.
+`save_agent` 응답의 실제 `agent_id`를 받아 현재 상태와 revision을 읽는다. 아래 UUID는 모양을 보이는 합성값이며 실제 호출에서는 반환된 ID를 쓴다.
 
-```json
-{"tool":"get_manual","arguments":{"agent_id":"<agent-id>","manual_id":"<manual-id>"}}
+```mcp-call
+{"tool":"get_agent","arguments":{"agent_id":"11111111-1111-4111-8111-111111111111"}}
 ```
 
-`save_agent(create)` → 반환 `agent_id` → `get_agent/list_manuals` → `save_manual(create, agent_id, expected_head_revision)` → 반환 `manual_id` → `get_agent/get_manual` → 실제 지원 시 `open_voice_test_session` → 실제 `call_id` → `get_call`.
+아래 `expected_head_revision`은 형식을 보이는 예시값이다. 실제 호출에서는 방금 읽은 revision으로 바꾼다. Manual은 현재 agent에 귀속된다.
 
-Single만 저장됐으면 그 `agent_id`에서 Manual 단계를 이어간다. Manual 저장만 성공했으면 두 리소스를 처음부터 다시 만들지 않고 같은 `agent_id`·`manual_id`로 재조회한다. 시험 미실행이면 저장과 시험 준비까지만 보고한다.
-
-## 기존 조회·수정 예
-
-```json
-{"tool":"list_agents","arguments":{}}
+```mcp-call
+{"tool":"save_manual","arguments":{"mode":"create","agent_id":"11111111-1111-4111-8111-111111111111","payload":{"expected_head_revision":7,"name":"샘플 홈케어 문의 접수","trigger":"고객이 홈케어 서비스나 방문 가능성을 문의할 때","content":"목표: 서비스 문의를 정확히 접수하고 담당자가 이어서 확인할 수 있도록 요약한다.\n\n진행: 1) 원하는 서비스 종류를 묻는다. 2) 가능한 날짜 범위를 묻는다. 3) 서비스 범위를 좁힌 뒤 위치와 주소를 한 번 확인한다. 4) 접수 내용을 요약하고 빠진 점이나 정정이 있는지 묻는다.\n\n제한: 연결된 가격표와 예약 확인 기능이 없다. 확정 가격, 방문 시각, 예약 완료를 말하지 않는다. 확인이 필요한 질문은 추측하지 말고 담당자 확인이 필요하다고 설명한다.\n\n마무리: 접수된 내용을 요약하고 담당자가 확인할 다음 단계를 안내한다. 고객이 정정하면 요약을 갱신한다."}}}
 ```
 
-```json
-{"tool":"list_manuals","arguments":{"agent_id":"<agent-id>"}}
+저장 결과의 `manual_id`를 보존하고 실제 리소스를 재조회한다.
+
+```mcp-call
+{"tool":"get_manual","arguments":{"agent_id":"11111111-1111-4111-8111-111111111111","manual_id":"22222222-2222-4222-8222-222222222222"}}
 ```
 
-```json
-{"tool":"get_agent","arguments":{"agent_id":"<agent-id>"}}
+본문과 `head_revision`이 의도한 값인지 확인한다. Manual만 저장됐다면 새 agent를 만들지 않고 같은 `agent_id`로 이어간다. 저장 성공과 readback 성공은 별도 결과로 보고한다.
+
+## 2. Refine: 정책을 좁게 바꾸고 확인
+
+고객이 “주소를 먼저 묻지 말고, 어떤 서비스를 원하는지 파악한 다음 한 번만 물어봐 주세요”라고 한다. 먼저 같은 agent의 전체 Manual을 읽고 변경 지점과 보존할 제한을 확인한다.
+
+```mcp-call
+{"tool":"get_manual","arguments":{"agent_id":"11111111-1111-4111-8111-111111111111","manual_id":"22222222-2222-4222-8222-222222222222"}}
 ```
 
-```json
-{"tool":"save_manual","arguments":{"mode":"update","agent_id":"<agent-id>","manual_id":"<manual-id>","payload":{"expected_head_revision":13,"config":{"tool_call_sound":null}}}}
+Manual 본문 저장은 전체 본문 교체다. 아래 `content`에는 변경 문장뿐 아니라 가격·예약 확정 제한, 요약과 정정 흐름을 포함한 **전체 새 본문**을 보낸다. `expected_head_revision`은 방금 조회한 Manual의 현재 revision으로 교체한다.
+
+```mcp-call
+{"tool":"save_manual","arguments":{"mode":"update","agent_id":"11111111-1111-4111-8111-111111111111","manual_id":"22222222-2222-4222-8222-222222222222","payload":{"expected_head_revision":8,"content":"목표: 서비스 문의를 정확히 접수하고 담당자가 이어서 확인할 수 있도록 요약한다.\n\n진행: 1) 원하는 서비스 종류를 묻는다. 2) 가능한 날짜 범위를 묻는다. 3) 고객이 원하는 업무 범위를 파악한 다음 위치와 주소를 한 번만 확인한다. 이미 주소를 들었다면 반복 질문하지 않는다. 4) 접수 내용을 요약하고 빠진 점이나 정정이 있는지 묻는다.\n\n제한: 연결된 가격표와 예약 확인 기능이 없다. 확정 가격, 방문 시각, 예약 완료를 말하지 않는다. 확인이 필요한 질문은 추측하지 말고 담당자 확인이 필요하다고 설명한다.\n\n마무리: 접수된 내용을 요약하고 담당자가 확인할 다음 단계를 안내한다. 고객이 정정하면 요약을 갱신한다."}}}
 ```
 
-마지막 revision도 직전 조회에서 얻은 값으로 바꾼다. `config.tool_call_sound=null`은 허용된 옵션을 끄는 예시이며 content를 null로 지우라는 뜻이 아니다. Manual `content`를 바꾸면 전체 본문을 보내고, 파생 `tool_ids`·`linked_manual_ids`·`manualIds`를 save payload에 넣지 않는다. Agent 설정을 수정할 때는 `save_agent(mode=update)` payload에도 현재 `expected_head_revision`을 포함하고, `data.manuals`를 보낼 경우 현재 UUID-keyed 값을 보존한다.
+`get_manual(agent_id, manual_id)`로 다시 읽어 주소 규칙이 한 번만 반영되고 다른 제한이 남았는지 확인한다. `409`이면 최신 본문을 다시 읽고 의도를 재적용한다. 쓰기 응답이 불명이면 중복 update를 보내지 말고 알려진 ID를 재조회한다.
 
-409 revision conflict가 나오면 현재 agent와 Manual을 다시 읽어 사용자의 의도를 다시 적용한다. 저장 응답이 unknown이거나 재조회가 실패하면 같은 쓰기를 자동 재실행하거나 새 리소스를 만들지 않고 지원되는 조회로 상태를 확인한다.
+## 3. Customer direct test: 고객이 직접 말해 보고 피드백
 
-## 나머지 업무: 구체 schema는 연결 도구에서 읽는다
+Assistant는 고객이 확인할 사례와 기대 동작을 준비한다. 예를 들어 고객은 “이번 주 금요일에 에어컨 청소 가능해요? 가격도 알려주세요”라고 말해 본다. 기대 동작은 서비스 종류와 날짜 범위를 접수하고, 연결되지 않은 가격·예약 확정을 약속하지 않는 것이다. 두 번째 사례에서는 고객이 먼저 주소를 말하고 서비스 종류를 바꾼다. 기대 동작은 주소를 되묻지 않고 새 서비스 범위를 반영하는 것이다.
 
-| 업무 | 대표 도구 흐름 | 재개/검증 |
-| --- | --- | --- |
-| 인바운드 | list_numbers/get_number → set_number_agents → get_number | 실제 수신 통화의 callId 확인 |
-| 번호 신청 | list_available_numbers/구분에 맞는 request 도구 → 번호/신청 조회 | 접수/심사/확보/연결 분리 |
-| 단건 발신 | get_agent/get_number → place_call → get_call | 불명 결과는 새 키로 재발신 금지 |
-| 캠페인 | launch_campaign → get_campaign; pause/resume/cancel 별도 | 대상별 상태; 중지 의미는 실제 계약 |
-| SMS | send_sms/send_sms_batch → get_sms/get_sms_batch | 접수와 전달 상태 분리 |
-| 위젯/채팅 | get_widget → save_widget → 별도 publish_widget; create_chat/create_chat_message/get_chat | 설정·게시·대화 성공 분리 |
+고객은 기존 vox.ai 제품 UI에서 음성 시험을 직접 실행한다. 이 번들의 현재 구현 MCP 도구는 시험 세션을 시작하거나 통화 결과를 조회하지 않는다. 고객이 “두 번째 사례에서 주소를 다시 물었어요”라고 보고하면 이를 **고객이 보고한 시험 피드백**으로 기록하고, 독립 확인된 call 증거라고 부르지 않는다. call reference가 있더라도 실제 호스트가 조회 도구를 제공하지 않으면 도구가 있는 척하지 않는다.
 
-예제를 변경할 때 해당 도구의 실제 입력 스키마로 검증한다.
+피드백이 Manual 분기 수정으로 이어지면 위 refine 흐름으로 좁게 바꾸고 저장값을 재조회한다. 전달에는 고객이 다시 말할 문장과 기대 결과를 적는다. 실제 재시험 전에는 “저장 확인·고객 재시험 대기”로 상태를 표현한다.
+
+## 4. Operate: 실제 운영과 개선 근거 구분
+
+고객이 “오늘부터 실제 문의를 받아도 될까요?”라고 묻는다. `get_agent`와 `get_manual`은 설정을 확인하는 선택적 조회다. 현재 구현 도구에는 번호 연결, 게시·활성화, 실전화·캠페인 발신, call history 조회가 없다. 저장된 설정만 보고 운영 가능하다고 판정하거나 MCP로 실제 전화를 실행했다고 말하지 않는다.
+
+고객이 제품 UI에서 권한·연결 상태를 확인하고 실제 운영을 진행한다. 이후 고객이 “오늘 접수는 괜찮았지만 주소를 중복 질문했다”고 알려주면, 그 내용을 고객 보고로 분류하고 수정 가설·확인 사례를 제안한다. 실제 통화 원문이나 결과가 필요하면 고객이 접근 가능한 근거를 제공하도록 안내한다. 조회가 되지 않은 운영 결과는 관측된 call 통계로 표현하지 않는다.
+
+## 5. Resume: 부분 성공을 보존하고 다른 세션에서도 안전하게 이어가기
+
+### Manual 생성 응답이 불명인 경우
+
+agent 생성은 성공해 실제 `agent_id`를 받았지만 Manual 생성 응답이 사라졌다고 하자. 새 Manual을 즉시 만들지 않는다. 같은 `agent_id`에서 목록을 확인한다.
+
+```mcp-call
+{"tool":"list_manuals","arguments":{"agent_id":"11111111-1111-4111-8111-111111111111"}}
+```
+
+Manual 이름이 맞는 항목이 하나여도 기존 리소스와 이번 create 요청을 구분할 수는 없다. 후보의 실제 `manual_id`로 전체 본문과 revision을 읽어 의도한 내용인지 대조한다. 일치하면 그 리소스를 현재 대상으로 이어갈 수 있지만, exact receipt나 별도 증거가 없으면 불명 쓰기의 성공이라고 보고하지 않는다. 없거나 여러 후보가 있거나 내용이 다르면 상태 불명으로 남기고 create를 반복하지 않는다.
+
+### 다른 Thread나 호스트에서 다시 시작하는 경우
+
+현재 snapshot에는 공유 improvement case 도구가 없다. 새 Thread나 다른 호스트에서 이어갈 때 호스트가 `get_work_context`, `get_work_record`, `save_work_record`, `get_work_operation`을 실제 도구 목록과 schema에 제공하는지 먼저 확인한다. 제공되면 그 schema와 [capability 표](workflow-capabilities.json)를 따라 기존 case·결정·근거를 읽고 갱신한다. 제공되지 않을 때만 원래 대화가 자동으로 이어진다고 가정하지 않고, 고객이 아래 최소 handoff를 제공하도록 한다.
+
+```text
+목표: 샘플 홈케어 문의 접수 Manual 완성
+agent_id: <실제 ID>
+manual_id: <실제 ID>
+마지막으로 확인한 agent/manual revision: <실제 값>
+직접 표현한 결정: 업무 범위 파악 후 주소를 한 번만 묻기
+시험 피드백: 고객 보고 — 주소를 다시 물었음; call 증거는 미확인
+다음 행동: 최신 Manual을 다시 읽고 규칙을 좁게 수정한 뒤 고객에게 재시험 사례 전달
+```
+
+이 fallback 요약은 사용자 제공 handoff이며 서버에 공유 기억으로 저장된 것이 아니다. shared-work 도구 경로를 사용할 때는 MCP가 반환한 case/record ID와 revision을 확인한다. 어느 경로든 재개할 때는 [resume-agent-work](../skills/resume-agent-work/SKILL.md)의 동일 ID·최신 상태 확인 원칙을 적용한다.

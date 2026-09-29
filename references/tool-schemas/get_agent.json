@@ -1,0 +1,25 @@
+{
+  "name": "get_agent",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "agent_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Agent UUID returned as `agent_id`.",
+        "title": "Agent Id"
+      },
+      "version": {
+        "type": "string",
+        "pattern": "^(current|production|v[1-9][0-9]*)$",
+        "description": "조회할 버전 selector. \"current\" (default) · \"production\" · \"v{n}\".",
+        "default": "current",
+        "title": "Version"
+      }
+    },
+    "required": [
+      "agent_id"
+    ],
+    "additionalProperties": false
+  }
+}

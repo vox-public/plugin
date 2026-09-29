@@ -1,0 +1,2076 @@
+{
+  "name": "save_agent",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "mode": {
+        "enum": [
+          "create",
+          "update"
+        ]
+      },
+      "payload": {
+        "type": "object"
+      },
+      "agent_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Agent UUID returned as `agent_id`.",
+        "title": "Agent Id"
+      }
+    },
+    "required": [
+      "mode",
+      "payload"
+    ],
+    "additionalProperties": false,
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "const": "create"
+          },
+          "payload": {
+            "$ref": "#/$defs/CreateAgentRequest"
+          }
+        },
+        "required": [
+          "mode",
+          "payload"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "agent_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Agent UUID returned as `agent_id`.",
+            "title": "Agent Id"
+          },
+          "mode": {
+            "const": "update"
+          },
+          "payload": {
+            "$ref": "#/$defs/UpdateAgentRequest"
+          }
+        },
+        "required": [
+          "agent_id",
+          "mode",
+          "payload"
+        ],
+        "additionalProperties": false
+      }
+    ],
+    "$defs": {
+      "CreateAgentRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name",
+            "description": "Agent display name shown in dashboards and list responses."
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/AgentDataCreate"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Agent configuration payload. Shape is published as `agent-schema/agent-data-create`. Missing or partial data is merged with server defaults before the agent is stored."
+          },
+          "folder_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Folder Id",
+            "description": "Optional folder to create the agent in. Omit (or null) to create at the organization root."
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "CreateAgentRequest",
+        "description": "에이전트 생성 요청.\n\nsingle_prompt 는 name만 필수이고 data 미전달 또는 부분 전달 시 서버\n기본값으로 채운다. flow 에이전트는 graph 를 `flow` 필드(`{nodes, edges}`)\n로 작성하며 — deprecated `flow_data` 는 호환용 — graph 미전달 시 서버\n기본 그래프(begin→conversation→endCall) 로 채운다.",
+        "additionalProperties": false
+      },
+      "AgentDataCreate": {
+        "properties": {
+          "prompt": {
+            "$ref": "#/$defs/AgentPrompt",
+            "description": "Agent prompt settings."
+          },
+          "stt": {
+            "$ref": "#/$defs/AgentSTT",
+            "description": "Speech-to-text settings."
+          },
+          "llm": {
+            "$ref": "#/$defs/AgentLLM",
+            "description": "Large language model settings."
+          },
+          "voice": {
+            "$ref": "#/$defs/AgentVoice",
+            "description": "Text-to-speech voice settings."
+          },
+          "speech": {
+            "$ref": "#/$defs/AgentSpeech",
+            "description": "Agent speech behavior settings."
+          },
+          "callSettings": {
+            "$ref": "#/$defs/AgentCallSettings",
+            "description": "Agent call behavior settings. Kept camelCase for compatibility."
+          },
+          "chatSettings": {
+            "$ref": "#/$defs/AgentChatSettings",
+            "description": "Native Chat session lifecycle settings. Kept camelCase for compatibility."
+          },
+          "postCall": {
+            "$ref": "#/$defs/AgentPostCall",
+            "description": "Post-call extraction and action settings. Kept camelCase."
+          },
+          "security": {
+            "$ref": "#/$defs/AgentSecurity",
+            "description": "Agent security and privacy settings."
+          },
+          "memory": {
+            "$ref": "#/$defs/AgentMemory",
+            "description": "Agent customer-memory settings."
+          },
+          "webhookSettings": {
+            "$ref": "#/$defs/AgentWebhookSettings",
+            "description": "Agent webhook settings. Kept camelCase for compatibility."
+          },
+          "knowledge": {
+            "$ref": "#/$defs/AgentKnowledge",
+            "description": "Agent knowledge-base settings."
+          },
+          "takeoverTranscription": {
+            "type": "boolean",
+            "title": "Takeovertranscription",
+            "description": "Enables real-time captions and durable transcription for the recorded human takeover segment. Set to false to opt out. Defaults to true.",
+            "default": true
+          },
+          "presetDynamicVariables": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Preset dynamic variables",
+            "description": "Preset dynamic variables available to the agent."
+          },
+          "toolIds": {
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "type": "array",
+            "title": "Tool IDs",
+            "description": "Custom tool UUIDs returned by `GET /v3/tools` and connected to the agent."
+          },
+          "builtInTools": {
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/EndCallTool"
+                },
+                {
+                  "$ref": "#/$defs/TransferCallTool"
+                },
+                {
+                  "$ref": "#/$defs/TransferAgentTool"
+                },
+                {
+                  "$ref": "#/$defs/SendSmsTool"
+                },
+                {
+                  "$ref": "#/$defs/SendDtmfTool"
+                },
+                {
+                  "$ref": "#/$defs/SearchAddressTool"
+                },
+                {
+                  "$ref": "#/$defs/SkillTool-Input"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Built-in tools",
+            "description": "Built-in tools connected to the agent."
+          },
+          "manuals": {
+            "additionalProperties": {
+              "$ref": "#/$defs/PublicManualValue-Input"
+            },
+            "type": "object",
+            "title": "Manuals",
+            "description": "Agent-owned manual values keyed by canonical manual UUID."
+          }
+        },
+        "type": "object",
+        "title": "AgentDataCreate",
+        "description": "Agent configuration accepted by create-agent requests.\n\nOmitted sub-schemas are filled from server defaults. Send complete\nsub-schemas when overriding defaults.",
+        "additionalProperties": false
+      },
+      "AgentPrompt": {
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "title": "Prompt",
+            "description": "System prompt for the agent.",
+            "default": ""
+          },
+          "firstLine": {
+            "type": "string",
+            "title": "Firstline",
+            "description": "Static first line spoken when `firstLineType=aiFirstStatic`.",
+            "default": ""
+          },
+          "firstLineType": {
+            "type": "string",
+            "enum": [
+              "userFirst",
+              "aiFirstDynamic",
+              "aiFirstStatic"
+            ],
+            "title": "Firstlinetype",
+            "description": "First-turn mode for single-prompt agents. `userFirst` waits for the user, `aiFirstDynamic` lets the agent generate the first line, and `aiFirstStatic` speaks `firstLine`.",
+            "default": "aiFirstDynamic"
+          },
+          "pauseBeforeSpeakingSeconds": {
+            "type": "number",
+            "maximum": 5.0,
+            "minimum": 0.0,
+            "title": "Pausebeforespeakingseconds",
+            "default": 0.0,
+            "description": "Delay in seconds before the agent speaks first."
+          },
+          "isFirstMessageInterruptible": {
+            "type": "boolean",
+            "title": "Isfirstmessageinterruptible",
+            "default": true,
+            "description": "Whether the user may interrupt the first agent message."
+          }
+        },
+        "type": "object",
+        "title": "AgentPrompt",
+        "description": "Registry: voxai://agent-schema/prompt/v1",
+        "additionalProperties": false
+      },
+      "AgentSTT": {
+        "properties": {
+          "languages": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Languages",
+            "description": "Speech recognition language codes. Use base ISO 639-1 codes such as 'ko', 'en', or 'ja'. Region tags such as 'ko-KR' are accepted for compatibility and normalized to their base code before storage."
+          },
+          "speed": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Speed",
+            "default": "high",
+            "description": "Voice speed or speech-to-text speed setting. For voices, use `GET /v3/models/voices` capabilities as the allowed range."
+          }
+        },
+        "type": "object",
+        "title": "AgentSTT",
+        "description": "Registry: voxai://agent-schema/stt/v2",
+        "additionalProperties": false
+      },
+      "AgentLLM": {
+        "properties": {
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "LLM model identifier. Use a `model` value returned by `GET /v3/models/llms`."
+          },
+          "temperature": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 2.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature",
+            "description": "Model or voice sampling temperature. Use `GET /v3/models/llms` or `GET /v3/models/voices` capabilities as the allowed range."
+          }
+        },
+        "type": "object",
+        "required": [
+          "model"
+        ],
+        "title": "AgentLLM",
+        "description": "Registry: voxai://agent-schema/llm/v2",
+        "additionalProperties": false
+      },
+      "AgentVoice": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Voice ID. Use an `id` returned by `GET /v3/models/voices`."
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "description": "TTS provider returned by `GET /v3/models/voices`."
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model",
+            "description": "TTS model override. In PATCH, null clears the override; omission preserves the stored model."
+          },
+          "speed": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Speed",
+            "description": "Voice speed. Per-voice min/max ranges are returned by `GET /v3/models/voices` in `capabilities.speed`.",
+            "default": 1.0
+          },
+          "volume": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume",
+            "default": 1.0,
+            "description": "Voice playback volume."
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language",
+            "description": "Language code or locale supported by the provider."
+          },
+          "temperature": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature",
+            "description": "Voice temperature. Per-voice min/max ranges are returned by `GET /v3/models/voices` in `capabilities.temperature`; out-of-range values are rejected.",
+            "default": 0.9
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "provider"
+        ],
+        "title": "AgentVoice",
+        "description": "Registry: voxai://agent-schema/voice/v1",
+        "additionalProperties": false
+      },
+      "AgentSpeech": {
+        "properties": {
+          "responsiveness": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Responsiveness",
+            "default": 1.0,
+            "description": "How quickly the agent should respond after user speech."
+          },
+          "boostedKeywords": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Boostedkeywords",
+            "description": "Words or phrases to bias speech recognition toward."
+          }
+        },
+        "type": "object",
+        "title": "AgentSpeech",
+        "description": "Registry: voxai://agent-schema/speech/v1 (v3 공개 2 필드).",
+        "additionalProperties": false
+      },
+      "AgentCallSettings": {
+        "properties": {
+          "backgroundMusic": {
+            "type": "string",
+            "enum": [
+              "none",
+              "cafe",
+              "office",
+              "call_center",
+              "library",
+              "dial_tone"
+            ],
+            "title": "Backgroundmusic",
+            "default": "none",
+            "description": "Background music preset for calls, or null when disabled."
+          },
+          "backgroundMusicVolume": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Backgroundmusicvolume",
+            "default": 0.5,
+            "description": "Background music volume."
+          },
+          "noiseCancellation": {
+            "type": "string",
+            "enum": [
+              "none",
+              "nc",
+              "bvc"
+            ],
+            "title": "Noisecancellation",
+            "default": "bvc",
+            "description": "Noise cancellation setting for calls."
+          },
+          "activationThreshold": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Activationthreshold",
+            "default": 0.55,
+            "description": "Audio activation threshold used to detect speech."
+          },
+          "callTimeoutInSeconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calltimeoutinseconds",
+            "default": 900,
+            "description": "Maximum call duration in seconds before timeout handling."
+          },
+          "silenceCallTimeoutInSeconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Silencecalltimeoutinseconds",
+            "default": 30,
+            "description": "Maximum silence duration in seconds before timeout handling."
+          },
+          "ringDurationInSeconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ringdurationinseconds",
+            "default": 30,
+            "description": "Maximum ringing duration in seconds before the call is considered unanswered."
+          },
+          "dtmfInterruptible": {
+            "type": "boolean",
+            "title": "Dtmfinterruptible",
+            "default": false,
+            "description": "Whether the first accepted digit of a DTMF batch may immediately interrupt current agent speech. Digit batching and reply admission remain unchanged."
+          },
+          "dtmfTerminationEnabled": {
+            "type": "boolean",
+            "title": "Dtmfterminationenabled",
+            "default": false,
+            "description": "Whether DTMF keypress termination is enabled."
+          },
+          "dtmfTerminationKey": {
+            "type": "string",
+            "enum": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7",
+              "8",
+              "9",
+              "#",
+              "*"
+            ],
+            "title": "Dtmfterminationkey",
+            "default": "#",
+            "description": "DTMF key that terminates the call when DTMF termination is enabled."
+          },
+          "dtmfTimeoutSeconds": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Dtmftimeoutseconds",
+            "default": 3,
+            "description": "Seconds to wait for DTMF input before timeout handling."
+          },
+          "callScreening": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/AgentCallScreening"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Response configuration used when an outbound call screener is detected."
+          }
+        },
+        "type": "object",
+        "title": "AgentCallSettings",
+        "description": "Registry: voxai://agent-schema/call-settings/v1.",
+        "additionalProperties": false
+      },
+      "AgentCallScreening": {
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "promptType": {
+                  "const": "static"
+                }
+              },
+              "required": [
+                "promptType"
+              ]
+            },
+            "then": {
+              "properties": {
+                "staticSentence": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": [
+                "staticSentence"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "promptType": {
+                  "const": "dynamic"
+                }
+              },
+              "required": [
+                "promptType"
+              ]
+            },
+            "then": {
+              "properties": {
+                "prompt": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": [
+                "prompt"
+              ]
+            }
+          }
+        ],
+        "properties": {
+          "promptType": {
+            "type": "string",
+            "enum": [
+              "static",
+              "dynamic"
+            ],
+            "title": "Prompttype"
+          },
+          "staticSentence": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 300
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Staticsentence"
+          },
+          "prompt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt",
+            "description": "Agent prompt settings."
+          },
+          "endCallAfterResponse": {
+            "type": "boolean",
+            "title": "Endcallafterresponse",
+            "description": "End the call after the configured screening response finishes playing.",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "promptType"
+        ],
+        "title": "AgentCallScreening",
+        "description": "Registry: voxai://agent-schema/call-screening/v1."
+      },
+      "AgentChatSettings": {
+        "properties": {
+          "silenceChatTimeoutInSeconds": {
+            "type": "integer",
+            "maximum": 172800.0,
+            "minimum": 120.0,
+            "title": "Silencechattimeoutinseconds",
+            "default": 3600,
+            "description": "Chat inactivity duration in seconds before the session ends."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "AgentChatSettings",
+        "description": "Native Chat lifecycle settings stored in Agent data."
+      },
+      "AgentPostCall": {
+        "properties": {
+          "actions": {
+            "items": {
+              "$ref": "#/$defs/PostCallAction"
+            },
+            "type": "array",
+            "title": "Actions",
+            "description": "Post-call actions or extraction fields."
+          }
+        },
+        "type": "object",
+        "title": "AgentPostCall",
+        "description": "Registry: voxai://agent-schema/post-call/v1",
+        "additionalProperties": false
+      },
+      "PostCallAction": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Human-readable resource name."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "enum",
+              "boolean",
+              "number"
+            ],
+            "title": "Type",
+            "description": "Resource or configuration type."
+          },
+          "isNullable": {
+            "type": "boolean",
+            "title": "Isnullable",
+            "default": false,
+            "description": "Whether this extracted field may be null."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Human-readable description."
+          },
+          "enumOptions": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enumoptions",
+            "description": "Allowed enum options for this extracted field."
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "type"
+        ],
+        "title": "PostCallAction",
+        "description": "Registry: voxai://agent-schema/post-call/v1 action item.",
+        "additionalProperties": false
+      },
+      "AgentSecurity": {
+        "properties": {
+          "optOutSensitiveDataStorage": {
+            "type": "boolean",
+            "title": "Optoutsensitivedatastorage",
+            "default": false,
+            "description": "Whether transcripts, recordings, and analysis outputs should avoid sensitive data storage."
+          },
+          "dataRetention": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/AgentDataRetention"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "piiMasking": {
+            "$ref": "#/$defs/PiiMasking"
+          }
+        },
+        "type": "object",
+        "title": "AgentSecurity",
+        "description": "Registry: voxai://agent-schema/security/v1.",
+        "additionalProperties": false
+      },
+      "AgentDataRetention": {
+        "properties": {
+          "durationSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 315576000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Durationseconds",
+            "description": "null keeps data indefinitely, 0 deletes it immediately, and a positive value retains it for that many seconds after completion."
+          },
+          "retainedDataTypes": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "recording",
+                "transcript",
+                "postCallAnalysis"
+              ]
+            },
+            "type": "array",
+            "title": "Retaineddatatypes",
+            "description": "Artifact types retained during the configured period."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "AgentDataRetention",
+        "description": "Artifact-retention policy for call and chat data."
+      },
+      "PiiMasking": {
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled",
+            "description": "Master switch for replacing detected PII with numbered category placeholders in post-call artifacts, including transcripts, summaries, and extracted data.",
+            "default": false
+          },
+          "name": {
+            "type": "boolean",
+            "title": "Name",
+            "description": "Replaces person names with numbered placeholders such as [이름 1].",
+            "default": false
+          },
+          "phone": {
+            "type": "boolean",
+            "title": "Phone",
+            "description": "Replaces phone numbers with numbered placeholders such as [전화번호 1], excluding organization-owned numbers.",
+            "default": false
+          },
+          "birthDate": {
+            "type": "boolean",
+            "title": "Birthdate",
+            "description": "Replaces birth dates with numbered placeholders such as [생년월일 1].",
+            "default": false
+          },
+          "address": {
+            "type": "boolean",
+            "title": "Address",
+            "description": "Replaces addresses with numbered placeholders such as [주소 1].",
+            "default": false
+          },
+          "email": {
+            "type": "boolean",
+            "title": "Email",
+            "description": "Replaces email addresses with numbered placeholders such as [이메일 1].",
+            "default": false
+          },
+          "residentId": {
+            "type": "boolean",
+            "title": "Residentid",
+            "description": "Replaces Korean resident registration numbers with numbered placeholders such as [주민등록번호 1].",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "PiiMasking",
+        "description": "PII categories masked in post-call artifacts.",
+        "additionalProperties": false
+      },
+      "AgentMemory": {
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled",
+            "default": false,
+            "description": "Whether this configuration is enabled."
+          }
+        },
+        "type": "object",
+        "title": "AgentMemory",
+        "description": "Registry: voxai://agent-schema/memory/v1 (1 field).",
+        "additionalProperties": false
+      },
+      "AgentWebhookSettings": {
+        "properties": {
+          "callDataWebhookUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calldatawebhookurl",
+            "description": "HTTPS webhook URL. Dynamic path values allow only ASCII letters, digits, `_`, and `-`; arbitrary strings belong in query values."
+          },
+          "inboundCallWebhookUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inboundcallwebhookurl",
+            "description": "Static HTTPS inbound-call webhook URL. Dynamic variables are not supported."
+          },
+          "webhookVersion": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "v1",
+                  "v2"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Webhookversion"
+          },
+          "inboundCallWebhookSigningEnabled": {
+            "type": "boolean",
+            "title": "Inboundcallwebhooksigningenabled",
+            "description": "Opt-in HMAC-SHA256 signing for inbound call webhook requests. When true, requests are signed with the organization webhook key and carry X-Webhook-Signature / X-Webhook-Timestamp headers (same format as organization webhooks). Omit or send false for the legacy unsigned behavior; null is rejected.",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "AgentWebhookSettings",
+        "description": "Registry: voxai://agent-schema/webhook-settings/v1",
+        "additionalProperties": false
+      },
+      "AgentKnowledge": {
+        "properties": {
+          "ragEnabled": {
+            "type": "boolean",
+            "title": "Ragenabled",
+            "default": false,
+            "description": "Whether retrieval-augmented generation is enabled for this agent."
+          },
+          "knowledgeIds": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Knowledgeids",
+            "description": "Numeric public knowledge IDs returned by `GET /v3/knowledges` and connected to this agent."
+          }
+        },
+        "type": "object",
+        "title": "AgentKnowledge",
+        "description": "Agent knowledge-base settings.",
+        "additionalProperties": false
+      },
+      "EndCallTool": {
+        "properties": {
+          "speakDuringExecution": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/app__dto__builtin_tool__SpeakDuringExecution"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Speech messages played while the tool executes."
+          },
+          "allowInterruptionDuringExecution": {
+            "type": "boolean",
+            "title": "Allowinterruptionduringexecution",
+            "description": "Whether the user may interrupt speech while the tool executes.",
+            "default": false
+          },
+          "responseMode": {
+            "type": "string",
+            "enum": [
+              "wait",
+              "fire_and_forget"
+            ],
+            "title": "Responsemode",
+            "description": "`wait` blocks on tool completion. `fire_and_forget` starts the tool and lets the conversation continue.",
+            "default": "wait"
+          },
+          "toolType": {
+            "type": "string",
+            "const": "end_call",
+            "title": "Tool type",
+            "description": "Built-in tool type."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "default": "end_call",
+            "description": "Human-readable resource name."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Human-readable description."
+          }
+        },
+        "type": "object",
+        "required": [
+          "toolType"
+        ],
+        "title": "EndCallTool",
+        "additionalProperties": false
+      },
+      "app__dto__builtin_tool__SpeakDuringExecution": {
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled",
+            "default": false,
+            "description": "Whether this configuration is enabled."
+          },
+          "messages": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Messages",
+            "description": "Messages played while the tool is executing."
+          }
+        },
+        "type": "object",
+        "title": "SpeakDuringExecution",
+        "description": "Speech messages played while a tool executes.",
+        "additionalProperties": false
+      },
+      "TransferCallTool": {
+        "properties": {
+          "speakDuringExecution": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/app__dto__builtin_tool__SpeakDuringExecution"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Speech messages played while the tool executes."
+          },
+          "allowInterruptionDuringExecution": {
+            "type": "boolean",
+            "title": "Allowinterruptionduringexecution",
+            "description": "Whether the user may interrupt speech while the tool executes.",
+            "default": false
+          },
+          "responseMode": {
+            "type": "string",
+            "enum": [
+              "wait",
+              "fire_and_forget"
+            ],
+            "title": "Responsemode",
+            "description": "`wait` blocks on tool completion. `fire_and_forget` starts the tool and lets the conversation continue.",
+            "default": "wait"
+          },
+          "toolType": {
+            "type": "string",
+            "const": "transfer_call",
+            "title": "Tool type",
+            "description": "Built-in tool type."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Human-readable resource name."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Human-readable description."
+          },
+          "transferConfigurations": {
+            "items": {
+              "$ref": "#/$defs/TransferConfig"
+            },
+            "type": "array",
+            "title": "Transfer configurations",
+            "description": "Transfer destinations. The v3 API returns `transferConfigurations`; runtime/web singular `transferConfiguration` is accepted on input."
+          },
+          "transferType": {
+            "type": "string",
+            "enum": [
+              "cold",
+              "warm"
+            ],
+            "title": "Transfertype",
+            "description": "Call transfer mode: `cold` removes the agent as soon as the call is transferred and does not brief the operator; `warm` puts the customer on hold, briefs the operator with a conversation summary or static sentence, and then connects them. If the operator does not answer within 30 seconds, the agent resumes handling the customer.",
+            "default": "cold"
+          },
+          "transferMessageType": {
+            "type": "string",
+            "enum": [
+              "static",
+              "dynamic"
+            ],
+            "title": "Transfermessagetype",
+            "description": "Operator briefing mode for `warm` transfers: `static` reads `warmTransferStaticSentence` verbatim to the operator, while `dynamic` uses `warmTransferPrompt` as instructions for the LLM to generate a conversation summary. Ignored for `cold` transfers.",
+            "default": "static"
+          },
+          "warmTransferPrompt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warmtransferprompt",
+            "description": "Instructions for the LLM to generate a conversation summary for the operator during a `warm` transfer. Used only when `transferMessageType` is `dynamic`."
+          },
+          "warmTransferStaticSentence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warmtransferstaticsentence",
+            "description": "Sentence read verbatim to the operator during a `warm` transfer. Used only when `transferMessageType` is `static`."
+          },
+          "displayedCallerId": {
+            "type": "string",
+            "enum": [
+              "agent",
+              "user"
+            ],
+            "title": "Displayedcallerid",
+            "description": "Caller ID shown on the operator's phone for both `cold` and `warm` transfers. `agent` shows the vox agent's phone number; `user` shows the current customer's phone number.",
+            "default": "agent"
+          },
+          "sipHeaders": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/$defs/TransferCallSipHeader"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sipheaders"
+          }
+        },
+        "type": "object",
+        "required": [
+          "toolType",
+          "name"
+        ],
+        "title": "TransferCallTool",
+        "additionalProperties": false
+      },
+      "TransferConfig": {
+        "properties": {
+          "transferTo": {
+            "type": "string",
+            "title": "Transferto",
+            "description": "Phone number or SIP URI to transfer to. When `transferType` is `operator`, this is a display label shown to the operator, not a dialed destination."
+          },
+          "transferCondition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transfercondition",
+            "description": "Condition under which this transfer destination should be used."
+          },
+          "transferType": {
+            "type": "string",
+            "enum": [
+              "phone",
+              "sip",
+              "operator"
+            ],
+            "title": "Transfertype",
+            "description": "Destination type. Defaults to `phone`, matching agent-server runtime. `operator` routes to a live human operator via the takeover handoff control plane (warm-only; `transferTo` is a display label).",
+            "default": "phone"
+          }
+        },
+        "type": "object",
+        "required": [
+          "transferTo"
+        ],
+        "title": "TransferConfig",
+        "description": "Transfer destination for transfer_call.",
+        "additionalProperties": false
+      },
+      "TransferCallSipHeader": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 3,
+            "pattern": "^X-[A-Za-z0-9-]+$",
+            "title": "Name",
+            "description": "SIP header name. Must start with `X-`, be 3-128 characters, match `X-[A-Za-z0-9-]+`, and must not use reserved system headers."
+          },
+          "value": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Value",
+            "description": "SIP header value. Must be 1-256 characters and must not contain CR/LF or control characters other than TAB."
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "value"
+        ],
+        "title": "TransferCallSipHeader",
+        "description": "SIP header key-value pair for transfer_call.",
+        "additionalProperties": false
+      },
+      "TransferAgentTool": {
+        "properties": {
+          "speakDuringExecution": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/app__dto__builtin_tool__SpeakDuringExecution"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Speech messages played while the tool executes."
+          },
+          "allowInterruptionDuringExecution": {
+            "type": "boolean",
+            "title": "Allowinterruptionduringexecution",
+            "description": "Whether the user may interrupt speech while the tool executes.",
+            "default": false
+          },
+          "responseMode": {
+            "type": "string",
+            "enum": [
+              "wait",
+              "fire_and_forget"
+            ],
+            "title": "Responsemode",
+            "description": "`wait` blocks on tool completion. `fire_and_forget` starts the tool and lets the conversation continue.",
+            "default": "wait"
+          },
+          "toolType": {
+            "type": "string",
+            "const": "transfer_agent",
+            "title": "Tool type",
+            "description": "Built-in tool type."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Human-readable resource name."
+          },
+          "agent": {
+            "$ref": "#/$defs/AgentMapping",
+            "description": "Agent mapping object with `agent_id` and `agent_version`. Used by cross-resource references (calls / campaigns / telephone_numbers) and by `builtInTools.transfer_agent` / flow `transferAgent` node `data.agent` per v3 §2.7 AgentMapping."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Human-readable description."
+          },
+          "preserveChatContext": {
+            "type": "boolean",
+            "title": "Preservechatcontext",
+            "description": "Whether the target agent should receive prior conversation context.",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "toolType",
+          "name",
+          "agent"
+        ],
+        "title": "TransferAgentTool",
+        "description": "Built-in transfer_agent tool config.\n\nv3 §2.7 exposes the destination as a nested ``AgentMapping``. The same\nobject shape is used by flow transferAgent nodes and other v3 surfaces so\nclients can configure agent handoff consistently.",
+        "additionalProperties": false
+      },
+      "AgentMapping": {
+        "additionalProperties": false,
+        "description": "agent_id + agent_version 매핑.\n\n요청·응답 모두에서 에이전트 매핑이 필요한 경우 이 타입을 사용한다.\n요청 중 version 지정이 불필요한 엔드포인트는 flat `agent_id: UUID` 를 직접 받고,\n`AgentMapping` 을 쓰지 않는다.",
+        "properties": {
+          "agent_id": {
+            "description": "Agent UUID.",
+            "format": "uuid",
+            "title": "Agent Id",
+            "type": "string"
+          },
+          "agent_version": {
+            "default": "current",
+            "description": "에이전트 버전. 허용값: \"current\", \"production\", 또는 \"v{n}\" (n≥1). 미전송 시 \"current\"로 처리됩니다. null 전송은 거부.",
+            "title": "Agent Version",
+            "type": "string",
+            "pattern": "^(current|production|v[1-9][0-9]*)$",
+            "examples": [
+              "current",
+              "production",
+              "v1"
+            ]
+          }
+        },
+        "required": [
+          "agent_id"
+        ],
+        "title": "AgentMapping",
+        "type": "object"
+      },
+      "SendSmsTool": {
+        "properties": {
+          "speakDuringExecution": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/app__dto__builtin_tool__SpeakDuringExecution"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Speech messages played while the tool executes."
+          },
+          "allowInterruptionDuringExecution": {
+            "type": "boolean",
+            "title": "Allowinterruptionduringexecution",
+            "description": "Whether the user may interrupt speech while the tool executes.",
+            "default": false
+          },
+          "responseMode": {
+            "type": "string",
+            "enum": [
+              "wait",
+              "fire_and_forget"
+            ],
+            "title": "Responsemode",
+            "description": "`wait` blocks on the SMS send result. `fire_and_forget` dispatches the SMS request and lets the conversation continue.",
+            "default": "wait"
+          },
+          "toolType": {
+            "type": "string",
+            "const": "send_sms",
+            "title": "Tool type",
+            "description": "Built-in tool type."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Human-readable resource name."
+          },
+          "toolCallSound": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "typing",
+                  "elevator_1",
+                  "elevator_2",
+                  "elevator_3",
+                  "elevator_4"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Toolcallsound",
+            "description": "Sound played while the tool runs, so the line does not go silent. Omit or `none` to play nothing; `typing` or `elevator_1`..`elevator_4` to pick a preset."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Human-readable description."
+          },
+          "smsMessageType": {
+            "type": "string",
+            "enum": [
+              "static",
+              "dynamic"
+            ],
+            "title": "Smsmessagetype",
+            "description": "SMS content mode. `static` sends the configured title/body/image file keys. `dynamic` lets the agent generate the body from `smsMessagePrompt`.",
+            "default": "static"
+          },
+          "smsMessageStaticSentence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Smsmessagestaticsentence",
+            "description": "Static message body used when `smsMessageType=static`. Together with a title or image file keys, this is sent as LMS/MMS as applicable."
+          },
+          "smsMessageStaticTitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Smsmessagestatictitle",
+            "description": "Optional static message title used when `smsMessageType=static`. Omit or null to send without a title."
+          },
+          "smsMessageStaticImageFileKeys": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array",
+                "maxItems": 3
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Smsmessagestaticimagefilekeys",
+            "description": "Static MMS image attachment file keys. Values are opaque `file_key` strings returned by the file upload API. Provide up to 3 file keys; omit or null for text-only SMS/LMS."
+          },
+          "smsMessagePrompt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Smsmessageprompt",
+            "description": "Prompt used by the agent to generate the SMS body when `smsMessageType=dynamic`."
+          },
+          "smsFromNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Smsfromnumber",
+            "description": "Optional sender phone number override. It must be an SMS-send-capable number owned by the organization; omit or null to use the call context default."
+          }
+        },
+        "type": "object",
+        "required": [
+          "toolType",
+          "name"
+        ],
+        "title": "SendSmsTool",
+        "additionalProperties": false
+      },
+      "SendDtmfTool": {
+        "properties": {
+          "toolType": {
+            "type": "string",
+            "const": "send_dtmf",
+            "title": "Tool type",
+            "description": "Built-in tool type."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Human-readable resource name."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Human-readable description."
+          },
+          "speakDuringExecution": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/app__dto__builtin_tool__SpeakDuringExecution"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Speech messages played while the tool executes."
+          },
+          "responseMode": {
+            "type": "string",
+            "enum": [
+              "wait",
+              "fire_and_forget"
+            ],
+            "title": "Responsemode",
+            "description": "`wait` blocks on tool completion. `fire_and_forget` starts the tool and lets the conversation continue.",
+            "default": "wait"
+          },
+          "allowInterruption": {
+            "type": "boolean",
+            "title": "Allowinterruption",
+            "description": "Whether the user may interrupt speech while the DTMF tool executes. Runtime/web `allowInterruptionDuringExecution` is accepted on input.",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "toolType",
+          "name"
+        ],
+        "title": "SendDtmfTool",
+        "additionalProperties": false
+      },
+      "SearchAddressTool": {
+        "properties": {
+          "speakDuringExecution": {
+            "$ref": "#/$defs/app__dto__builtin_tool__SpeakDuringExecution",
+            "description": "도구 실행 중 사용자에게 재생할 TTS 메시지를 설정합니다."
+          },
+          "allowInterruptionDuringExecution": {
+            "type": "boolean",
+            "title": "Allowinterruptionduringexecution",
+            "description": "도구 실행 중 사용자의 발화 끼어들기를 허용할지 설정합니다.",
+            "default": false
+          },
+          "responseMode": {
+            "type": "string",
+            "enum": [
+              "wait",
+              "fire_and_forget"
+            ],
+            "title": "Responsemode",
+            "description": "`wait` blocks on tool completion. `fire_and_forget` starts the tool and lets the conversation continue.",
+            "default": "wait"
+          },
+          "toolType": {
+            "type": "string",
+            "const": "search_address",
+            "title": "Tool type",
+            "description": "Built-in tool type."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Human-readable resource name."
+          },
+          "toolCallSound": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "typing",
+                  "elevator_1",
+                  "elevator_2",
+                  "elevator_3",
+                  "elevator_4"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Toolcallsound",
+            "description": "Sound played while the tool runs, so the line does not go silent. Omit or `none` to play nothing; `typing` or `elevator_1`..`elevator_4` to pick a preset."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "도구의 역할과 호출 조건을 설명합니다. LLM이 이 설명을 바탕으로 도구 호출 여부를 판단합니다.",
+            "default": "Search Korean address candidates using OpenSearch and Kakao Local API. Use this when the caller provides Korean address clues such as region, road name and building number, jibun, or building/place name. The tool returns candidates, evidence, recommended_action, and timings; it does not confirm or commit the address."
+          }
+        },
+        "type": "object",
+        "required": [
+          "toolType",
+          "name"
+        ],
+        "title": "SearchAddressTool",
+        "additionalProperties": false
+      },
+      "SkillTool-Input": {
+        "properties": {
+          "speakDuringExecution": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/app__dto__builtin_tool__SpeakDuringExecution"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Speech messages played while the tool executes."
+          },
+          "allowInterruptionDuringExecution": {
+            "type": "boolean",
+            "title": "Allowinterruptionduringexecution",
+            "description": "Whether the user may interrupt speech while the tool executes.",
+            "default": false
+          },
+          "responseMode": {
+            "type": "string",
+            "enum": [
+              "wait",
+              "fire_and_forget"
+            ],
+            "title": "Responsemode",
+            "description": "`wait` blocks on tool completion. `fire_and_forget` starts the tool and lets the conversation continue.",
+            "default": "wait"
+          },
+          "toolType": {
+            "type": "string",
+            "const": "skill",
+            "title": "Tool type",
+            "description": "Built-in tool type."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Human-readable resource name."
+          },
+          "toolCallSound": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "typing",
+                  "elevator_1",
+                  "elevator_2",
+                  "elevator_3",
+                  "elevator_4"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Toolcallsound",
+            "description": "Sound played while the tool runs, so the line does not go silent. Omit or `none` to play nothing; `typing` or `elevator_1`..`elevator_4` to pick a preset."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Human-readable description."
+          },
+          "skill": {
+            "$ref": "#/$defs/SkillPayload",
+            "description": "Skill payload. The v3 API field is `skill`; it is stored as `skillPayload` when executing calls."
+          }
+        },
+        "type": "object",
+        "required": [
+          "toolType",
+          "name",
+          "skill"
+        ],
+        "title": "SkillTool",
+        "additionalProperties": false
+      },
+      "SkillPayload": {
+        "properties": {
+          "skills": {
+            "items": {
+              "$ref": "#/$defs/SkillItem"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Skills",
+            "description": "Skills available to this meta-tool. At least one skill is required."
+          },
+          "initSkillId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Initskillid",
+            "description": "Optional skill ID to start with before the LLM chooses another skill."
+          },
+          "initSkillName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Initskillname",
+            "description": "Optional skill name to start with before the LLM chooses another skill."
+          }
+        },
+        "type": "object",
+        "required": [
+          "skills"
+        ],
+        "title": "SkillPayload",
+        "description": "Skill 호출 payload.",
+        "additionalProperties": false
+      },
+      "SkillItem": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id",
+            "description": "Skill identifier unique within this tool."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Skill name exposed to the LLM."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "When the LLM should use this skill."
+          },
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "description": "Prompt or instruction content executed by this skill."
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "content"
+        ],
+        "title": "SkillItem",
+        "description": "Single skill definition inside a Skill built-in tool.",
+        "additionalProperties": false
+      },
+      "PublicManualValue-Input": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 128,
+            "title": "Name",
+            "description": "Human-readable resource name."
+          },
+          "trigger": {
+            "type": "string",
+            "title": "Trigger"
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 8096,
+            "title": "Content",
+            "description": "Text content for this flow node or message object."
+          },
+          "built_in_tools": {
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/EndCallTool"
+                },
+                {
+                  "$ref": "#/$defs/TransferCallTool"
+                },
+                {
+                  "$ref": "#/$defs/TransferAgentTool"
+                },
+                {
+                  "$ref": "#/$defs/SendSmsTool"
+                },
+                {
+                  "$ref": "#/$defs/SendDtmfTool"
+                },
+                {
+                  "$ref": "#/$defs/SearchAddressTool"
+                },
+                {
+                  "$ref": "#/$defs/SkillTool-Input"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Built In Tools"
+          },
+          "config": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "none",
+                    "typing",
+                    "elevator_1",
+                    "elevator_2",
+                    "elevator_3",
+                    "elevator_4"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "object",
+            "title": "Config"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "trigger",
+          "content"
+        ],
+        "title": "PublicManualValue",
+        "description": "One owned document; reuse the agent's canonical built-in tool union."
+      },
+      "UpdateAgentRequest": {
+        "properties": {
+          "expected_head_revision": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Expected Head Revision",
+            "description": "Current agent authoring revision."
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name",
+            "description": "New agent display name. Omit the field to keep the current name; `null` is rejected."
+          },
+          "data": {
+            "$ref": "#/$defs/AgentDataUpdate",
+            "description": "PATCH payload for agent configuration. Shape is published as `agent-schema/agent-data-update`. Omitted top-level sub-schemas are kept; sent sub-schemas are merged by the service according to the update schema."
+          }
+        },
+        "type": "object",
+        "minProperties": 1,
+        "required": [
+          "expected_head_revision"
+        ],
+        "title": "UpdateAgentRequest",
+        "description": "Agent patch request.\n\n- Send at least one field.\n- Omit fields to keep existing values.\n- `type` is create-time only.\n- Send `flow` to replace a flow agent's graph; `flow_data` is the deprecated\n  builder-shape equivalent kept for compatibility.",
+        "anyOf": [
+          {
+            "required": [
+              "name"
+            ]
+          },
+          {
+            "required": [
+              "data"
+            ]
+          }
+        ],
+        "additionalProperties": false
+      },
+      "AgentDataUpdate": {
+        "properties": {
+          "prompt": {
+            "$ref": "#/$defs/AgentPrompt",
+            "description": "Agent prompt settings."
+          },
+          "stt": {
+            "$ref": "#/$defs/AgentSTT",
+            "description": "Speech-to-text settings."
+          },
+          "llm": {
+            "$ref": "#/$defs/AgentLLM",
+            "description": "Large language model settings."
+          },
+          "voice": {
+            "$ref": "#/$defs/AgentVoice",
+            "description": "Text-to-speech voice settings."
+          },
+          "speech": {
+            "$ref": "#/$defs/AgentSpeech",
+            "description": "Agent speech behavior settings."
+          },
+          "callSettings": {
+            "$ref": "#/$defs/AgentCallSettings",
+            "description": "Agent call behavior settings. Kept camelCase for compatibility."
+          },
+          "chatSettings": {
+            "$ref": "#/$defs/AgentChatSettings",
+            "description": "Native Chat session lifecycle settings. Kept camelCase for compatibility."
+          },
+          "postCall": {
+            "$ref": "#/$defs/AgentPostCall",
+            "description": "Post-call extraction and action settings. Kept camelCase."
+          },
+          "security": {
+            "$ref": "#/$defs/AgentSecurity",
+            "description": "Agent security and privacy settings."
+          },
+          "memory": {
+            "$ref": "#/$defs/AgentMemory",
+            "description": "Agent customer-memory settings."
+          },
+          "webhookSettings": {
+            "$ref": "#/$defs/AgentWebhookSettings",
+            "description": "Agent webhook settings. Kept camelCase for compatibility."
+          },
+          "knowledge": {
+            "$ref": "#/$defs/AgentKnowledge",
+            "description": "Agent knowledge-base settings."
+          },
+          "takeoverTranscription": {
+            "type": "boolean",
+            "title": "Takeovertranscription",
+            "description": "Enables real-time captions and durable transcription for the recorded human takeover segment. Set to false to opt out. Defaults to true.",
+            "default": true
+          },
+          "presetDynamicVariables": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Preset dynamic variables",
+            "description": "Preset dynamic variables available to the agent."
+          },
+          "toolIds": {
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "type": "array",
+            "title": "Tool IDs",
+            "description": "Custom tool UUIDs returned by `GET /v3/tools` and connected to the agent."
+          },
+          "builtInTools": {
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/EndCallTool"
+                },
+                {
+                  "$ref": "#/$defs/TransferCallTool"
+                },
+                {
+                  "$ref": "#/$defs/TransferAgentTool"
+                },
+                {
+                  "$ref": "#/$defs/SendSmsTool"
+                },
+                {
+                  "$ref": "#/$defs/SendDtmfTool"
+                },
+                {
+                  "$ref": "#/$defs/SearchAddressTool"
+                },
+                {
+                  "$ref": "#/$defs/SkillTool-Input"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Built-in tools",
+            "description": "Built-in tools connected to the agent."
+          },
+          "manuals": {
+            "additionalProperties": {
+              "$ref": "#/$defs/PublicManualValue-Input"
+            },
+            "type": "object",
+            "title": "Manuals",
+            "description": "Full replacement of the agent-owned manual map when provided."
+          }
+        },
+        "type": "object",
+        "title": "AgentDataUpdate",
+        "description": "Agent configuration accepted by update-agent requests.\n\nOmitted top-level sub-schemas are kept. Sent sub-schemas update that\npart of the configuration.",
+        "additionalProperties": false
+      }
+    }
+  }
+}
