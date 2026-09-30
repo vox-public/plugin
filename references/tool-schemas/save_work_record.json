@@ -1383,7 +1383,7 @@
           "holdout_scenario": {
             "type": "object",
             "title": "Holdout Scenario",
-            "description": "Preferred. The MCP builds the API's scenario string from this object, so send plain strings, not JSON text. Example: {\"base_configuration\": \"환불 문의에는 영수증을 먼저 요청한다.\", \"requested_change\": \"배송 지연 문의에는 예상 도착일을 함께 안내한다.\", \"required_preservation\": [\"환불 문의의 영수증 요청 문구\"]}.",
+            "description": "Preferred. The MCP builds the API's scenario string from this object, so send plain strings, not JSON text. Example: {\"base_configuration\": \"환불 문의에는 영수증을 먼저 요청한다.\", \"requested_change\": \"배송 지연 문의에는 예상 도착일을 함께 안내한다.\", \"required_preservation\": [\"영수증을 먼저 요청한다\"]}. required_preservation and required_additions are literal text copied from base_configuration / requested_change, never descriptions.",
             "properties": {
               "base_configuration": {
                 "type": "string",
@@ -1406,7 +1406,28 @@
                   "minLength": 1,
                   "maxLength": 1024
                 },
-                "description": "1-6 non-blank statements that must keep working after the edit (each at most 1024 UTF-8 bytes)."
+                "description": "1-6 literal texts copied verbatim from base_configuration that must survive the edit, not descriptions (each non-blank, at most 1024 UTF-8 bytes). When required_additions is present each must occur in base_configuration."
+              },
+              "required_additions": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 4,
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64
+                },
+                "description": "Optional (deterministic grading). 1-4 literal texts copied verbatim from requested_change that must appear in the edited result and must not occur in base_configuration (each 2-64 UTF-8 bytes)."
+              },
+              "retired_literals": {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 4,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Optional. 0-4 literal texts copied verbatim from base_configuration that must disappear from the edited result; none may overlap (contain or be contained by) a required_preservation or required_additions item."
               }
             },
             "required": [

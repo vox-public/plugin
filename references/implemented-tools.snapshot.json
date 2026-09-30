@@ -2,8 +2,8 @@
   "snapshot_date": "2026-09-29",
   "scope": "Local MCP source contract candidate. The source worktree state is recorded below; this is not a deployed-server inventory. A connected host may expose fewer tools or permissions; inspect its live tools and schemas before acting.",
   "source": {
-    "mcp_commit": "0ce94d1a2651c6879b3734937172da886677c303",
-    "manifest_sha256": "36f660520267c381d89fe0a4ae4f50678b467c35e26e80942b5a73eee7a09cb2",
+    "mcp_commit": "99e1dae03d66aa77541aa7952917a0197805c1dd",
+    "manifest_sha256": "643559119480ecb3f4096719b5afb8f7801cbe5aebf35e4d4a772bfef1c38aab",
     "source_manifest_sha256": "f7c583c38b19d9d910233c285f012783acb840f0aa027dd9821e42d919224c3c",
     "source_state": "clean_commit",
     "dirty_contracts": []
@@ -79,7 +79,7 @@
     },
     "save_work_record": {
       "path": "tool-schemas/save_work_record.json",
-      "sha256": "b69082837e2275652d37ed0b115d3b0f6f610c807761a78e8e271a312f1faebc"
+      "sha256": "72afeb763c7e2f2ad7eca74ddc5baebc60695f8f5200440e6694b6512ac54350"
     }
   }
 }

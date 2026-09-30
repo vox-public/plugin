@@ -248,5 +248,45 @@ class ClaimWithdrawalGuidanceTests(unittest.TestCase):
                 self.assertIn("되묻지 말고 `claim_corrected`로 기존 결정을 정정해 기록한다", text)
 
 
+class HoldoutLiteralGuidanceTests(unittest.TestCase):
+    HOLDOUT_FILES = [
+        "references/execution-contract.md",
+        "references/workflow-guidance.md",
+        "skills/resume-agent-work/SKILL.md",
+    ]
+    BAD_EXAMPLE = "환불 문의의 영수증 요청 문구"
+
+    def test_schema_snapshot_carries_optional_literal_fields(self):
+        schema = json.loads((ROOT / "references/tool-schemas/save_work_record.json").read_text())["inputSchema"]
+        scenario = schema["$defs"]["HoldoutRegistrationPayload"]["properties"]["holdout_scenario"]
+        self.assertEqual(scenario["required"], ["base_configuration", "requested_change", "required_preservation"])
+        self.assertEqual(
+            (scenario["properties"]["required_additions"]["minItems"], scenario["properties"]["required_additions"]["maxItems"]),
+            (1, 4),
+        )
+        self.assertEqual(scenario["properties"]["retired_literals"]["maxItems"], 4)
+
+    def test_holdout_guidance_requires_literal_text_and_shows_the_duplicated_fact_case(self):
+        for relative in [*self.HOLDOUT_FILES, "references/workflow-examples.md"]:
+            text = (ROOT / relative).read_text()
+            with self.subTest(file=relative):
+                self.assertNotIn(self.BAD_EXAMPLE, text)
+                self.assertIn("글자 그대로 복사한", text)
+                self.assertIn("채점", text)
+                self.assertIn("required_additions", text)
+                self.assertIn("retired_literals", text)
+                self.assertIn("오후 8시", text)
+                self.assertIn("오후 7시", text)
+
+    def test_editing_skills_end_with_a_decision_record_step(self):
+        for name in ("edit-manual-safely", "tune-voice-behavior", "try-and-improve-voice-agent"):
+            text = (ROOT / f"skills/{name}/SKILL.md").read_text()
+            with self.subTest(skill=name):
+                self.assertIn("앞으로도 지킬 규칙·결정", text)
+                self.assertIn('"앞으로", "항상", "다음에도"', text)
+                self.assertIn("`save_work_record`의 `decision_set`으로 짧게 기록한다", text)
+                self.assertIn("OFF이거나 사용자가 기록하지 말라고 했으면 제외", text)
+
+
 if __name__ == "__main__":
     unittest.main()
