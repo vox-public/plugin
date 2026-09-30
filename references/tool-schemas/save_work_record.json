@@ -418,6 +418,47 @@
         "title": "ClaimCorrectedPayload",
         "type": "object"
       },
+      "ClaimWithdrawnPayload": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "claim_withdrawn",
+            "title": "Kind",
+            "type": "string"
+          },
+          "claim_id": {
+            "format": "uuid",
+            "title": "Claim Id",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          },
+          "duplicate_of_claim_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Duplicate Of Claim Id"
+          }
+        },
+        "required": [
+          "kind",
+          "claim_id",
+          "reason"
+        ],
+        "title": "ClaimWithdrawnPayload",
+        "type": "object"
+      },
       "DecisionSetPayload": {
         "additionalProperties": false,
         "properties": {
@@ -961,6 +1002,7 @@
               "mapping": {
                 "case_updated": "#/$defs/CaseUpdatedPayload",
                 "claim_corrected": "#/$defs/ClaimCorrectedPayload",
+                "claim_withdrawn": "#/$defs/ClaimWithdrawnPayload",
                 "evaluation_reported": "#/$defs/HoldoutRegistrationPayload",
                 "proposal_accepted": "#/$defs/ProposalAcceptedPayload",
                 "proposal_rejected": "#/$defs/ProposalRejectedPayload",
@@ -982,6 +1024,9 @@
               },
               {
                 "$ref": "#/$defs/ClaimCorrectedPayload"
+              },
+              {
+                "$ref": "#/$defs/ClaimWithdrawnPayload"
               },
               {
                 "$ref": "#/$defs/VisibilityChangedPayload"

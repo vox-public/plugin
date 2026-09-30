@@ -23,6 +23,8 @@
 
 vox.ai 구축·개선 중 이후 작업에 영향을 줄 사용자 결정, 중요한 피드백, 확인된 변경, 미완료 다음 단계가 생기면 관련 기록이 있는지 확인하고 필요한 내용을 save_work_record로 짧게 기록한다. 사용자가 “기억해” 같은 키워드를 말할 때까지 기다리지 않는다. 단발 질문이나 다음 작업에 쓸 가치가 없는 세부 동작은 저장하지 않는다. `get_work_context.background_settings`에서 자동 기록 상태와 revision/epoch를 확인한다. 기본값은 켜짐이며 사용자가 끄면 routine case/event 자동 기록을 중단한다. routine 쓰기에는 최신 revision/epoch를 넣고 API가 설정 변경을 거부하면 재시도하지 말고 상태를 다시 확인한다. 사용자가 명시적으로 요청한 기존 기록 조회·정정·삭제는 OFF와 별개로 계속 지원한다. 사용자가 현재 대화에서 저장하지 말라고 직접 요청하면 기록하지 않는다. 사용자가 공유 context 조회도 금지하면 조회·제품 저장은 중단하고 초안만 제공한다.
 
+`source_retracted`·`delete_source`·`delete_case`는 선택한 기록 하나가 아니라 같은 출처에서 나온 사용자의 모든 case 기록을 함께 지운다. 중복 기억 중 하나만 지우거나 기억 하나만 철회할 때는 `claim_withdrawn`(claim_id, reason, 중복이면 duplicate_of_claim_id)을 쓴다. 출처 자체를 지워 달라는 요청일 때만 source/case 삭제를 쓰고, 실행 전에 함께 지워지는 다른 기록을 알린다. 사용자가 기존 결정과 다른 새 지시를 분명히 하면 되묻지 말고 `claim_corrected`로 기존 결정을 정정해 기록한다. 되묻는 것은 지시가 모호할 때뿐이다.
+
 사용자가 특정 agent와 무관한 개인 작업 선호를 여러 대화에서 기억해 달라고 하면 agent_id 없이 save_work_record로 저장한다. 이 개인 범위 기록은 항상 비공개로 만든 사용자 본인에게만 보이며 조직 구성원에게 공유되지 않는다. agent_id 없이 get_work_context를 호출하면 그 본인 기록만 돌려받는다. 공유는 agent 범위 case를 `visibility_changed`로 명시적으로 바꿀 때만 일어난다.
 
 get_work_context가 `context.pending_recent_inputs[]`(source_id·text·truncated·status pending|processing·elapsed_seconds)를 주면 같은 사용자의 아직 정리 전 최근 입력이다. 이어서 작업할 때 참고하되 확정된 기억이나 결정처럼 단정하지 말고, 작업에 영향을 주면 사용자에게 확인한다. 응답이 크기 제한으로 이 필드를 `omitted_fields`에 담아 빼면 없는 것이 아니라 읽지 못한 것이다. guidance에 `evaluated_agent_revision`과 `current_agent_revision`이 있고 current가 evaluated보다 크면 평가 이후 agent가 바뀐 것이다. 현재 agent를 다시 읽고, guidance는 그대로 복사하지 말고 현재 설정에 맞는 절차로만 적용한다.

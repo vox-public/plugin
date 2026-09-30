@@ -216,5 +216,37 @@ class WorkflowExampleTests(unittest.TestCase):
         self.assertEqual(result.stdout, "")
 
 
+class ClaimWithdrawalGuidanceTests(unittest.TestCase):
+    GUIDANCE_FILES = [
+        "references/execution-contract.md",
+        "references/host-adapters.md",
+        "references/workflow-guidance.md",
+        "skills/resume-agent-work/SKILL.md",
+    ]
+
+    def test_schema_snapshot_accepts_claim_withdrawn_on_the_explicit_route_only(self):
+        schema = json.loads((ROOT / "references/tool-schemas/save_work_record.json").read_text())["inputSchema"]
+        defs = schema["$defs"]
+        withdrawn = defs["ClaimWithdrawnPayload"]
+        self.assertEqual(withdrawn["required"], ["kind", "claim_id", "reason"])
+        self.assertEqual(withdrawn["properties"]["reason"]["maxLength"], 300)
+        self.assertIn(
+            "claim_withdrawn", defs["ImprovementEventAppendInput"]["properties"]["payload"]["discriminator"]["mapping"]
+        )
+        self.assertNotIn(
+            "claim_withdrawn",
+            defs["AutomaticImprovementEventAppendInput"]["properties"]["payload"]["discriminator"]["mapping"],
+        )
+
+    def test_guidance_separates_single_memory_withdrawal_from_source_deletion(self):
+        for relative in self.GUIDANCE_FILES:
+            text = (ROOT / relative).read_text()
+            with self.subTest(file=relative):
+                self.assertIn("같은 출처에서 나온 사용자의 모든 case 기록을 함께 지운다", text)
+                self.assertIn("`claim_withdrawn`(claim_id, reason, 중복이면 duplicate_of_claim_id)", text)
+                self.assertIn("실행 전에 함께 지워지는 다른 기록을 알린다", text)
+                self.assertIn("되묻지 말고 `claim_corrected`로 기존 결정을 정정해 기록한다", text)
+
+
 if __name__ == "__main__":
     unittest.main()
