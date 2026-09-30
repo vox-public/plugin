@@ -1,6 +1,6 @@
 {
-  "mcp_commit": "1610dda54fe20344ee136d3d240a60f72176d019",
-  "manifest_sha256": "c71e6990e27b4fde079af7426f9c96de6fc616e83b7c3803bdad706f21d46039",
+  "mcp_commit": "db9be64913fee8c780e12961ad86a4797cafedac",
+  "manifest_sha256": "425ac6d6b8e59d8afe8a7b6b96fe58ba379d5c38de48d1a60e8d8366249ca46e",
   "source_manifest_sha256": "f7c583c38b19d9d910233c285f012783acb840f0aa027dd9821e42d919224c3c",
   "source_state": "clean_commit",
   "dirty_contracts": [],
@@ -34,6 +34,6 @@
     "list_schemas": "8d81377d1ae2f903515f0e3b98a1ad38f09136d88bb96fcdc13ba62b3dde4124",
     "save_agent": "eaf6cfe4590c1f56d71bf3d825b1ad5552f9e8592324e06878753f799fa83d27",
     "save_manual": "925ea71430c479e688527230debd1b56e5cb68e168754d9516168acb3e7ce061",
-    "save_work_record": "cbe6316fe7fc305e73c203808db7f46ade2655a167ff4479bb515353f5f1d64d"
+    "save_work_record": "872fd42acb5b752e493b732526ce84b0a5f369bf36f36ff7a04725c0f5731deb"
   }
 }

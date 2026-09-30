@@ -1266,7 +1266,8 @@
             "maxLength": 4096,
             "minLength": 1,
             "title": "Scenario",
-            "type": "string"
+            "type": "string",
+            "description": "Legacy alternative to holdout_scenario: a JSON-serialized string with exactly task_kind=agent_partial_edit, base_configuration, requested_change and required_preservation. Prefer holdout_scenario; never send both."
           },
           "expected_result": {
             "maxLength": 4096,
@@ -1333,11 +1334,46 @@
             "title": "Register Holdout",
             "type": "boolean",
             "const": true
+          },
+          "holdout_scenario": {
+            "type": "object",
+            "title": "Holdout Scenario",
+            "description": "Preferred. The MCP builds the API's scenario string from this object, so send plain strings, not JSON text. Example: {\"base_configuration\": \"환불 문의에는 영수증을 먼저 요청한다.\", \"requested_change\": \"배송 지연 문의에는 예상 도착일을 함께 안내한다.\", \"required_preservation\": [\"환불 문의의 영수증 요청 문구\"]}.",
+            "properties": {
+              "base_configuration": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096,
+                "description": "Current agent configuration text the change applies to (non-blank)."
+              },
+              "requested_change": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024,
+                "description": "The single partial edit the customer asked for (non-blank, at most 1024 UTF-8 bytes)."
+              },
+              "required_preservation": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 6,
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1024
+                },
+                "description": "1-6 non-blank statements that must keep working after the edit (each at most 1024 UTF-8 bytes)."
+              }
+            },
+            "required": [
+              "base_configuration",
+              "requested_change",
+              "required_preservation"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [
           "kind",
-          "scenario",
           "expected_result",
           "observed_result",
           "evaluation_kind",
@@ -1345,7 +1381,7 @@
         ],
         "title": "HoldoutRegistrationPayload",
         "type": "object",
-        "description": "Register one independent text-contract holdout. scenario is a JSON-serialized string with exactly task_kind=agent_partial_edit, base_configuration, requested_change and required_preservation (1-6 strings). observed_result is required but replaced by the server. Only the user's own explicit words in the current embedded Copilot conversation may be the source (source.source_host=embedded; copy source_thread_id and source_id of the matching get_work_context.pending_recent_inputs item to source.source_thread_id and source.source_message_id, never guessed). Do not decide eligibility from the host name: call get_work_context first; if no pending_recent_inputs item matching the current user message has a source_thread_id, report that registration is not possible."
+        "description": "Register one independent text-contract holdout. Send holdout_scenario {base_configuration, requested_change, required_preservation (1-6 strings)}; the MCP turns it into the API's scenario string (task_kind=agent_partial_edit). The legacy scenario JSON string is still accepted, but never send both; the whole scenario must fit 4096 UTF-8 bytes. observed_result is required but replaced by the server. Only the user's own explicit words in the current embedded Copilot conversation may be the source (source.source_host=embedded; copy source_thread_id and source_id of the matching get_work_context.pending_recent_inputs item to source.source_thread_id and source.source_message_id, never guessed). Do not decide eligibility from the host name: call get_work_context first; if no pending_recent_inputs item matching the current user message has a source_thread_id, report that registration is not possible."
       }
     }
   }

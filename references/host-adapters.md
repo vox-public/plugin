@@ -6,7 +6,7 @@
 
 - 제품이 제공하는 연결과 인증을 사용한다. 외부 marketplace 설치나 Claude/Codex OAuth 절차를 요구하지 않는다.
 - 호스트가 get_work_context, get_work_record, save_work_record, get_work_operation을 실제 목록과 schema에 제공하면 공통 작업을 조회·갱신한다. 다음 작업에 영향을 줄 결정·피드백은 별도 기억 키워드를 요구하지 않고 짧게 기록한다. get_work_context의 background_settings로 기본 켜짐 상태와 현재 revision/epoch를 확인하고 routine case/event 쓰기에 그 값을 전달한다. OFF이거나 settings CAS가 거부되면 automatic 저장을 중단한다. 사용자가 명시적으로 요청한 기존 기록 조회·정정·삭제는 계속 지원한다. 사용자가 현재 대화에서 저장하지 말라고 직접 요청하면 기록하지 않는다. 전체 통화 transcript는 수집하지 않는다.
-- user-principal save_agent/save_manual 호출 전에는 매번 get_work_context를 새로 호출하고 반환된 context_receipt.token을 최상위 context_receipt에 담아 바로 다음 한 번에만 사용한다. tool이나 receipt가 없으면 초안만 제공한다. save_work_record routine event에는 별도 settings revision/epoch CAS가 필요하다.
+- user-principal save_agent/save_manual 호출 전에는 매번 get_work_context를 새로 호출하고 반환된 context_receipt.token을 최상위 context_receipt에 담아 바로 다음 한 번에만 사용한다. 이 읽기는 max_tokens를 기본값(3000) 아래로 낮추지 않고 `MEMORY_CONTEXT_BUDGET_TOO_SMALL`이 오면 `details.required_tokens` 이상(최대 3000)으로 한 번만 다시 호출한다. tool이나 receipt가 없으면 초안만 제공한다. save_work_record routine event에는 별도 settings revision/epoch CAS가 필요하다.
 - 고객 직접 음성 시험과 실사용 운영은 고객이 기존 vox.ai 제품 UI에서 수행한다. 완료 여부는 고객 보고와 MCP readback을 구분한다.
 - 예: “첨부한 합성 서비스 설명으로 첫 Manual을 만들고, 저장 후 전체 본문과 revision을 다시 읽어줘.” 공유 도구가 없고 이전 Thread에도 접근할 수 없을 때만 실제 ID와 마지막 결정을 사용자에게 받아 검증한다.
 

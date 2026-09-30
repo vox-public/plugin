@@ -34,7 +34,16 @@ for example in examples:
             body = arguments["payload"]["payload"]
             if body["kind"] == "evaluation_reported" and body.get("register_holdout") is True:
                 # Holdout registration is accepted only by the explicit events API.
-                ImprovementEventAppendInput.model_validate(arguments["payload"])
+                # The MCP turns holdout_scenario into the API's canonical scenario string.
+                command = json.loads(json.dumps(arguments["payload"]))
+                inner = command["payload"]
+                structured = inner.pop("holdout_scenario", None)
+                if structured is not None:
+                    inner["scenario"] = json.dumps(
+                        {"task_kind": "agent_partial_edit", **structured},
+                        ensure_ascii=False, separators=(",", ":"), sort_keys=True,
+                    )
+                ImprovementEventAppendInput.model_validate(command)
             else:
                 AutomaticImprovementEventAppendInput.model_validate(arguments["payload"])
         else:
@@ -66,6 +75,26 @@ class WorkflowExampleTests(unittest.TestCase):
             content = call["arguments"]["payload"]["content"]
             self.assertIn("\n", content)
             self.assertNotIn("\\n", content)
+
+    def test_receipt_reads_keep_default_budget_and_document_retry(self):
+        calls = load_calls()
+        receipt_reads = 0
+        for previous, call in zip(calls, calls[1:]):
+            if call["tool"] in {"save_agent", "save_manual"} and "context_receipt" in call["arguments"]:
+                self.assertEqual(previous["tool"], "get_work_context")
+                self.assertGreaterEqual(previous["arguments"].get("max_tokens", 3000), 3000)
+                receipt_reads += 1
+        self.assertEqual(receipt_reads, 3)
+        for path in (
+            "references/execution-contract.md",
+            "references/workflow-examples.md",
+            "references/host-adapters.md",
+            "skills/agents-platform/SKILL.md",
+            "README.md",
+        ):
+            text = (ROOT / path).read_text()
+            self.assertIn("MEMORY_CONTEXT_BUDGET_TOO_SMALL", text, path)
+            self.assertIn("details.required_tokens", text, path)
 
     def test_shared_work_examples_validate_with_api_dtos(self):
         calls = [call for call in load_calls() if call["tool"] == "save_work_record"]
@@ -106,6 +135,13 @@ class WorkflowExampleTests(unittest.TestCase):
         self.assertEqual(holdout_source["source_host"], "embedded")
         self.assertTrue(holdout_source["source_thread_id"] and holdout_source["source_message_id"])
         self.assertEqual(holdout_payload["evaluation_kind"], "text_contract")
+        # The example uses the structured holdout_scenario, never a hand-built scenario string.
+        self.assertNotIn("scenario", holdout_payload)
+        structured = holdout_payload["holdout_scenario"]
+        self.assertEqual(
+            set(structured), {"base_configuration", "requested_change", "required_preservation"}
+        )
+        self.assertTrue(1 <= len(structured["required_preservation"]) <= 6)
 
         # The holdout source ids come from a get_work_context pending_recent_inputs item,
         # so the guidance and example must say to copy them instead of guessing.
@@ -138,9 +174,18 @@ class WorkflowExampleTests(unittest.TestCase):
                 self.assertIn("호스트 이름", text, path)
                 self.assertIn("get_work_context(agent_id)", text, path)
                 self.assertIn("해당 항목이 없으면 등록할 수 없다고 안내한다", text, path)
+        for path in (
+            "references/workflow-examples.md",
+            "references/workflow-guidance.md",
+            "references/execution-contract.md",
+            "skills/resume-agent-work/SKILL.md",
+        ):
+            self.assertIn("holdout_scenario", (ROOT / path).read_text(), path)
         schema = json.loads((ROOT / "references/tool-schemas/save_work_record.json").read_text())
         holdout_description = schema["inputSchema"]["$defs"]["HoldoutRegistrationPayload"]["description"]
         self.assertIn("Do not decide eligibility from the host name", holdout_description)
+        self.assertIn("holdout_scenario", holdout_description)
+        self.assertIn("holdout_scenario", schema["inputSchema"]["$defs"]["HoldoutRegistrationPayload"]["properties"])
         # Negative example: routine-only fields on a holdout are rejected field by field.
         self.assertIn("잘못된 예", examples_text)
         self.assertIn("INVALID_ARGUMENTS", examples_text)
