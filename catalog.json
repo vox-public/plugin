@@ -27,9 +27,16 @@
       "name": "manual-authoring",
       "layer": "general",
       "path": "skills/manual-authoring/SKILL.md",
-      "description": "vox.ai Single용 Manual의 질문·조건·정정·도구 사용·마무리를 작성하거나 긴 프롬프트를 재구성할 때 사용한다. 기존 제품 본문 저장은 별도 편집 스킬로 수행한다.",
+      "description": "vox.ai Single 에이전트의 Manual(업무 절차)을 한 번에 운영 수준으로 쓸 때 사용한다. 트리거, 단계·분기, 원문 문장, @tool 호출과 성공·실패 처리, Manual 나누기, 프롬프트·지식 분담을 다룬다. 기존 본문 수정·저장은 edit-manual-safely를 쓴다.",
       "tools": {
-        "implemented": [],
+        "implemented": [
+          "get_manual",
+          "list_manuals",
+          "list_tools",
+          "save_agent",
+          "save_manual",
+          "save_tool"
+        ],
         "designed_only": []
       }
     },

@@ -205,11 +205,57 @@ class FirstReleaseGuidanceTests(unittest.TestCase):
 
     def test_manual_authoring_covers_split_triggers_attach_and_tool_references(self):
         text = read("skills/manual-authoring/SKILL.md")
-        for needle in ("## 어디에 쓸까", "## 몇 개로 나눌까", "## 트리거 쓰기", "## 에이전트에 연결하기",
-                       "트리거를 비운 공용 Manual", "`@manual:`", "`@tool:이름`", "`save_manual(mode=create",
-                       "기본 프롬프트", "8,096자"):
+        for needle in ("## 어디에 쓸까", "## 몇 개로 나눌까", "## 트리거 쓰기", "## 저장 순서와 확인",
+                       "`@manual:`", "`@tool:이름`", "`save_manual(mode=create", "기본 프롬프트", "8,096자",
+                       "`data.manuals` 맵이나 폐기된 `manualIds`를 손으로 만들지 않는다"):
             self.assertIn(needle, text, needle)
         self.assertNotIn("초기에는 완결된 Manual 하나를 만들고", text)
+
+    def test_manual_authoring_teaches_the_template_trigger_runtime_and_reference_syntax(self):
+        text = read("skills/manual-authoring/SKILL.md")
+        for needle in ("## Manual이 통화에서 쓰이는 방식", "## 본문 템플릿", "## 규칙", "## 진행 절차",
+                       "### 시작", "### <단계 이름>", "### <도구 결과 처리>", "### 완료",
+                       "## 단계와 분기를 산문으로 쓰는 법", "## 반드시·절대와 원문 문장",
+                       "## 도구 쓰기 (@tool)", "## 피할 것",
+                       "**정확히 하나의** 트리거", "제외한다(○○ 담당)", "Manual 선택 우선순위",
+                       "1,500~4,000자", "보통 3~10개", "`@tool:<tool_id>`",
+                       "[Manual 예시](../../references/manual-examples.md)"):
+            self.assertIn(needle, text, needle)
+        # The target of an @manual: reference must be saved first because only its UUID is valid.
+        self.assertRegex(text, r"\*\*먼저\*\* `save_manual\(mode=create\)`로 저장해 `manual_id`를 받는다")
+        # Superseded advice stays out of every piece of guidance.
+        for path in guidance_files() + [ROOT / "references/manual-examples.md"]:
+            body = path.read_text()
+            for stale in ("트리거를 비운 공용 Manual", "트리거 없는 공용", "대략 1,500자 이내", "첫 구축은 보통 2~5개"):
+                self.assertNotIn(stale, body, f"{path.relative_to(ROOT)}: {stale}")
+        examples = read("references/manual-examples.md")
+        for needle in ("### 예시 1. 사고 보상 접수", "### 예시 2. 상담원 연결 (공용)", "## 규칙", "## 진행 절차",
+                       "- trigger:", "제외한다"):
+            self.assertIn(needle, examples, needle)
+        # Pointers elsewhere stay short and agree with the manual-authoring guidance.
+        for name in ("voice-agent-design", "build-first-voice-agent", "agents-platform"):
+            self.assertIn("manual-authoring/SKILL.md", read(f"skills/{name}/SKILL.md"), name)
+        for name in ("build-first-voice-agent", "agents-platform"):
+            self.assertIn("@manual:<manual_id>", read(f"skills/{name}/SKILL.md"), name)
+        design = read("skills/voice-agent-design/SKILL.md")
+        self.assertIn("`@tool:<tool_id>`", design)
+        self.assertIn("1,500~4,000자", design)
+        actions = " ".join(json.loads(read("references/workflow-capabilities.json"))["workflows"][0]["host_actions"])
+        self.assertIn("@manual:<manual_id>", actions)
+        catalog = {skill["name"]: skill for skill in json.loads(read("catalog.json"))["skills"]}
+        frontmatter = read("skills/manual-authoring/SKILL.md").split("---", 2)[1]
+        self.assertIn(catalog["manual-authoring"]["description"], frontmatter)
+
+    def test_manual_guidance_is_host_neutral_and_public_safe(self):
+        paths = [ROOT / "skills/manual-authoring/SKILL.md", ROOT / "references/manual-examples.md",
+                 ROOT / "skills/voice-agent-design/SKILL.md", ROOT / "skills/build-first-voice-agent/SKILL.md"]
+        for path in paths:
+            text = path.read_text()
+            name = path.relative_to(ROOT)
+            for host in ("Claude", "Codex", "Grok", "Copilot", "코파일럿", "ChatGPT", "Cursor"):
+                self.assertNotIn(host, text, f"{name}: {host}")
+            self.assertNotRegex(text, r"(?i)\b__docs__\b|docs repo|docs 저장소|vox-mono|/Users/", str(name))
+            self.assertNotRegex(text, r"\b01[016789]-?\d{3,4}-?\d{4}\b|https?://", f"{name}: concrete contact or URL")
 
     def test_ars_flow_pattern_reference_states_pitfalls_and_the_silence_limit(self):
         text = read("references/flow-ars-pattern.md")
