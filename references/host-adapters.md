@@ -7,6 +7,7 @@
 - 제품이 제공하는 연결과 인증을 사용한다. 외부 marketplace 설치나 Claude/Codex OAuth 절차를 요구하지 않는다.
 - 호스트가 get_work_context, get_work_record, save_work_record, get_work_operation을 실제 목록과 schema에 제공하면 공통 작업을 조회·갱신한다. 다음 작업에 영향을 줄 결정·피드백은 별도 기억 키워드를 요구하지 않고 짧게 기록한다. get_work_context의 background_settings로 기본 켜짐 상태와 현재 revision/epoch를 확인하고 routine case/event 쓰기에 그 값을 전달한다. OFF이거나 settings CAS가 거부되면 automatic 저장을 중단한다. 사용자가 명시적으로 요청한 기존 기록 조회·정정·삭제는 계속 지원한다. `source_retracted`·`delete_source`·`delete_case`는 선택한 기록 하나가 아니라 같은 출처에서 나온 사용자의 모든 case 기록을 함께 지운다. 중복 기억 중 하나만 지우거나 기억 하나만 철회할 때는 `claim_withdrawn`(claim_id, reason, 중복이면 duplicate_of_claim_id)을 쓴다. 출처 자체를 지워 달라는 요청일 때만 source/case 삭제를 쓰고, 실행 전에 함께 지워지는 다른 기록을 알린다. 사용자가 기존 결정과 다른 새 지시를 분명히 하면 되묻지 말고 `claim_corrected`로 기존 결정을 정정해 기록한다. 되묻는 것은 지시가 모호할 때뿐이다. 사용자가 현재 대화에서 저장하지 말라고 직접 요청하면 기록하지 않는다. 전체 통화 transcript는 수집하지 않는다.
 - user-principal save_agent/save_manual 호출 전에는 매번 get_work_context를 새로 호출하고 반환된 context_receipt.token을 최상위 context_receipt에 담아 바로 다음 한 번에만 사용한다. 이 읽기는 max_tokens를 기본값(3000) 아래로 낮추지 않고 `MEMORY_CONTEXT_BUDGET_TOO_SMALL`이 오면 `details.required_tokens` 이상(최대 3000)으로 한 번만 다시 호출한다. tool이나 receipt가 없는 호스트(외부 공개 연결 등)에서는 receipt 없이 저장을 시도하고 서버가 receipt를 요구하며 거부하면 초안만 제공한다. save_work_record routine event에는 별도 settings revision/epoch CAS가 필요하다.
+- 내장 Copilot은 `set_organization`으로 조직을 바꿀 수 없다. 다른 조직 작업이 필요하면 제품 화면에서 조직을 바꾼 새 대화로 이어간다.
 - 음성 시험 도구는 없어 고객이 제품 UI에서 직접 시험한다. 번호 연결·발신·캠페인·통화 조회는 연결된 도구로 수행하며 실제 영향이 있는 도구는 [실행 계약](execution-contract.md)의 확인·실행 키 규칙을 따른다. 완료 여부는 고객 보고와 MCP readback을 구분한다.
 - 예: “첨부한 합성 서비스 설명으로 첫 Manual을 만들고, 저장 후 전체 본문과 revision을 다시 읽어줘.” 공유 도구가 없고 이전 Thread에도 접근할 수 없을 때만 실제 ID와 마지막 결정을 사용자에게 받아 검증한다.
 
@@ -27,6 +28,15 @@
 - 제품 변경 뒤 실제 MCP 응답을 재조회한다. 고객이 직접 시험한 결과는 `customer_reported`; 실제 제품 call 조회 근거는 조회 도구와 결과가 확인된 경우에만 별도로 표시한다.
 - 음성 시험은 고객이 제품 UI에서 직접 한다. 번호 연결·발신·캠페인·통화 조회는 도구로 하고, 발신·게시·번호 연결 전에는 대화에서 요약 확인을 받는다. 외부 공개 연결에는 작업 기록 4개 도구가 없을 수 있다. 공통 improvement case 도구가 없을 때에만 새 Claude Code 대화에서 사용자가 제공한 handoff로 재개하고, 도구가 있으면 해당 MCP 기록을 다시 확인한다.
 - 예: `/vox-ai:build-first-voice-agent`를 사용해 사용자가 제공한 서비스 자료로 첫 Manual을 만들고, 저장한 `agent_id`와 `manual_id`를 기록해줘. shared-work 도구가 있으면 그 기록을 확인하고, 없으면 새 호스트 대화에 상태가 자동 전달됐다고 가정하지 않는다.
+
+## Grok Build
+
+- Grok Build는 저장소의 `.claude-plugin` manifest와 `.mcp.json`, `skills/`를 그대로 읽는다. `grok plugin install https://github.com/vox-public/plugin.git`으로 설치하고 MCP OAuth 로그인은 TUI의 `/mcps`에서 완료한다.
+- 그 밖의 원칙(조직·도구 확인, 저장 뒤 재조회, 고객 직접 음성 시험, 발신·게시·번호 연결 전 요약 확인, 작업 기록 도구 부재 시 handoff)은 Claude Code 절과 같다. Claude Code 전용 `/vox-ai:<skill>` 호출 형식을 가정하지 않고 설치된 skill을 선택하거나 자연어로 요청한다.
+
+## 공식 문서 연결
+
+plugin은 제품 MCP(`vox-ai`) 외에 공식 문서 MCP(`vox-docs`, `https://docs.tryvox.co/mcp`)를 함께 연결한다. 문서 검색은 [product-documentation](../skills/product-documentation/SKILL.md)을 따르고, 문서 MCP를 제품 데이터 접근이나 권한의 근거로 쓰지 않는다. `vox-docs`가 없는 호스트는 `https://docs.tryvox.co/llms.txt`를 읽는다.
 
 ## 연결·파일·재개 공통 원칙
 

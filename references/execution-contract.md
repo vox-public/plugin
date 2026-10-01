@@ -21,7 +21,7 @@
 
 ## 실제 영향이 있는 도구
 
-대상은 `place_call`(실제 전화), `launch_campaign`·`resume_campaign`(대량 발신), `publish_agent_version`(운영 반영), `set_number_agents`·`update_number`(번호 연결·설정), `delete_knowledge_document`(삭제), 인증값을 바꾸는 `save_tool`이다. `pause_campaign`·`cancel_campaign`은 위험을 줄이는 도구라 사용자 요청이 분명하면 바로 실행하되 cancel은 남은 대상이 취소되고 이미 연결된 통화는 끊기지 않는다고 알린다.
+대상은 `place_call`(실제 전화), `launch_campaign`·`resume_campaign`(대량 발신), `publish_agent_version`(운영 반영), `set_number_agents`·`update_number`(번호 연결·설정), `delete_knowledge_document`(삭제), `set_organization`(연결 전체의 대상 조직 변경, 대상 조직 이름을 확인받고 전환 뒤 `get_organization`으로 재확인), `create_voice_model`(화자 동의를 확인받은 공개 HTTPS 음원만), 인증값을 바꾸는 `save_tool`이다. `pause_campaign`·`cancel_campaign`은 위험을 줄이는 도구라 사용자 요청이 분명하면 바로 실행하되 cancel은 남은 대상이 취소되고 이미 연결된 통화는 끊기지 않는다고 알린다.
 
 1. 확인: 호출 전에 대화에서 짧게 요약한다(대상 번호·고객·시트 규모, agent 이름과 버전, 발신 번호, 바뀌는 연결·운영 상태). 사용자가 진행을 명시한 뒤 호출한다. ‘계획을 짜줘’·‘준비해줘’는 실행 승인이 아니다. 같은 요약에 이미 승인받은 재전송·실패 재시도는 다시 묻지 않고, 대상·번호·내용이 바뀌면 다시 요약한다.
 2. 실행 키: `place_call`·`launch_campaign`·`resume_campaign`은 `execution_key`(8~128자, UUID 권장)가 필수이고 `pause_campaign`·`cancel_campaign`은 선택이다. 실행하려는 의도마다 새 키를 만든다. 같은 키는 같은 실행(같은 인자)의 재전송에만 쓰며, 같은 키의 재호출은 새로 실행하지 않고 앞선 결과를 돌려준다. 기록된 실패도 그대로 돌려주므로 실패(일시 오류 포함)를 다시 시도하려면 새 키를 만든다. `EXECUTION_KEY_REUSED`는 같은 키를 다른 인자에 쓴 것이므로 새 키로 요청 내용을 사용자에게 다시 확인한 뒤 호출한다.

@@ -24,7 +24,7 @@ metadata:
 | 발신·캠페인 응답 불명(`EXECUTION_RESULT_UNKNOWN`·`EXECUTION_IN_PROGRESS`) | 재실행·새 `execution_key` 금지; `list_calls`(`call_to`·`start_at_after`)/`get_call`, 캠페인은 `get_campaign`/`list_campaigns`로 접수 여부 확인 후 보고 |
 | 게시·번호 연결·지식 삭제 등 제품 작업 응답 불명 | `get_agent`/`list_agent_versions`, `get_number`, `list_knowledge_documents`로 실제 상태를 읽고 재실행하지 않음; 조회 도구가 없으면 사용자에게 상태 확인을 요청 |
 | 인증 만료/철회 | 호스트의 재연결 경로로 권한 복구 후 실제 상태 재조회 |
-| 다른 조직으로 바뀜 | 이전 조직 자격 증명/리소스를 재사용하지 않음 |
+| 다른 조직으로 바뀜(`set_organization` 전환 포함) | 이전 조직 자격 증명/리소스·ID·revision을 재사용하지 않고 `get_organization`으로 현재 조직을 확인한 뒤 필요한 리소스를 다시 조회; 의도하지 않은 전환이면 사용자에게 알리고 대상 조직을 확인받는다 |
 
 제품이나 작업 기록의 unknown 결과를 임의로 재실행하지 않는다. save_work_record는 처음 사용한 UUID operation_id로 get_work_operation을 조회해 영수증을 확인한다. 새 operation ID, POST 재시도, 직접 API 우회를 하지 않는다.
 

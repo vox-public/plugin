@@ -291,9 +291,13 @@ def validate(root):
     require(re.fullmatch(r'\d+\.\d+\.\d+', codex['version']), 'Invalid release version')
     require(codex['skills'] == './skills/' and codex['mcpServers'] == './.mcp.json',
             'Unexpected component paths')
-    connection = load_json(root / '.mcp.json')['mcpServers']['vox-ai']
-    require(connection == {'type': 'http', 'url': 'https://mcp.services.tryvox.co/mcp'},
+    servers = load_json(root / '.mcp.json')['mcpServers']
+    require(set(servers) == {'vox-ai', 'vox-docs'},
+            'Public bundle must declare exactly the vox-ai and vox-docs MCP servers')
+    require(servers['vox-ai'] == {'type': 'http', 'url': 'https://mcp.services.tryvox.co/mcp'},
             'Public bundle must use the reviewed public MCP connection without credentials')
+    require(servers['vox-docs'] == {'type': 'http', 'url': 'https://docs.tryvox.co/mcp'},
+            'Public bundle must connect the public docs MCP without credentials')
     for host, location in [('codex', '.agents/plugins/marketplace.json'),
                            ('claude', '.claude-plugin/marketplace.json')]:
         market = load_json(root / location)

@@ -15,14 +15,16 @@ metadata:
 이 스킬은 Agents 제품의 연결과 도구 사용을 안내한다. 사용자의 요청이 음성 agent 구축·시험·통신 운영이면 이 모듈을 선택한다. desk의 상담원 수신·이어받기·상담원 발신 요청을 비슷한 이름의 Agents 도구에 넘기지 않는다. 현재 연결에서 지원 여부를 확인하고 미지원 범위를 알려준다. 현재 번들의 구현 기준은 [워크플로 capability 표](../../references/workflow-capabilities.json)다.
 
 ## 연결과 발견
-호스트에서 제공하는 인증 절차를 사용한다. 키나 토큰을 프롬프트/파일에 요구하지 않는다. 연결 조직은 고정이며 모델 인자로 전환하지 않는다. 조직 변경은 호스트의 연결 UX로 처리한다.
+호스트에서 제공하는 인증 절차를 사용한다. 키나 토큰을 프롬프트/파일에 요구하지 않는다. 연결은 한 번에 한 조직에서 동작한다. 조직이 여러 개인 계정이면 `list_organizations`로 접근 가능한 조직과 현재 조직을 읽고, 사용자가 바꾸기를 원할 때만 `set_organization`을 호출한다. 이 전환은 이 MCP 연결 전체의 대상 조직을 바꾸므로 호출 전에 대상 조직 이름을 사용자에게 보여 확인받고, 전환 뒤 `get_organization`으로 현재 조직을 다시 읽는다. 이전 조직에서 읽은 agent_id·number_id 등 ID와 `expected_*_revision`은 새 조직에서 재사용하지 않고 다시 조회한다. 내장 Copilot은 조직을 바꿀 수 없으므로 제품 화면에서 조직을 바꾼 새 대화로 이어가도록 안내한다.
 
 호스트가 실제 제공한 MCP 도구 이름과 스키마를 먼저 확인한다. 이름 검색 후 정확한 ID를 확보한다. `list_models`, `list_schemas`, `get_schema`는 제품 설정 탐색용이며 호스트의 MCP 도구 발견 기능과 혼동하지 않는다. 여러 서버가 있으면 연결 식별자와 제품 모듈을 함께 확인한다. Manual은 Single에 귀속되므로 `list_agents`로 대상을 정하고 `list_manuals` 또는 `get_manual`로 같은 `agent_id` 범위의 현재 Manual을 읽는다.
 
 ## 도구 선택
 첫 배포 범위의 도구는 대화만으로 첫 출시 여정(구축 → 버전 저장·게시 → 보유 번호 연결 → 발신 → 결과 확인)을 끝낼 수 있게 한다. 실제 사용 가능 여부는 연결된 서버의 목록과 schema로 확인한다.
-- 조직·탐색: `get_organization`, `list_models`, `list_schemas`, `get_schema`. 조직 관리는 `update_organization`(요청한 설정만)과 `list_organization_members`(개인정보라 필요한 범위만)다.
+- 조직·탐색: `get_organization`, `list_organizations`/`set_organization`(조직 전환, 위 ‘연결과 발견’ 참고), `list_models`, `list_schemas`, `get_schema`. 조직 관리는 `update_organization`(요청한 설정만)과 `list_organization_members`(개인정보라 필요한 범위만)다.
 - 구축: `list_agent_templates` → `get_agent_template` → `instantiate_agent_template`로 시작하거나 `save_agent`(mode=create). `list_manuals`/`get_manual`/`save_manual`, 도구 `list_tools`/`get_tool`/`save_tool`, 지식 `list_knowledges`/`create_knowledge`/`import_knowledge_documents`(텍스트·URL만)/`list_knowledge_documents`/`delete_knowledge_document`. Manual 저장에는 `agent_id`와 현재 `head_revision`에 해당하는 `expected_head_revision`을 포함하고 Agent 수정에도 현재 `head_revision`을 사용한다.
+- Flow agent: 메뉴·분기·전환이 정해진 흐름은 Flow agent로 만든다. 생성·수정 모두 `validate_flow`로 먼저 검증해 오류를 고친 뒤 `save_agent`로 저장하고, 수정에는 방금 읽은 `get_agent`의 flow revision을 `expected_flow_revision`으로 보낸다. 저장 뒤 `get_agent`로 재조회한다. 입력 형식은 실제 schema와 `get_schema`로 확인하고 검증 오류를 추측으로 우회하지 않는다. 설계 기준은 [음성 업무 설계](../voice-agent-design/SKILL.md)의 ‘Flow와 ARS 흐름’을 따른다.
+- 음성 모델: `create_voice_model`로 사용자가 동의한 화자의 음성을 등록한다. 자세한 조건은 [음성 조정](../tune-voice-behavior/SKILL.md)의 ‘음성 모델 만들기’를 따른다.
 - 버전·게시: `list_agent_versions`, `create_agent_version`(현재 설정을 버전으로 저장) → `publish_agent_version`(production 지정). → [첫 출시 연결](../build-first-voice-agent/SKILL.md)
 - 번호: `list_numbers`, `get_number`, `set_number_agents`, `update_number`. 이미 가진 번호만 다루며 번호 획득·해지는 웹에서만 한다. → [번호 연결](../connect-phone-service/SKILL.md)
 - 발신·캠페인: `place_call`, 시트 `list_sheets`/`get_sheet`/`create_sheet`, `launch_campaign`, `list_campaigns`/`get_campaign`, `pause_campaign`/`resume_campaign`/`cancel_campaign`. → [발신 운영](../operate-outbound-and-followup/SKILL.md)
