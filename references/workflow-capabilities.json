@@ -8,20 +8,33 @@
         "required_tools": [
           "get_agent",
           "get_manual",
-          "get_work_context",
           "save_agent",
           "save_manual"
         ],
         "optional_tools": [
+          "create_knowledge",
+          "delete_knowledge_document",
+          "get_agent_template",
           "get_organization",
           "get_schema",
+          "get_tool",
+          "get_work_context",
           "get_work_operation",
           "get_work_record",
+          "import_knowledge_documents",
+          "instantiate_agent_template",
+          "list_agent_templates",
           "list_agents",
+          "list_knowledge_documents",
+          "list_knowledges",
           "list_manuals",
           "list_models",
+          "list_organization_members",
           "list_schemas",
-          "save_work_record"
+          "list_tools",
+          "save_tool",
+          "save_work_record",
+          "update_organization"
         ]
       },
       "designed": {
@@ -29,9 +42,10 @@
         "optional_tools": []
       },
       "host_actions": [
-        "The user or assistant supplies source material through a file, URL, or conversation supported by that host."
+        "The user or assistant supplies source material as conversation text or URLs; knowledge accepts text and URL only, so file contents are registered as text the user confirmed.",
+        "Secrets for save_tool come only from the user's current request; masked values are never written back."
       ],
-      "designed_unavailable_fallback": "If get_work_context or its receipt is unavailable, prepare the draft and explain that user-principal product saves require the receipt. Keep continuity in the current accessible conversation or a user-provided handoff."
+      "designed_unavailable_fallback": "If get_work_context or its receipt is unavailable (external public connections may not expose work-record tools), try the save without a receipt; if the server requires it and rejects, prepare the draft and explain. Keep continuity in the current accessible conversation or a user-provided handoff."
     },
     {
       "id": "refinement",
@@ -39,15 +53,22 @@
         "required_tools": [
           "get_agent",
           "get_manual",
-          "get_work_context",
           "save_manual"
         ],
         "optional_tools": [
+          "create_knowledge",
           "get_schema",
+          "get_tool",
+          "get_work_context",
           "get_work_operation",
           "get_work_record",
+          "list_agent_versions",
+          "list_knowledge_documents",
+          "list_knowledges",
           "list_manuals",
+          "list_tools",
           "save_agent",
+          "save_tool",
           "save_work_record"
         ]
       },
@@ -56,7 +77,55 @@
         "optional_tools": []
       },
       "host_actions": [],
-      "designed_unavailable_fallback": "Re-read current product state before editing. If get_work_context or its receipt is unavailable, prepare a draft and do not attempt a user-principal product save."
+      "designed_unavailable_fallback": "Re-read current product state before editing. If get_work_context or its receipt is unavailable, try the save without a receipt; if the server requires it and rejects, prepare a draft."
+    },
+    {
+      "id": "publish",
+      "implemented": {
+        "required_tools": [
+          "create_agent_version",
+          "get_agent",
+          "list_agent_versions",
+          "publish_agent_version"
+        ],
+        "optional_tools": [
+          "get_number",
+          "list_numbers"
+        ]
+      },
+      "designed": {
+        "required_tools": [],
+        "optional_tools": []
+      },
+      "host_actions": [
+        "Before publish_agent_version the assistant summarizes the agent and version and gets the user's confirmation in the conversation."
+      ],
+      "designed_unavailable_fallback": "If publish tools are not exposed, report that publishing is unavailable on this connection; do not claim a version is live."
+    },
+    {
+      "id": "connect_phone",
+      "implemented": {
+        "required_tools": [
+          "get_number",
+          "list_numbers",
+          "set_number_agents"
+        ],
+        "optional_tools": [
+          "get_call",
+          "list_agent_versions",
+          "list_calls",
+          "update_number"
+        ]
+      },
+      "designed": {
+        "required_tools": [],
+        "optional_tools": []
+      },
+      "host_actions": [
+        "Only numbers the organization already owns are connected; acquiring or cancelling numbers happens on the web.",
+        "Before set_number_agents or update_number the assistant confirms the number and the agent/version change (null disconnects) in the conversation."
+      ],
+      "designed_unavailable_fallback": "If number tools are not exposed, report that number connection is unavailable on this connection; do not claim a number is connected."
     },
     {
       "id": "customer_direct_test",
@@ -64,10 +133,13 @@
         "required_tools": [],
         "optional_tools": [
           "get_agent",
+          "get_call",
           "get_manual",
           "get_work_context",
           "get_work_operation",
           "get_work_record",
+          "list_agent_versions",
+          "list_calls",
           "save_work_record"
         ]
       },
@@ -76,21 +148,78 @@
         "optional_tools": []
       },
       "host_actions": [
-        "The customer performs the voice test in the existing vox.ai product UI.",
+        "The customer performs the voice test in the product UI; no tool starts a voice test.",
         "The customer reports the observed result and any relevant call reference."
       ],
-      "designed_unavailable_fallback": "Keep customer test feedback labeled as reported. If shared record tools are unavailable or the user directly asks not to save, retain only the current accessible conversation; never imply MCP launched or independently verified the test. The current contract does not expose the saved product UI recording setting to the host."
+      "designed_unavailable_fallback": "Keep customer test feedback labeled as reported until get_call reads the call. If shared record tools are unavailable (external public connections may not expose them) or the user directly asks not to save, retain only the current accessible conversation; never imply MCP launched the test."
     },
     {
       "id": "operate",
       "implemented": {
         "required_tools": [],
         "optional_tools": [
-          "get_agent",
-          "get_manual",
+          "cancel_campaign",
+          "create_sheet",
+          "find_customer",
+          "get_call",
+          "get_campaign",
+          "get_customer",
+          "get_number",
+          "get_sheet",
           "get_work_context",
           "get_work_operation",
           "get_work_record",
+          "launch_campaign",
+          "list_calls",
+          "list_campaigns",
+          "list_customers",
+          "list_numbers",
+          "list_sheets",
+          "pause_campaign",
+          "place_call",
+          "resume_campaign",
+          "save_work_record"
+        ]
+      },
+      "designed": {
+        "required_tools": [],
+        "optional_tools": [
+          "transfer_call",
+          "send_sms",
+          "send_sms_batch",
+          "get_sms",
+          "get_sms_batch"
+        ]
+      },
+      "host_actions": [
+        "Before place_call, launch_campaign, or resume_campaign the assistant confirms the target, from number, and agent/version in the conversation and creates a fresh execution_key per intended action.",
+        "On EXECUTION_RESULT_UNKNOWN or EXECUTION_IN_PROGRESS the assistant never retries; it checks get_call/list_calls or get_campaign/list_campaigns."
+      ],
+      "designed_unavailable_fallback": "Call transfer and SMS tools are not part of this tool set. If place_call or campaign tools are not exposed, say live operation is unavailable on this connection and do not claim call or campaign execution."
+    },
+    {
+      "id": "inspect_results",
+      "implemented": {
+        "required_tools": [
+          "get_call",
+          "list_calls"
+        ],
+        "optional_tools": [
+          "find_customer",
+          "get_agent",
+          "get_campaign",
+          "get_customer",
+          "get_customer_attribute_definition",
+          "get_work_context",
+          "get_work_operation",
+          "get_work_record",
+          "list_agent_versions",
+          "list_campaigns",
+          "list_customer_attribute_definitions",
+          "list_customers",
+          "resolve_customer",
+          "save_customer",
+          "save_customer_attribute_definition",
           "save_work_record"
         ]
       },
@@ -99,9 +228,9 @@
         "optional_tools": []
       },
       "host_actions": [
-        "For live use, the customer operates the configured agent through the existing vox.ai product UI and reports the outcome."
+        "get_call omits the transcript by default; include_transcript is requested only when the user asks and quotes only the needed turns."
       ],
-      "designed_unavailable_fallback": "The current tool contract candidates only read and save agent and Manual configuration plus work records. Use the product UI for live operation; do not claim MCP call, campaign, SMS, or call-history access."
+      "designed_unavailable_fallback": "If call tools are not exposed, rely on the customer's report labeled as reported and do not present it as read call evidence."
     },
     {
       "id": "resume",
@@ -111,11 +240,17 @@
           "get_manual"
         ],
         "optional_tools": [
+          "get_call",
+          "get_campaign",
+          "get_number",
           "get_organization",
           "get_work_context",
           "get_work_operation",
           "get_work_record",
+          "list_agent_versions",
           "list_agents",
+          "list_calls",
+          "list_knowledge_documents",
           "list_manuals",
           "save_work_record"
         ]
@@ -127,8 +262,8 @@
       "host_actions": [
         "When shared-work tools are unavailable and the host cannot access the original conversation, the user provides prior resource IDs and the latest decision."
       ],
-      "designed_unavailable_fallback": "Resume from same-host history or a user-provided handoff, then verify supplied IDs and current revisions. Never infer that another thread or host was searched."
+      "designed_unavailable_fallback": "Resume from same-host history or a user-provided handoff, then verify supplied IDs and current revisions. Never infer that another thread or host was searched. After an unknown execution, look up state with the read tools instead of re-running."
     }
   ],
-  "scope_note": "The bundle documents 14 tool schema candidates. This does not prove a connected host exposes them; inspect the live tool list and schemas."
+  "scope_note": "The bundle documents the first-release tool schema candidates plus work context/record tools. This does not prove a connected host exposes them; external public connections may not expose the work-record tools. Inspect the live tool list and schemas."
 }

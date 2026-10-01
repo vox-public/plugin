@@ -109,10 +109,10 @@ class BuildTests(unittest.TestCase):
 
     def test_catalog_rejects_unavailable_tool_as_implemented(self):
         def misclassify(catalog):
-            skill = next(skill for skill in catalog['skills'] if skill['name'] == 'agents-platform')
+            skill = next(skill for skill in catalog['skills'] if skill['name'] == 'configure-supporting-channel')
             tools = skill['tools']
-            tools['designed_only'].remove('get_call')
-            tools['implemented'].append('get_call')
+            tools['designed_only'].remove('save_widget')
+            tools['implemented'].append('save_widget')
         self.change_json('catalog.json', misclassify)
         with self.assertRaisesRegex(ValueError, 'classifies unavailable tools as implemented'):
             self.run_build()

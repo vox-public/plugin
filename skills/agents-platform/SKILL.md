@@ -20,15 +20,22 @@ metadata:
 호스트가 실제 제공한 MCP 도구 이름과 스키마를 먼저 확인한다. 이름 검색 후 정확한 ID를 확보한다. `list_models`, `list_schemas`, `get_schema`는 제품 설정 탐색용이며 호스트의 MCP 도구 발견 기능과 혼동하지 않는다. 여러 서버가 있으면 연결 식별자와 제품 모듈을 함께 확인한다. Manual은 Single에 귀속되므로 `list_agents`로 대상을 정하고 `list_manuals` 또는 `get_manual`로 같은 `agent_id` 범위의 현재 Manual을 읽는다.
 
 ## 도구 선택
-- 구축: `list_agents`, `get_agent`, `list_manuals`, `get_manual`, `save_agent`, `save_manual`. 생성/수정 mode와 연결된 서버의 실제 payload를 사용한다. Manual 저장에는 `agent_id`와 현재 `head_revision`에 해당하는 `expected_head_revision`을 포함한다. Agent 수정에도 현재 `head_revision`을 사용한다.
-- 현재 번들에는 조직·agent·Manual·모델·설정 schema 10개와 work context·record·operation 도구 4개의 schema 후보가 있다. 실제 사용 가능 여부는 연결된 서버의 목록과 schema로 확인한다. 직접 음성 시험, call history, 발신, 번호, 캠페인, SMS, 채팅과 위젯 동작은 포함되지 않는다. 예제와 schema 검증은 [합성 고객 여정](../../references/workflow-examples.md)을 따른다.
-- 호스트가 추가 tool을 실제로 노출하면 그 tool list와 입력 schema를 확인한 뒤 해당 업무를 진행한다. agent 저장이 실고객 발신을 허가하지 않고, plugin의 skill 목록만으로 구현 여부를 추정하지 않는다.
+첫 배포 범위의 도구는 대화만으로 첫 출시 여정(구축 → 버전 저장·게시 → 보유 번호 연결 → 발신 → 결과 확인)을 끝낼 수 있게 한다. 실제 사용 가능 여부는 연결된 서버의 목록과 schema로 확인한다.
+- 조직·탐색: `get_organization`, `list_models`, `list_schemas`, `get_schema`. 조직 관리는 `update_organization`(요청한 설정만)과 `list_organization_members`(개인정보라 필요한 범위만)다.
+- 구축: `list_agent_templates` → `get_agent_template` → `instantiate_agent_template`로 시작하거나 `save_agent`(mode=create). `list_manuals`/`get_manual`/`save_manual`, 도구 `list_tools`/`get_tool`/`save_tool`, 지식 `list_knowledges`/`create_knowledge`/`import_knowledge_documents`(텍스트·URL만)/`list_knowledge_documents`/`delete_knowledge_document`. Manual 저장에는 `agent_id`와 현재 `head_revision`에 해당하는 `expected_head_revision`을 포함하고 Agent 수정에도 현재 `head_revision`을 사용한다.
+- 버전·게시: `list_agent_versions`, `create_agent_version`(현재 설정을 버전으로 저장) → `publish_agent_version`(production 지정). → [첫 출시 연결](../build-first-voice-agent/SKILL.md)
+- 번호: `list_numbers`, `get_number`, `set_number_agents`, `update_number`. 이미 가진 번호만 다루며 번호 획득·해지는 웹에서만 한다. → [번호 연결](../connect-phone-service/SKILL.md)
+- 발신·캠페인: `place_call`, 시트 `list_sheets`/`get_sheet`/`create_sheet`, `launch_campaign`, `list_campaigns`/`get_campaign`, `pause_campaign`/`resume_campaign`/`cancel_campaign`. → [발신 운영](../operate-outbound-and-followup/SKILL.md)
+- 결과 확인: `list_calls`, `get_call`(원문은 명시 요청 시만), 고객 `list_customers`/`get_customer`/`find_customer`/`save_customer`/`resolve_customer`와 속성 정의 3개. → [통화 근거](../inspect-call-evidence/SKILL.md)
+- 이 범위 밖(음성 시험 시작, SMS, 채팅·위젯, 번호 구매, 파일 업로드)은 도구가 없다. 음성 시험은 고객이 제품 UI에서 직접 하고 결과를 보고한다. 호스트가 추가 tool을 실제로 노출하면 그 입력 schema를 확인한 뒤 사용한다. 예제와 schema 검증은 [합성 고객 여정](../../references/workflow-examples.md)을 따른다.
+
+실제 전화·대량 발신·운영 반영·번호 연결 변경·삭제·인증 변경은 [실행 계약](../../references/execution-contract.md)의 ‘실제 영향이 있는 도구’(사용자 확인, `execution_key`, 결과 불명, 비밀값 마스킹)를 따른다. agent 저장이나 게시가 실고객 발신을 허가하지 않는다.
 
 ## Context와 기록
 
 다음 작업에 영향을 줄 결정, 고객 피드백, 확인된 제품 변경, 미완료 다음 단계가 생기면 get_work_context와 get_work_record로 관련 case를 확인하고 save_work_record로 필요한 요약을 기록한다. “기억해” 같은 키워드를 요구하지 않는다. get_work_context의 background_settings로 자동 기록 상태와 revision/epoch를 확인하고 routine case/event에 최신 값을 전달한다. 기본은 켜짐이며 OFF이면 routine 자동 기록을 중단한다. 사용자가 명시적으로 요청한 기존 기록 조회·정정·삭제는 OFF와 별개로 지원한다. 사용자가 현재 대화에서 저장하지 말라고 직접 요청하면 기록하지 않는다. 외부 통화 transcript 전체를 수집하지 않고 간결한 보고와 최소 locator만 남긴다. 고객 음성 결과는 reported evidence로 유지하며 text_contract 평가를 고객 voice 결과로 표시하지 않는다.
 
-user-principal save_agent 또는 save_manual을 호출하기 직전에 매번 get_work_context를 실행하고, 결과의 context_receipt.token을 다음 한 번의 저장에 최상위 context_receipt로 전달한다. receipt를 재사용하지 않는다. 이 읽기는 max_tokens를 기본값(3000) 아래로 낮추지 않고, `MEMORY_CONTEXT_BUDGET_TOO_SMALL`이 오면 `details.required_tokens` 이상(최대 3000)으로 한 번만 다시 호출한다. 실제 도구 목록이나 schema에 context/receipt가 없으면 초안만 준비하고 제품 쓰기는 하지 않는다.
+user-principal save_agent 또는 save_manual을 호출하기 직전에 매번 get_work_context를 실행하고, 결과의 context_receipt.token을 다음 한 번의 저장에 최상위 context_receipt로 전달한다. receipt를 재사용하지 않는다. 이 읽기는 max_tokens를 기본값(3000) 아래로 낮추지 않고, `MEMORY_CONTEXT_BUDGET_TOO_SMALL`이 오면 `details.required_tokens` 이상(최대 3000)으로 한 번만 다시 호출한다. 실제 도구 목록에 get_work_context가 없는 호스트(외부 공개 연결 등)에서는 receipt 없이 저장을 시도할 수 있고, 서버가 receipt를 요구하며 거부하면 초안만 준비하고 그 사실을 알린다. 작업 기록 도구가 없으면 현재 대화나 사용자 handoff로 이어간다.
 
 ## 응답과 복귀
 저장/접수/최종 완료/부분 실패/불명을 분리한다. 저장 성공 뒤 조회가 실패했다면 받은 `agent_id`와 `manual_id`부터 이어간다. `409` conflict는 현재 상태를 다시 읽고 사용자의 변경 의도를 다시 적용할 때만 처리하며 무조건 재시도하지 않는다. 쓰기 응답이 불명이면 새 생성이나 같은 쓰기를 반복하지 말고 [resume-agent-work](../resume-agent-work/SKILL.md)로 지원되는 조회를 이어간다. OAuth 만료를 조직 전체 키나 직접 REST로 우회하지 않는다.

@@ -15,7 +15,7 @@ metadata:
 [결과 설계](../post-call-result-design/SKILL.md)에 따라 필요한 필드와 완료 판정을 정한다. `get_agent`의 기존 postCall 설정과 연결 대상을 읽고 변경하지 않을 항목을 보존한다. 현재 지원하는 저장 대상과 필드 스키마를 확인한다.
 
 ## 저장
-`save_agent`에 지원되는 postCall payload를 전달한다. 설정 그룹의 교체 의미에 따라 기존 필드를 포함한다. 고객·시트가 필요한 경우 현재 리소스를 먼저 조회하고 실제 지원되는 연결만 사용한다. 존재하지 않는 저장 대상이나 임의의 필드 타입을 만들지 않는다.
+`save_agent`에 지원되는 postCall payload를 전달한다. 설정 그룹의 교체 의미에 따라 기존 필드를 포함한다. 고객·시트가 필요한 경우 `list_customer_attribute_definitions`/`get_customer_attribute_definition`, `list_customers`/`find_customer`, `list_sheets`/`get_sheet`로 현재 리소스를 먼저 읽고 실제 지원되는 연결만 사용한다. 고객 속성·정의는 `save_customer`/`save_customer_attribute_definition`으로 저장하며 `resolve_customer`는 없으면 고객을 만든다. 존재하지 않는 저장 대상이나 임의의 필드 타입을 만들지 않는다.
 
 ## 확인
 설정 재조회와 실제 통화 결과 확인은 별도다. 시험 뒤 `get_call`의 실제 추출/분석 상태와 필요한 내부 저장 대상을 읽는다. 분석 대기, 정보 미수집, 저장 실패, 외부 전달 실패를 나눈다. 과거 콜을 현재 필드 설정으로 평가하지 말고 당시 버전/근거부터 확인한다.

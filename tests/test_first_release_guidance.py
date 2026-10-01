@@ -1,0 +1,167 @@
+import json
+import re
+import unittest
+
+from scripts.build import ROOT
+
+FIRST_RELEASE_TOOLS = """
+get_organization list_models list_schemas get_schema update_organization list_organization_members
+list_agents get_agent save_agent list_agent_versions create_agent_version publish_agent_version
+list_agent_templates get_agent_template instantiate_agent_template
+list_manuals get_manual save_manual list_tools get_tool save_tool
+list_knowledges create_knowledge list_knowledge_documents import_knowledge_documents delete_knowledge_document
+list_numbers get_number update_number set_number_agents
+list_calls get_call place_call
+list_campaigns get_campaign launch_campaign pause_campaign resume_campaign cancel_campaign
+list_sheets get_sheet create_sheet
+list_customers get_customer find_customer save_customer resolve_customer
+list_customer_attribute_definitions get_customer_attribute_definition save_customer_attribute_definition
+""".split()
+
+SIDE_EFFECT_TOOLS = [
+    "place_call", "launch_campaign", "resume_campaign", "publish_agent_version",
+    "set_number_agents", "update_number", "delete_knowledge_document", "save_tool",
+]
+
+# Phrases that send the user to the product UI/dashboard for capabilities the 50 tools now cover.
+DASHBOARD_FALLBACKS = [
+    r"대시보드에서(?! 보자)",
+    r"제품 UI에서 (운영|상태를 확인|실운영)",
+    r"실운영(은|을)[^.\n]{0,20}제품 UI",
+    r"기존 vox\.ai 제품 UI",
+    r"baseline에",
+    r"포함되지 않는다",
+    r"도구가 없다고 .{0,10}제품 UI",
+    r"Use the product UI for live operation",
+    r"do not claim MCP call, campaign",
+]
+
+
+def read(relative):
+    return (ROOT / relative).read_text()
+
+
+def guidance_files():
+    paths = sorted(ROOT.glob("skills/*/SKILL.md"))
+    paths += [ROOT / "references" / name for name in (
+        "execution-contract.md", "host-adapters.md", "workflow-guidance.md",
+        "workflow-examples.md", "workflow-capabilities.json")]
+    paths.append(ROOT / "README.md")
+    return paths
+
+
+class FirstReleaseGuidanceTests(unittest.TestCase):
+    def test_execution_contract_states_confirmation_key_unknown_and_secret_rules(self):
+        text = read("references/execution-contract.md")
+        for tool in SIDE_EFFECT_TOOLS:
+            self.assertIn(f"`{tool}`", text, tool)
+        for needle in (
+            "## 실제 영향이 있는 도구",
+            "대화에서 짧게 요약한다",
+            "‘계획을 짜줘’·‘준비해줘’는 실행 승인이 아니다",
+            "`execution_key`(8~128자",
+            "같은 키는 같은 실행(같은 인자)의 재전송에만 쓰며",
+            "실패(일시 오류 포함)를 다시 시도하려면 새 키를 만든다",
+            "`EXECUTION_KEY_REUSED`",
+            "`EXECUTION_RESULT_UNKNOWN`",
+            "`EXECUTION_IN_PROGRESS`",
+            "다시 실행하지 않고 새 키도 만들지 않는다",
+            "`list_calls`",
+            "`get_campaign`",
+            "마스킹",
+            "`save_tool`에 되돌려 넣지 않고",
+            "`include_transcript`",
+            "지식은 텍스트·URL만 받는다",
+            "번호 획득·해지는 웹에서만",
+            "음성 시험 도구는 없으며 고객이 제품 UI에서 직접 시험한다",
+        ):
+            self.assertIn(needle, text, needle)
+
+    def test_skills_carry_their_first_release_guidance(self):
+        required = {
+            "agents-platform": ["`instantiate_agent_template`", "`create_agent_version`", "`publish_agent_version`",
+                                 "`set_number_agents`", "`place_call`", "`launch_campaign`", "`get_call`",
+                                 "‘실제 영향이 있는 도구’", "`import_knowledge_documents`(텍스트·URL만)",
+                                 "번호 획득·해지는 웹에서만"],
+            "build-first-voice-agent": ["`instantiate_agent_template`", "`create_agent_version`",
+                                         "`publish_agent_version`", "사용자에게 어느 버전을 production으로 지정할지 요약해 확인받고"],
+            "connect-phone-service": ["`list_numbers`", "`get_number`", "`set_number_agents`", "**`set_number_agents`의 null은 연결 해제다.**",
+                                       "번호 획득·해지와 대표번호·발신표기번호 신청·심사는 웹에서만", "`publish_agent_version`"],
+            "operate-outbound-and-followup": ["`place_call`", "`execution_key`", "`launch_campaign`", "`pause_campaign`",
+                                               "`resume_campaign`", "`cancel_campaign`", "`create_sheet`", "`EXECUTION_RESULT_UNKNOWN`",
+                                               "`EXECUTION_IN_PROGRESS`", "`EXECUTION_KEY_REUSED`", "새 키를 만든다",
+                                               "대화에서 짧게 요약해 사용자의 진행 확인을 받는다"],
+            "prepare-voice-test": ["음성 시험을 시작하는 도구는 없다", "`get_call`", "`list_calls`", "customer_reported"],
+            "inspect-call-evidence": ["`list_calls`", "`get_call`", "`include_transcript`", "사용자가 요청할 때만"],
+            "review-call-performance": ["`list_calls`", "`get_call`", "`get_campaign`"],
+            "knowledge-grounding": ["`create_knowledge`", "`import_knowledge_documents`", "텍스트(`document_type=text`)와 URL(`webpage`)만",
+                                     "파일은 전달할 수 없으므로", "`list_knowledge_documents`", "`delete_knowledge_document`"],
+            "connect-agent-tools": ["`save_tool`", "마스킹", "`save_tool`에 되돌려 넣지 않는다", "인증을 바꾸는 저장은"],
+            "resume-agent-work": ["`EXECUTION_RESULT_UNKNOWN`", "재실행·새 `execution_key` 금지", "`list_calls`"],
+        }
+        for name, needles in required.items():
+            text = read(f"skills/{name}/SKILL.md")
+            for needle in needles:
+                self.assertIn(needle, text, f"{name}: {needle}")
+
+    def test_no_skill_or_reference_sends_covered_capabilities_to_the_dashboard(self):
+        for path in guidance_files():
+            text = path.read_text()
+            for pattern in DASHBOARD_FALLBACKS:
+                self.assertIsNone(re.search(pattern, text), f"{path.relative_to(ROOT)}: {pattern}")
+
+    def test_every_first_release_tool_is_named_in_guidance_and_none_is_design_only(self):
+        corpus = "\n".join(path.read_text() for path in guidance_files())
+        for tool in FIRST_RELEASE_TOOLS:
+            self.assertRegex(corpus, rf"(?<![A-Za-z_]){tool}(?![A-Za-z_])", tool)
+        catalog = json.loads(read("catalog.json"))
+        for skill in catalog["skills"]:
+            self.assertFalse(set(skill["tools"]["designed_only"]) & set(FIRST_RELEASE_TOOLS), skill["name"])
+        self.assertFalse(set(catalog["designed_tool_references"]) & set(FIRST_RELEASE_TOOLS))
+
+    def test_workflow_capabilities_cover_the_first_release_journey(self):
+        contract = json.loads(read("references/workflow-capabilities.json"))
+        workflows = {workflow["id"]: workflow for workflow in contract["workflows"]}
+        self.assertTrue({"authoring", "publish", "connect_phone", "operate", "inspect_results"} <= set(workflows))
+        covered = set()
+        for workflow in workflows.values():
+            tools = workflow["implemented"]["required_tools"] + workflow["implemented"]["optional_tools"]
+            covered.update(tools)
+        self.assertTrue(set(FIRST_RELEASE_TOOLS) <= covered, sorted(set(FIRST_RELEASE_TOOLS) - covered))
+        operate = workflows["operate"]
+        self.assertIn("place_call", operate["implemented"]["optional_tools"])
+        self.assertIn("launch_campaign", operate["implemented"]["optional_tools"])
+        self.assertTrue(any("execution_key" in action for action in operate["host_actions"]))
+        self.assertTrue(any("EXECUTION_RESULT_UNKNOWN" in action for action in operate["host_actions"]))
+        self.assertEqual(
+            workflows["publish"]["implemented"]["required_tools"],
+            ["create_agent_version", "get_agent", "list_agent_versions", "publish_agent_version"])
+        self.assertEqual(
+            workflows["connect_phone"]["implemented"]["required_tools"],
+            ["get_number", "list_numbers", "set_number_agents"])
+        # The voice test stays a customer action, and work-record tools are never hard requirements.
+        self.assertTrue(any("customer performs the voice test" in a
+                            for a in workflows["customer_direct_test"]["host_actions"]))
+        work = {"get_work_context", "get_work_operation", "get_work_record", "save_work_record"}
+        for workflow in workflows.values():
+            self.assertFalse(work & set(workflow["implemented"]["required_tools"]), workflow["id"])
+
+    def test_work_record_tools_may_be_absent_on_external_hosts(self):
+        for path in ("references/host-adapters.md", "references/execution-contract.md", "README.md"):
+            text = read(path)
+            self.assertIn("작업 기록", text, path)
+        adapters = read("references/host-adapters.md")
+        self.assertIn("외부 공개 연결에는 작업 기록 4개 도구가 없을 수 있다", adapters)
+        self.assertIn("사용자 handoff", adapters)
+        contract = read("references/execution-contract.md")
+        self.assertIn("작업 기록 도구가 없으면 현재 대화나 사용자 handoff로 이어간다", contract)
+
+    def test_new_work_requires_confirmation_summary_for_every_side_effect_skill(self):
+        for name in ("operate-outbound-and-followup", "connect-phone-service", "build-first-voice-agent",
+                     "knowledge-grounding", "connect-agent-tools"):
+            text = read(f"skills/{name}/SKILL.md")
+            self.assertRegex(text, r"요약해 확인받|요약해 사용자의 진행 확인|대화에서 짧게 요약해", name)
+
+
+if __name__ == "__main__":
+    unittest.main()

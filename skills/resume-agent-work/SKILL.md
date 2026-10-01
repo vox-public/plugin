@@ -20,7 +20,9 @@ metadata:
 | Manual 저장 성공, 후속 단계 실패 | 받은 `agent_id`와 `manual_id`로 Manual을 조회하고 그 Single에서 이어간다 |
 | 저장 성공, 재조회 실패 | 같은 `agent_id`·`manual_id`를 재조회; 새 리소스 생성 금지 |
 | Manual create 응답 불명 | 같은 `agent_id`에서 `list_manuals`로 후보를 찾고 `get_manual`로 ID·전체 본문·revision을 비교한다; 일치 후보는 현재 대상으로 사용할 수 있지만 exact receipt 없이는 원 create 성공으로 단정하지 않는다 |
-| save_work_record 응답 불명 | 동일 UUID operation_id로 get_work_operation을 조회; POST를 반복하거나 새 ID를 만들지 않음 |\n| 실제 제품 작업 응답 불명 | 현재 도구가 해당 동작·결과 조회를 제공하는지 먼저 확인; 제공하지 않으면 제품 UI에서 상태를 확인하도록 안내하고 재실행하지 않음 |
+| save_work_record 응답 불명 | 동일 UUID operation_id로 get_work_operation을 조회; POST를 반복하거나 새 ID를 만들지 않음 |
+| 발신·캠페인 응답 불명(`EXECUTION_RESULT_UNKNOWN`·`EXECUTION_IN_PROGRESS`) | 재실행·새 `execution_key` 금지; `list_calls`(`call_to`·`start_at_after`)/`get_call`, 캠페인은 `get_campaign`/`list_campaigns`로 접수 여부 확인 후 보고 |
+| 게시·번호 연결·지식 삭제 등 제품 작업 응답 불명 | `get_agent`/`list_agent_versions`, `get_number`, `list_knowledge_documents`로 실제 상태를 읽고 재실행하지 않음; 조회 도구가 없으면 사용자에게 상태 확인을 요청 |
 | 인증 만료/철회 | 호스트의 재연결 경로로 권한 복구 후 실제 상태 재조회 |
 | 다른 조직으로 바뀜 | 이전 조직 자격 증명/리소스를 재사용하지 않음 |
 
