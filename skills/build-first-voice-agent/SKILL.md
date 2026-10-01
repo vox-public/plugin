@@ -16,12 +16,12 @@ metadata:
 
 ## 구축
 ### 모델 고르기
-새 agent 모델을 정하거나 사용자가 요청한 기존 agent 모델을 바꿀 때마다 `list_models(kind=llm)`을 호출한다. 사용자가 모델이나 계열·공급사를 말하지 않았다면 “좋은 모델로”, “최신 모델로”, “성능 좋게” 같은 표현도 지정으로 보지 않는다. 호스트 자신의 모델 계열이라는 이유로 고르지 않으며, 기존 agent 모델은 변경 요청이 없으면 보존한다.
+새 agent 모델을 정하거나 사용자가 요청한 기존 agent 모델을 바꿀 때마다 `list_models(kind=llm)`을 호출한다. 사용자가 모델 ID·모델명·계열·공급사를 직접 지정하지 않았다면 “좋은 모델로”, “최신 모델로”, “성능 좋게”, “빠른 모델”, “비용이 낮은 모델”, “품질이 좋은 모델” 같은 속도·비용·품질·최신 선호는 지정으로 보지 않는다. 호스트 자신의 모델 계열이라는 이유로 고르지 않으며, 기존 agent 모델은 변경 요청이 없으면 보존한다.
 
 - 결과에 `featured` 필드 자체가 없는 구 API에서는 새 agent의 `data.llm`을 생략해 서버 기본값을 쓴다. 사용자가 모델·계열·공급사를 지정했으면 그 선택을 이 구 API로 명시 저장할 수 없다고 알린다. 기존 agent 모델 변경도 실행하지 않고 현재 값을 보존한다. 모델이 들어 있는 템플릿은 선택하지 말고 `save_agent(mode=create)`에서 `data.llm`을 생략한다. `featured` 정보가 있는데 활성 featured 항목이 하나도 없다면 지정 없는 요청은 추천 모델을 찾지 못했다고 알리고 임의 선택하지 않는다.
-- `featured` 정보가 있으면 지정이 없는 경우 `featured=true`이고 `deprecated=false`인 결과 중 `display_order`가 가장 작은 항목을 고른다. `data.llm.model`에는 그 항목의 `model` 값을 그대로 넣는다. 이는 표시 이름과 다른 routing group 키일 수 있다.
-- 사용자가 정확한 모델 ID를 지정하면 조회 결과에서 같은 `model` 값을 가진 항목을 쓴다. 모델명을 지정하면 조회 결과의 `display_name`과 정확히 맞는 항목을 찾고, `data.llm.model`에는 그 항목의 `model` 값을 넣는다. `deprecated=true` 항목은 정확한 모델 ID가 지정된 경우에만 허용한다. 사용자가 계열이나 공급사를 지정하면 결과의 해당 범위에서 deprecated가 아닌 featured 항목 중 `display_order`가 가장 작은 것을 고른다. 그 범위에 featured가 없으면 deprecated가 아닌 항목 중 순서가 가장 앞선 것을 고르고 vox 추천 모델이 아니라고 알린다. 해당 ID·계열·공급사의 사용 가능한 항목이 조회 결과에 없으면 저장하지 않는다. 모델 ID를 추측하거나 다른 필드에서 만들어 내지 않는다.
-- 선택을 한 줄로 알린다. 예: `모델: <display_name> (vox 추천 1순위)`, `모델: <display_name> (요청한 계열의 vox 추천 모델)`, `모델: <display_name> (사용자 지정)`, 또는 `모델: <display_name> (요청한 계열, vox 추천 모델 아님)`. 사용자가 deprecated ID를 정확히 요청했다면 그 사실도 표시한다. 구 API fallback은 `모델: vox 추천 기본값 (구 API 서버 기본값)`이라고 알린다.
+- 추천 기준은 `featured=true`, `deprecated=false`인 모델이며, `display_order`가 가장 작은 항목이 이번 출시의 vox 추천 1순위다. 지정이 없으면 전역 추천 1순위의 `model` 값을 `data.llm.model`에 그대로 넣는다. 이는 표시 이름과 다른 routing group 키일 수 있다.
+- featured 추천 범위 밖의 모델은 사용자가 모델 ID·모델명·계열·공급사를 직접 지정한 경우에만 선택한다. 정확한 모델 ID는 조회 결과의 `model`과, 모델명은 `display_name`과 정확히 일치시킨다. `deprecated=true` 항목은 정확한 모델 ID를 직접 지정한 경우에만 허용한다. 사용자가 계열이나 공급사를 지정하면 해당 범위에서 deprecated가 아닌 featured 항목 중 `display_order`가 가장 작은 것을 고른다. 범위 안에 featured 항목이 없으면 deprecated가 아닌 항목 중 순서가 가장 앞선 것을 선택한다. 저장 시 선택한 모델이 `featured=true`이고 `deprecated=false`인 추천 항목이 아니면 반드시 `이 모델은 vox 추천 모델이 아닙니다(추천: <featured 1순위 display_name>)` 한 줄을 알린다. 활성 featured 추천이 없으면 추천 이름을 만들지 말고 같은 문구의 추천 값을 `현재 featured 추천 모델 없음`으로 표시한다. 해당 ID·계열·공급사의 사용 가능한 항목이 조회 결과에 없으면 저장하지 않는다. 모델 ID를 추측하거나 다른 필드에서 만들어 내지 않는다.
+- 선택을 한 줄로 알린다. 예: `모델: <display_name> (vox 추천 1순위)`, `모델: <display_name> (요청한 계열의 vox 추천 모델)`, `모델: <display_name> (사용자 지정)`, 또는 `모델: <display_name> (요청한 계열, vox 추천 모델 아님)`. 추천이 아닌 모델은 위의 필수 알림도 저장 전에 별도로 한 줄 표시한다. 사용자가 deprecated ID를 정확히 요청했다면 그 사실도 표시한다. 구 API fallback은 `모델: vox 추천 기본값 (구 API 서버 기본값)`이라고 알린다.
 - `save_agent(mode=create)`에서는 선택한 `model`을 `data.llm.model`에 넣는다. 템플릿 생성은 `instantiate_agent_template` 성공 뒤 `get_agent`로 `head_revision`과 현재 `data.llm`을 읽고, `data.llm`의 기존 지원 필드는 보존하면서 `model`만 선택값으로 바꿔 `save_agent(mode=update)`에 보낸다. 방금 읽은 revision을 `expected_head_revision`으로 쓰고 다른 설정 묶음은 보내지 않는다. `llm` 묶음은 통째로 교체되므로 temperature 등 기존 값을 빠뜨리지 않는다.
 
 ### 구축 순서
