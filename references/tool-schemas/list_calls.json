@@ -133,6 +133,46 @@
         "default": 50,
         "title": "Limit",
         "description": "Maximum number of items to return. v3 list endpoints accept 1-100."
+      },
+      "agent_version": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "에이전트 버전 필터 (current 또는 v{n}, 반복 가능). agent_id를 1개 지정할 때만 사용할 수 있습니다.",
+        "title": "Agent Version"
+      },
+      "duration_ms_min": {
+        "type": "integer",
+        "maximum": 9223372036854775807,
+        "minimum": 0,
+        "description": "통화 시간 하한 (밀리초, 이 값 이상).",
+        "title": "Duration Ms Min"
+      },
+      "duration_ms_max": {
+        "type": "integer",
+        "maximum": 9223372036854775807,
+        "minimum": 0,
+        "description": "통화 시간 상한 (밀리초, 이 값 이하).",
+        "title": "Duration Ms Max"
+      },
+      "metadata": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 20,
+        "description": "key:value 형식의 메타데이터 정확 일치 필터 (예: source:crm, 반복 가능). 같은 key는 OR, 다른 key는 AND로 찾습니다.",
+        "title": "Metadata"
+      },
+      "dynamic_variables": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 20,
+        "description": "key:value 형식의 동적 변수 정확 일치 필터 (예: name:홍길동, 반복 가능). 같은 key는 OR, 다른 key는 AND로 찾습니다.",
+        "title": "Dynamic Variables"
       }
     },
     "required": []
