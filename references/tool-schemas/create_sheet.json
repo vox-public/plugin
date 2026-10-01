@@ -1,0 +1,62 @@
+{
+  "name": "create_sheet",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "payload": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Name",
+            "description": "프로젝트에 저장할 시트 이름."
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/$defs/CreateSheetRowRequest"
+            },
+            "type": "array",
+            "maxItems": 10000,
+            "minItems": 1,
+            "title": "Rows",
+            "description": "시트 행. 최소 1개, 최대 10,000개."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "rows"
+        ],
+        "title": "CreateSheetRequest"
+      }
+    },
+    "required": [
+      "payload"
+    ],
+    "$defs": {
+      "CreateSheetRowRequest": {
+        "properties": {
+          "to_number": {
+            "type": "string",
+            "title": "To Number",
+            "description": "발신 대상 전화번호."
+          },
+          "dynamic_variables": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Dynamic Variables",
+            "description": "행에 저장할 동적 변수. 모든 값은 문자열이어야 합니다."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "to_number"
+        ],
+        "title": "CreateSheetRowRequest"
+      }
+    }
+  }
+}

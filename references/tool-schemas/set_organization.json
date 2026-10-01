@@ -1,0 +1,17 @@
+{
+  "name": "set_organization",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "organization_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "전환할 조직 ID(UUID). list_organizations 결과의 organization_id"
+      }
+    },
+    "required": [
+      "organization_id"
+    ],
+    "additionalProperties": false
+  }
+}

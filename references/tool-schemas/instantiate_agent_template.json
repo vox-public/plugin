@@ -1,0 +1,52 @@
+{
+  "name": "instantiate_agent_template",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "template_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "템플릿 UUID입니다.",
+        "title": "Template Id"
+      },
+      "payload": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "생성할 에이전트 이름입니다. 생략하면 템플릿 이름을 사용합니다."
+          },
+          "folder_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Folder Id",
+            "description": "Optional folder to create the agent in. Omit (or null) to create at the organization root."
+          }
+        },
+        "type": "object",
+        "title": "InstantiateAgentTemplateRequest",
+        "description": "Optional target-agent name override.",
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "template_id"
+    ]
+  }
+}

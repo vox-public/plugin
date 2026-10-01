@@ -1,0 +1,67 @@
+{
+  "name": "list_knowledge_documents",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "knowledge_id": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Numeric public knowledge ID returned by `GET /v3/knowledges`.",
+        "title": "Knowledge Id"
+      },
+      "cursor": {
+        "type": "string",
+        "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page.",
+        "title": "Cursor"
+      },
+      "limit": {
+        "type": "integer",
+        "maximum": 100,
+        "minimum": 1,
+        "description": "Maximum number of items to return. v3 list endpoints accept 1-100.",
+        "default": 50,
+        "title": "Limit"
+      },
+      "sort_order": {
+        "enum": [
+          "asc",
+          "desc"
+        ],
+        "type": "string",
+        "description": "Sort direction. Allowed values are `asc` and `desc`.",
+        "default": "desc",
+        "title": "Sort Order"
+      },
+      "document_type": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "file",
+            "text",
+            "webpage"
+          ],
+          "type": "string"
+        },
+        "description": "document 타입 필터 (복수 반복 가능). 예: `?document_type=file&document_type=text`.",
+        "title": "Document Type"
+      },
+      "status": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "uploading",
+            "completed",
+            "failed"
+          ],
+          "type": "string"
+        },
+        "description": "Status filter. Repeat the query parameter to filter by multiple statuses when the endpoint supports multiple values.",
+        "title": "Status"
+      }
+    },
+    "required": [
+      "knowledge_id"
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "get_sheet",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "sheet_id": {
+        "type": "string",
+        "format": "uuid",
+        "title": "Sheet Id"
+      }
+    },
+    "required": [
+      "sheet_id"
+    ]
+  }
+}

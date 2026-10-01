@@ -1,0 +1,400 @@
+{
+  "name": "save_tool",
+  "inputSchema": {
+    "type": "object",
+    "oneOf": [
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "const": "create"
+          },
+          "payload": {
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 64,
+                "minLength": 1,
+                "pattern": "^[a-zA-Z0-9_-]+$",
+                "title": "Name",
+                "description": "도구 이름. 영숫자, 하이픈, 언더스코어만 허용. 1~64자."
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Description",
+                "description": "도구에 대한 설명. null 허용."
+              },
+              "input_schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Input Schema",
+                "description": "도구 입력 파라미터를 정의하는 JSON Schema 객체."
+              },
+              "api_configuration": {
+                "$ref": "#/$defs/ToolApiConfigurationWrite",
+                "description": "외부 API 호출 설정."
+              },
+              "speak_during_execution": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SpeakDuringExecution"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "실행 중 사용자에게 재생할 TTS 메시지 설정."
+              },
+              "allow_interruption_during_execution": {
+                "type": "boolean",
+                "title": "Allow Interruption During Execution",
+                "description": "도구 실행 중 사용자 발화로 인터럽트 허용 여부. 기본값 false.",
+                "default": false
+              },
+              "tool_call_sound": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "none",
+                      "typing",
+                      "elevator_1",
+                      "elevator_2",
+                      "elevator_3",
+                      "elevator_4"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Tool Call Sound",
+                "description": "도구 실행 중 재생할 대기음. null 또는 `none`이면 재생하지 않는다."
+              },
+              "response_mode": {
+                "type": "string",
+                "enum": [
+                  "wait",
+                  "fire_and_forget"
+                ],
+                "title": "Response Mode",
+                "description": "`wait`는 API 응답을 기다려 결과를 대화에 전달한다. `fire_and_forget`은 요청을 보낸 뒤 즉시 다음 대화로 진행한다.",
+                "default": "wait"
+              }
+            },
+            "type": "object",
+            "required": [
+              "name",
+              "input_schema",
+              "api_configuration"
+            ],
+            "title": "CreateToolRequest",
+            "description": "도구 생성 요청 (`POST /v3/tools`).",
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "mode",
+          "payload"
+        ]
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "tool_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "도구 ID.",
+            "title": "Tool Id"
+          },
+          "mode": {
+            "const": "update"
+          },
+          "payload": {
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 64,
+                "minLength": 1,
+                "pattern": "^[a-zA-Z0-9_-]+$",
+                "title": "Name",
+                "description": "도구 이름. 생략 시 변경 안함. null 전송 시 400."
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Description",
+                "description": "도구 설명. 생략 시 변경 안함. null 전송 시 값이 null 로 설정된다."
+              },
+              "input_schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Input Schema",
+                "description": "도구 입력 파라미터를 정의하는 JSON Schema 객체. 생략 시 변경 안함. null 전송 시 400."
+              },
+              "api_configuration": {
+                "$ref": "#/$defs/ToolApiConfigurationPatch",
+                "description": "외부 API 호출 설정 부분 업데이트. 생략 시 변경 안함. null 전송 시 400."
+              },
+              "speak_during_execution": {
+                "$ref": "#/$defs/SpeakDuringExecution",
+                "description": "실행 중 TTS 메시지 설정. 생략 시 변경 안함. null 전송 시 400."
+              },
+              "allow_interruption_during_execution": {
+                "type": "boolean",
+                "title": "Allow Interruption During Execution",
+                "description": "실행 중 인터럽트 허용 여부. 생략 시 변경 안함. null 전송 시 400."
+              },
+              "tool_call_sound": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "none",
+                      "typing",
+                      "elevator_1",
+                      "elevator_2",
+                      "elevator_3",
+                      "elevator_4"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Tool Call Sound",
+                "description": "실행 중 재생할 대기음. 생략 시 변경 안함. null 전송 시 값이 null 로 설정된다."
+              },
+              "response_mode": {
+                "type": "string",
+                "enum": [
+                  "wait",
+                  "fire_and_forget"
+                ],
+                "title": "Response Mode",
+                "description": "응답 대기 모드. 생략 시 변경 안함. null 전송 시 400."
+              }
+            },
+            "type": "object",
+            "minProperties": 1,
+            "title": "UpdateToolRequest",
+            "description": "도구 부분 업데이트 페이로드.\n\n`name`, `input_schema`, `api_configuration`, `speak_during_execution`,\n`allow_interruption_during_execution` 필드는 생략하면 기존 값을 유지하고\nnull 로 전송하면 400 을 반환한다. `description`, `tool_call_sound` 는\n생략하면 기존 값을 유지하고 null 전송 시 값이 null 로 설정된다.",
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "tool_id",
+          "mode",
+          "payload"
+        ]
+      }
+    ],
+    "$defs": {
+      "ToolApiConfigurationWrite": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url",
+            "description": "외부 API 엔드포인트 URL. path 동적 값은 영숫자, `_`, `-`만 허용하고 임의 문자열은 query value에서만 허용."
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "GET",
+              "POST",
+              "PUT",
+              "PATCH",
+              "DELETE"
+            ],
+            "title": "Method",
+            "description": "HTTP 메서드."
+          },
+          "headers": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headers",
+            "description": "요청에 포함할 추가 헤더. key/value 모두 string."
+          },
+          "auth_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "Basic",
+                  "Bearer"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auth Type",
+            "description": "인증 방식. null이면 미인증."
+          },
+          "auth_credentials": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auth Credentials",
+            "description": "인증 자격증명. Basic은 `user:password`, Bearer는 토큰 문자열."
+          },
+          "timeout_seconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 60.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timeout Seconds",
+            "description": "요청 타임아웃(초). 생략하거나 null로 전송하면 서버가 기본값 10초를 적용한다."
+          }
+        },
+        "type": "object",
+        "required": [
+          "url",
+          "method"
+        ],
+        "title": "ToolApiConfigurationWrite",
+        "description": "도구 생성/수정 시 클라이언트가 입력하는 외부 API 호출 설정.\n\n`url`·`method` 는 필수. `timeout_seconds` 는 생략하거나 null 로 보내면\n서버 기본값(10초) 이 적용된다.",
+        "additionalProperties": false
+      },
+      "SpeakDuringExecution": {
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled",
+            "description": "실행 중 TTS 메시지 재생 여부. 기본값 false.",
+            "default": false
+          },
+          "messages": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Messages",
+            "description": "재생할 TTS 메시지 목록. enabled=true일 때만 의미가 있다."
+          }
+        },
+        "type": "object",
+        "title": "SpeakDuringExecution",
+        "description": "실행 중 사용자에게 재생할 TTS 메시지 설정.",
+        "additionalProperties": false
+      },
+      "ToolApiConfigurationPatch": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url",
+            "description": "외부 API 엔드포인트 URL. path 동적 값은 영숫자, `_`, `-`만 허용하고 임의 문자열은 query value에서만 허용. 생략 시 변경 안함. null 전송 시 400."
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "GET",
+              "POST",
+              "PUT",
+              "PATCH",
+              "DELETE"
+            ],
+            "title": "Method",
+            "description": "HTTP 메서드. 생략 시 변경 안함. null 전송 시 400."
+          },
+          "headers": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headers",
+            "description": "요청 헤더. 생략 시 변경 안함. null 전송 시 값이 null 로 설정된다."
+          },
+          "auth_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "Basic",
+                  "Bearer"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auth Type",
+            "description": "인증 방식. 생략 시 변경 안함. null 전송 시 미인증으로 설정된다."
+          },
+          "auth_credentials": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auth Credentials",
+            "description": "인증 자격증명. 생략 시 변경 안함. null 전송 시 값이 null 로 설정된다."
+          },
+          "timeout_seconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 60.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timeout Seconds",
+            "description": "요청 타임아웃(초). 생략 시 변경 안함. null 전송 시 서비스 계층에서 서버 기본값(10초)로 재설정된다."
+          }
+        },
+        "type": "object",
+        "title": "ToolApiConfigurationPatch",
+        "description": "api_configuration 부분 업데이트 페이로드.\n\n`url`, `method` 는 생략하면 기존 값을 유지하며 null 로 전송하면 400 을\n반환한다. 나머지 필드의 null 처리는 각 필드 설명을 참조한다.",
+        "additionalProperties": false
+      }
+    }
+  }
+}

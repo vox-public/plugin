@@ -420,6 +420,7 @@
       },
       "ClaimWithdrawnPayload": {
         "additionalProperties": false,
+        "description": "Withdraw exactly one remembered claim without tombstoning its source family.",
         "properties": {
           "kind": {
             "const": "claim_withdrawn",

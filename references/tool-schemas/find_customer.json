@@ -1,0 +1,27 @@
+{
+  "name": "find_customer",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "identifier_value": {
+        "type": "string",
+        "description": "Identifier value to look up.",
+        "title": "Identifier Value"
+      },
+      "identifier_type": {
+        "enum": [
+          "phone",
+          "email",
+          "external_id"
+        ],
+        "type": "string",
+        "description": "Identifier type: `phone`, `email`, or `external_id`. When omitted, returns the first customer matched in phone, email, then external_id order.",
+        "title": "Identifier Type"
+      }
+    },
+    "required": [
+      "identifier_value"
+    ]
+  }
+}

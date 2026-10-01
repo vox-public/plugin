@@ -1,0 +1,18 @@
+{
+  "name": "list_agent_versions",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "agent_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Agent UUID returned as `agent_id`.",
+        "title": "Agent Id"
+      }
+    },
+    "required": [
+      "agent_id"
+    ]
+  }
+}

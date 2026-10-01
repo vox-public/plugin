@@ -1,0 +1,160 @@
+{
+  "name": "save_customer_attribute_definition",
+  "inputSchema": {
+    "type": "object",
+    "oneOf": [
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "const": "create"
+          },
+          "payload": {
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Name",
+                "description": "Attribute name unique within the organization. Must be 1-100 characters after trimming."
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "enum",
+                  "date"
+                ],
+                "title": "Type",
+                "description": "Value type. `enum_options` is required when the type is `enum`."
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Description",
+                "description": "Attribute description."
+              },
+              "enum_options": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Enum Options",
+                "description": "Allowed string values for the `enum` type. Cannot be specified for other types."
+              },
+              "conflict_mode": {
+                "type": "string",
+                "enum": [
+                  "overwrite",
+                  "fill_if_empty"
+                ],
+                "title": "Conflict Mode",
+                "description": "Conflict handling mode for automatically extracted values.",
+                "default": "overwrite"
+              }
+            },
+            "type": "object",
+            "required": [
+              "name",
+              "type"
+            ],
+            "title": "CreateCustomerAttributeDefinitionRequest",
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "mode",
+          "payload"
+        ]
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "definition_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Definition Id"
+          },
+          "mode": {
+            "const": "update"
+          },
+          "payload": {
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Name",
+                "description": "Attribute name. Omit to keep the current value."
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Description",
+                "description": "Attribute description. Omit to keep the current value."
+              },
+              "enum_options": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Enum Options",
+                "description": "Allowed string values for the `enum` type. Cannot be specified for non-enum types."
+              },
+              "conflict_mode": {
+                "type": "string",
+                "enum": [
+                  "overwrite",
+                  "fill_if_empty"
+                ],
+                "title": "Conflict Mode",
+                "description": "Conflict handling mode for automatically extracted values. Omit to keep the current value."
+              },
+              "is_active": {
+                "type": "boolean",
+                "title": "Is Active",
+                "description": "Whether the definition is active. When false, the definition is excluded from automatic extraction. Omit to keep the current value."
+              }
+            },
+            "type": "object",
+            "minProperties": 1,
+            "title": "PatchCustomerAttributeDefinitionRequest",
+            "description": "Expose only mutable fields. `type` is immutable.",
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "definition_id",
+          "mode",
+          "payload"
+        ]
+      }
+    ]
+  }
+}

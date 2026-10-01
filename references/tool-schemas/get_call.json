@@ -1,0 +1,22 @@
+{
+  "name": "get_call",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "call_id": {
+        "type": "string",
+        "format": "uuid",
+        "title": "Call Id",
+        "description": "Call identifier."
+      },
+      "include_transcript": {
+        "type": "boolean",
+        "default": false
+      }
+    },
+    "required": [
+      "call_id"
+    ]
+  }
+}

@@ -13,6 +13,7 @@
         ],
         "optional_tools": [
           "create_knowledge",
+          "create_voice_model",
           "delete_knowledge_document",
           "get_agent_template",
           "get_organization",
@@ -30,11 +31,14 @@
           "list_manuals",
           "list_models",
           "list_organization_members",
+          "list_organizations",
           "list_schemas",
           "list_tools",
           "save_tool",
           "save_work_record",
-          "update_organization"
+          "set_organization",
+          "update_organization",
+          "validate_flow"
         ]
       },
       "designed": {
@@ -43,7 +47,10 @@
       },
       "host_actions": [
         "The user or assistant supplies source material as conversation text or URLs; knowledge accepts text and URL only, so file contents are registered as text the user confirmed.",
-        "Secrets for save_tool come only from the user's current request; masked values are never written back."
+        "Secrets for save_tool come only from the user's current request; masked values are never written back.",
+        "Flow agent graphs are checked with validate_flow (level all) before save_agent; api-node secrets come back masked (********) and are never sent back, so the real values are re-entered by the user when a flow with api nodes is updated.",
+        "create_voice_model registers only a voice the speaker has consented to; the assistant confirms consent and the source (public HTTPS audio, up to 6MB) in the conversation first.",
+        "Before set_organization the assistant confirms the target organization with the user, because the switch applies to the whole connection."
       ],
       "designed_unavailable_fallback": "If get_work_context or its receipt is unavailable (external public connections may not expose work-record tools), try the save without a receipt; if the server requires it and rejects, prepare the draft and explain. Keep continuity in the current accessible conversation or a user-provided handoff."
     },
@@ -252,7 +259,9 @@
           "list_calls",
           "list_knowledge_documents",
           "list_manuals",
-          "save_work_record"
+          "list_organizations",
+          "save_work_record",
+          "set_organization"
         ]
       },
       "designed": {

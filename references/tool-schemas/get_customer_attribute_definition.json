@@ -1,0 +1,17 @@
+{
+  "name": "get_customer_attribute_definition",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "definition_id": {
+        "type": "string",
+        "format": "uuid",
+        "title": "Definition Id"
+      }
+    },
+    "required": [
+      "definition_id"
+    ]
+  }
+}

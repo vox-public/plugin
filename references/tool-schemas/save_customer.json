@@ -1,0 +1,208 @@
+{
+  "name": "save_customer",
+  "inputSchema": {
+    "type": "object",
+    "oneOf": [
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "const": "create"
+          },
+          "payload": {
+            "properties": {
+              "name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Name",
+                "description": "Customer name."
+              },
+              "note": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Note",
+                "description": "Customer note."
+              },
+              "metadata": {
+                "anyOf": [
+                  {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Metadata",
+                "description": "Customer metadata. An empty object is created when omitted or null."
+              },
+              "identifiers": {
+                "items": {
+                  "$ref": "#/$defs/CustomerIdentifierInput"
+                },
+                "type": "array",
+                "minItems": 1,
+                "title": "Identifiers",
+                "description": "Customer identity identifiers. At least one is required."
+              }
+            },
+            "type": "object",
+            "required": [
+              "identifiers"
+            ],
+            "title": "CreateCustomerRequest",
+            "description": "Plain customer creation request, not get-or-create.\n\nAt least one identifier is required; customers without identifiers are not\nallowed. A customer cannot be created from profile fields alone.",
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "mode",
+          "payload"
+        ]
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Customer identifier.",
+            "title": "Customer Id"
+          },
+          "mode": {
+            "const": "update"
+          },
+          "payload": {
+            "properties": {
+              "name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Name",
+                "description": "Customer name. Omit to keep the current value."
+              },
+              "note": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Note",
+                "description": "Customer note. Omit to keep the current value."
+              },
+              "metadata": {
+                "anyOf": [
+                  {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Metadata",
+                "description": "Customer metadata. Provided keys are added or updated with a shallow merge, and omitted keys are retained. Key deletion is not supported."
+              },
+              "identifiers": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "$ref": "#/$defs/CustomerIdentifierInput"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Identifiers",
+                "description": "Identity identifiers to add to this customer. Omit to leave identifiers unchanged."
+              },
+              "attributes": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {
+                      "anyOf": [
+                        {},
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Attributes",
+                "description": "Customer attribute values to update. Only provided names are changed; null deletes that name even if its definition is inactive or deleted. Setting a non-null value requires an active attribute definition."
+              }
+            },
+            "type": "object",
+            "minProperties": 1,
+            "title": "PatchCustomerRequest",
+            "description": "Customer update request with at least one field to change.\n\nOmitted fields are retained. `metadata` is shallow-merged by adding new keys\nand updating existing keys; key deletion is not supported. Provided\n`identifiers` are added to the customer and are not modified or removed in place.",
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "customer_id",
+          "mode",
+          "payload"
+        ]
+      }
+    ],
+    "$defs": {
+      "CustomerIdentifierInput": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "phone",
+              "email",
+              "external_id"
+            ],
+            "title": "Type",
+            "description": "Identifier type: `phone`, `email`, or `external_id`."
+          },
+          "value": {
+            "type": "string",
+            "title": "Value",
+            "description": "Identifier value. Phone numbers are normalized to canonical KR national format without hyphens, emails are validated and lowercased, and leading and trailing whitespace is removed from external IDs."
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "value"
+        ],
+        "title": "CustomerIdentifierInput",
+        "description": "One customer identity identifier input shared by create, patch, and find.\n\n`type` accepts only `phone`, `email`, or `external_id`; other values return\n400. The service layer normalizes `value` according to its type.",
+        "additionalProperties": false
+      }
+    }
+  }
+}

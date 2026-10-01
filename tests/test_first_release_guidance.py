@@ -156,6 +156,29 @@ class FirstReleaseGuidanceTests(unittest.TestCase):
         contract = read("references/execution-contract.md")
         self.assertIn("작업 기록 도구가 없으면 현재 대화나 사용자 handoff로 이어간다", contract)
 
+    def test_snapshot_covers_public_tools_native_org_tools_and_work_records_only(self):
+        snapshot = json.loads(read("references/implemented-tools.snapshot.json"))
+        implemented = set(snapshot["implemented_tools"])
+        self.assertEqual(snapshot["native_tools"], ["list_organizations", "set_organization"])
+        self.assertEqual(snapshot["public_excluded"],
+                         ["get_work_context", "get_work_operation", "get_work_record", "save_work_record"])
+        self.assertTrue({"validate_flow", "create_voice_model", *snapshot["native_tools"]} <= implemented)
+        self.assertEqual(len(implemented), 58)
+        for skill in json.loads(read("catalog.json"))["skills"]:
+            self.assertTrue(set(skill["tools"]["implemented"]) <= implemented, skill["name"])
+
+    def test_flow_guidance_follows_the_real_schema(self):
+        for name in ("agents-platform", "voice-agent-design"):
+            text = read(f"skills/{name}/SKILL.md")
+            for needle in ("snake_case", "`static_sentence`", "`prompt_type`", "`is_allow_interruption`",
+                           "`begin`의 나가는 edge는 `fallback`", "`condition` 노드", "self-loop",
+                           '`level="all"`'):
+                self.assertIn(needle, text, f"{name}: {needle}")
+        platform = read("skills/agents-platform/SKILL.md")
+        for needle in ("`sendSms`", "`transferCall`", "`transferAgent`", "`endCall`", "`note`",
+                       "DTMF 키 입력은 메시지로 들어오므로 AI 조건", "`********`", "실제 비밀값을 다시 받아"):
+            self.assertIn(needle, platform, needle)
+
     def test_new_work_requires_confirmation_summary_for_every_side_effect_skill(self):
         for name in ("operate-outbound-and-followup", "connect-phone-service", "build-first-voice-agent",
                      "knowledge-grounding", "connect-agent-tools"):

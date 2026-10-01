@@ -23,13 +23,14 @@ metadata:
 예: 청소 견적 문의라면 ‘상담 정보를 수집해 저장’과 ‘가격을 확정하고 예약’의 완료 근거를 구분한다. 후자를 요청했다면 전자로 몰래 축소하지 않는다.
 
 ## Flow와 ARS 흐름
-메뉴 선택·조건 분기·상담원 연결처럼 경로가 정해진 업무(ARS 등)는 자유 대화 Single보다 Flow agent가 맞는지 먼저 비교한다. ARS형 Flow는 보통 다음 요소로 설계한다.
-- 안내와 메뉴를 말하는 메뉴 노드. 선택지는 고객이 한 번에 기억할 수 있는 수로 줄인다.
-- 키 입력(DTMF)을 읽고 분기하는 LLM 분기. 입력값별 다음 노드와 ‘해당 없음’ 경로를 모두 둔다.
-- 상담원·다른 번호로 넘기는 전환 노드. 전환 직전 안내 문구와 실패 시 대체 경로를 정한다.
-- 안내 도중 고객이 말하거나 눌러도 이어갈 수 있는 끼어들기(barge-in) 허용 범위.
-- 무입력이면 한 번 다시 안내하고, 그래도 입력이 없으면 전환 노드로 보낸다.
-저장 전에는 `validate_flow`로 구조를 검증하고 `save_agent`는 [agents-platform](../agents-platform/SKILL.md)의 Flow agent 절차를 따른다. 흐름을 만들었다는 것이 실제 통화 시험을 마쳤다는 뜻은 아니며, 시험은 고객이 직접 한다.
+메뉴 선택·조건 분기·상담원 연결처럼 경로가 정해진 업무(ARS 등)는 자유 대화 Single보다 Flow agent가 맞는지 먼저 비교한다. 노드 종류는 실제 schema가 허용하는 `begin`, `conversation`, `tool`, `condition`, `extraction`, `api`, `sendSms`, `transferCall`, `transferAgent`, `endCall`, `note`로 설계한다. 노드 `data` 키는 snake_case(`static_sentence`, `prompt_type`, `is_allow_interruption` 등)이고 분기는 노드가 아니라 edge의 `condition`(`ai`·`logic`·`fallback`)으로 둔다. ARS형 Flow는 보통 다음 요소로 설계한다.
+- 안내와 메뉴를 말하는 `conversation` 노드. 선택지는 고객이 한 번에 기억할 수 있는 수로 줄이고, 고정 문구는 `prompt_type`을 `static`으로 하고 `static_sentence`에 둔다.
+- 키 입력(DTMF) 분기. 눌린 키는 별도 이벤트가 아니라 고객 메시지로 들어오므로 입력값별 AI 조건(edge `condition.type=ai`)으로 분기한다. LLM이 판단하는 분기라 결정적이지 않으니, 입력값별 조건 문구를 서로 겹치지 않게 쓰고 ‘해당 없음’ 경로(`fallback`)도 둔다.
+- 시간대·변수처럼 결정적으로 갈리는 분기는 `condition` 노드와 `logic` 조건으로 만든다. `begin`의 나가는 edge는 `fallback` 조건만 허용하므로 영업시간 분기는 `begin` → `condition` 노드 → 영업시간 안/밖 분기로 설계한다.
+- 상담원·다른 번호로 넘기는 `transferCall` 노드(다른 agent로는 `transferAgent`). 전환 직전 안내 문구와 실패 시 대체 경로를 정한다.
+- 안내 도중 고객이 말하거나 눌러도 이어갈 수 있는 끼어들기(barge-in)는 노드의 `is_allow_interruption`으로 정한다.
+- 무입력이면 같은 노드로 되돌아오는 self-loop edge로 한 번 다시 안내하고, 그래도 입력이 없으면 전환 노드로 보낸다. self-loop는 허용되지만 빠져나오는 경로가 없으면 무한 반복이 되므로 반드시 별도 출구를 둔다.
+저장 전에는 `validate_flow`를 `level="all"`로 호출해 errors를 고치고 advisories(저장은 막지 않는 실행 경고)도 읽어 반영한다. `save_agent`는 [agents-platform](../agents-platform/SKILL.md)의 Flow agent 절차를 따른다. 흐름을 만들었다는 것이 실제 통화 시험을 마쳤다는 뜻은 아니며, 시험은 고객이 직접 한다.
 
 실제 구축은 [build-first-voice-agent](../build-first-voice-agent/SKILL.md), 대화 원고 작성은 [manual-authoring](../manual-authoring/SKILL.md)로 연결한다.
 

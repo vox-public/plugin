@@ -1,0 +1,23 @@
+{
+  "name": "list_organization_members",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "cursor": {
+        "type": "string",
+        "title": "Cursor",
+        "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page."
+      },
+      "limit": {
+        "type": "integer",
+        "maximum": 100,
+        "minimum": 1,
+        "default": 50,
+        "title": "Limit",
+        "description": "Maximum number of items to return. v3 list endpoints accept 1-100."
+      }
+    },
+    "required": []
+  }
+}

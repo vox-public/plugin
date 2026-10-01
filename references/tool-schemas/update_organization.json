@@ -1,0 +1,63 @@
+{
+  "name": "update_organization",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "payload": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name",
+            "description": "조직 이름. 앞뒤 공백은 제거된다. `null`은 거부되고, 생략 시 유지."
+          },
+          "webhook_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Webhook Url",
+            "description": "webhook 수신 URL. https URL만 허용하며, `null` 또는 빈 문자열이면 해제, 생략 시 유지. 동적 변수는 지원하지 않음."
+          },
+          "webhook_version": {
+            "type": "string",
+            "const": "v2",
+            "title": "Webhook Version",
+            "description": "Call webhook payload 버전. `v2`만 설정할 수 있다(v1은 레거시 단방향이라 API로 설정 불가 — v1→v2 업그레이드만 가능). `null`은 거부되고, 생략 시 유지."
+          },
+          "webhook_event_subscriptions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Webhook Event Subscriptions",
+            "description": "구독할 webhook 이벤트 타입 목록. 현재 `sms_received`, `handoff`, `campaign`, `sms_batch`, `chat_started`, `chat_ended`, `chat_analyzed`가 구독 대상이며, Chat lifecycle 이벤트는 organization의 Call webhook_version과 무관하게 항상 `v2`로 전송된다. 통화 관련 이벤트는 구독과 무관하게 항상 발송된다. 중복은 제거되고, `null`은 거부되며 생략 시 유지."
+          },
+          "billing_invoice_recipient_emails": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Billing Invoice Recipient Emails",
+            "description": "청구서 안내 수신 이메일 목록. 소문자로 정규화되며 중복은 거부된다. `null`은 거부되고, 생략 시 유지."
+          }
+        },
+        "type": "object",
+        "minProperties": 1,
+        "title": "PatchOrganizationRequest",
+        "description": "조직 수정 요청. 변경할 필드만 보내며(최소 1개), 생략한 필드는 유지된다.\n\n상위·하위 관계와 결제 방식은 이 API로 바꿀 수 없다.",
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "payload"
+    ]
+  }
+}

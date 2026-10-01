@@ -1,0 +1,122 @@
+{
+  "name": "place_call",
+  "inputSchema": {
+    "additionalProperties": false,
+    "description": "v3 아웃바운드 통화 생성 요청.",
+    "title": "CreateCallRequest",
+    "type": "object",
+    "oneOf": [
+      {
+        "properties": {
+          "routing": {
+            "const": "explicit_agent"
+          }
+        },
+        "required": [
+          "agent"
+        ]
+      },
+      {
+        "properties": {
+          "routing": {
+            "const": "phone_default"
+          }
+        },
+        "not": {
+          "required": [
+            "agent"
+          ]
+        }
+      }
+    ],
+    "properties": {
+      "from_number": {
+        "type": "string",
+        "title": "From Number",
+        "description": "발신 번호. 하이픈 없는 국내 번호 (예: '01012345678'). libphonenumber 검증."
+      },
+      "to_number": {
+        "type": "string",
+        "title": "To Number",
+        "description": "수신 번호. 하이픈 없는 국내 번호 (예: '01098765432')."
+      },
+      "agent": {
+        "description": "Agent mapping object with `agent_id` and `agent_version`. Used by cross-resource references (calls / campaigns / telephone_numbers) and by `builtInTools.transfer_agent` / flow `transferAgent` node `data.agent` per v3 §2.7 AgentMapping.",
+        "$ref": "#/$defs/AgentMapping"
+      },
+      "metadata": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Metadata",
+        "description": "자유 형식 메타데이터. 응답에 echo."
+      },
+      "dynamic_variables": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Dynamic Variables",
+        "description": "에이전트 프롬프트에 주입할 동적 변수. {{변수명}} 치환."
+      },
+      "presentation_number": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "title": "Presentation Number",
+        "description": "수신자에게 표시할 번호. 조직 승인 번호만 허용. 미지정은 null."
+      },
+      "routing": {
+        "enum": [
+          "explicit_agent",
+          "phone_default"
+        ]
+      },
+      "execution_key": {
+        "type": "string",
+        "minLength": 8,
+        "maxLength": 128,
+        "description": "같은 실행에만 같은 키를 쓰고, 새로 시도할 때는 새 키를 쓴다. 결과가 불명(EXECUTION_RESULT_UNKNOWN)이면 다시 실행하지 말고 get_call/list_calls로 확인한다."
+      }
+    },
+    "required": [
+      "from_number",
+      "to_number",
+      "routing",
+      "execution_key"
+    ],
+    "$defs": {
+      "AgentMapping": {
+        "additionalProperties": false,
+        "description": "agent_id + agent_version 매핑.\n\n요청·응답 모두에서 에이전트 매핑이 필요한 경우 이 타입을 사용한다.\n요청 중 version 지정이 불필요한 엔드포인트는 flat `agent_id: UUID` 를 직접 받고,\n`AgentMapping` 을 쓰지 않는다.",
+        "properties": {
+          "agent_id": {
+            "description": "Agent UUID.",
+            "format": "uuid",
+            "title": "Agent Id",
+            "type": "string"
+          },
+          "agent_version": {
+            "default": "current",
+            "description": "에이전트 버전. 허용값: \"current\", \"production\", 또는 \"v{n}\" (n≥1). 미전송 시 \"current\"로 처리됩니다. null 전송은 거부.",
+            "title": "Agent Version",
+            "type": "string",
+            "pattern": "^(current|production|v[1-9][0-9]*)$",
+            "examples": [
+              "current",
+              "production",
+              "v1"
+            ]
+          }
+        },
+        "required": [
+          "agent_id"
+        ],
+        "title": "AgentMapping",
+        "type": "object"
+      }
+    }
+  }
+}

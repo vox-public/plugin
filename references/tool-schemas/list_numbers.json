@@ -1,0 +1,167 @@
+{
+  "name": "list_numbers",
+  "inputSchema": {
+    "type": "object",
+    "oneOf": [
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "provider": {
+            "$ref": "#/$defs/TelephoneProvider",
+            "description": "Provider filter. Omit to include both vox-managed and custom numbers.",
+            "title": "Provider"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status filter. Repeat the query parameter to filter by multiple statuses when the endpoint supports multiple values.",
+            "default": "active",
+            "title": "Status"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page.",
+            "title": "Cursor"
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "default": 50,
+            "title": "Limit",
+            "description": "Maximum number of items to return. v3 list endpoints accept 1-100."
+          },
+          "sort_by": {
+            "const": "created_at",
+            "type": "string",
+            "description": "정렬 기준 필드. 기본값: 'created_at'.",
+            "default": "created_at",
+            "title": "Sort By"
+          },
+          "sort_order": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "description": "Sort direction. Allowed values are `asc` and `desc`.",
+            "default": "desc",
+            "title": "Sort Order"
+          },
+          "kind": {
+            "const": "general"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "$ref": "#/$defs/UanTelephoneStatus",
+            "title": "Status",
+            "description": "Status filter. Repeat the query parameter to filter by multiple statuses when the endpoint supports multiple values."
+          },
+          "cursor": {
+            "type": "string",
+            "title": "Cursor",
+            "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page."
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "default": 50,
+            "title": "Limit",
+            "description": "Maximum number of items to return. v3 list endpoints accept 1-100."
+          },
+          "kind": {
+            "const": "uan"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "pending",
+                "approved",
+                "rejected"
+              ],
+              "type": "string"
+            },
+            "description": "Status filter. Repeat the query parameter to filter by multiple statuses when the endpoint supports multiple values.",
+            "title": "Status"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page.",
+            "title": "Cursor"
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "default": 50,
+            "title": "Limit",
+            "description": "Maximum number of items to return. v3 list endpoints accept 1-100."
+          },
+          "sort_by": {
+            "const": "created_at",
+            "type": "string",
+            "description": "정렬 기준 필드. 기본값: 'created_at'.",
+            "default": "created_at",
+            "title": "Sort By"
+          },
+          "sort_order": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "description": "Sort direction. Allowed values are `asc` and `desc`.",
+            "default": "desc",
+            "title": "Sort Order"
+          },
+          "kind": {
+            "const": "presentation"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      }
+    ],
+    "$defs": {
+      "TelephoneProvider": {
+        "type": "string",
+        "enum": [
+          "vox",
+          "custom"
+        ],
+        "title": "TelephoneProvider",
+        "description": "번호 제공자 구분."
+      },
+      "UanTelephoneStatus": {
+        "type": "string",
+        "enum": [
+          "provisioning",
+          "active",
+          "cancel_requested",
+          "expired"
+        ],
+        "title": "UanTelephoneStatus"
+      }
+    }
+  }
+}

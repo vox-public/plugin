@@ -1,0 +1,17 @@
+{
+  "name": "get_campaign",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "campaign_id": {
+        "type": "string",
+        "title": "Campaign Id",
+        "description": "Campaign identifier."
+      }
+    },
+    "required": [
+      "campaign_id"
+    ]
+  }
+}

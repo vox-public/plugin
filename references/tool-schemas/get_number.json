@@ -1,0 +1,65 @@
+{
+  "name": "get_number",
+  "inputSchema": {
+    "type": "object",
+    "oneOf": [
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "organization_telephone_number_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Organization Telephone Number Id",
+            "description": "Organization-owned telephone number identifier. Use the `id` returned by `GET /v3/organization-telephone-numbers`, not the phone number string."
+          },
+          "kind": {
+            "const": "general"
+          }
+        },
+        "required": [
+          "organization_telephone_number_id",
+          "kind"
+        ]
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "uan_telephone_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Uan Telephone Id",
+            "description": "UAN telephone identifier. Use the `id` returned by `GET /v3/telephone-numbers/uan`, not the phone number string."
+          },
+          "kind": {
+            "const": "uan"
+          }
+        },
+        "required": [
+          "uan_telephone_id",
+          "kind"
+        ]
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "telephone_presentation_number_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Telephone Presentation Number Id",
+            "description": "Telephone presentation number identifier. Use the `id` returned by `GET /v3/telephone-presentation-numbers` or `POST /v3/telephone-presentation-numbers`."
+          },
+          "kind": {
+            "const": "presentation"
+          }
+        },
+        "required": [
+          "telephone_presentation_number_id",
+          "kind"
+        ]
+      }
+    ]
+  }
+}

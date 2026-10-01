@@ -66,6 +66,10 @@ def validate_tool_snapshot(root, catalog):
                        'source_state', 'dirty_contracts')
     require(source == {key: lock[key] for key in provenance_keys},
             'Bundled tool snapshot provenance disagrees with the source contract lock')
+    for key in ('native_tools', 'public_excluded'):
+        require(isinstance(lock.get(key), list) and set(lock[key]) <= set(implemented)
+                and snapshot.get(key) == lock[key],
+                f'Tool contract lock and snapshot disagree on {key}')
     schema_hashes = lock.get('input_schema_sha256', {})
     require(set(schema_hashes) == set(implemented),
             'Tool contract lock must include an input schema digest for every implemented tool')
@@ -221,8 +225,11 @@ def crosscheck_mcp_source(root, mcp_root=None, manifest_path=None):
     manifest = json.loads(manifest_bytes)
     require(manifest.get('source_manifest_sha256') == lock.get('source_manifest_sha256'),
             'Supplied MCP source manifest checksum does not match the pinned source')
-    require(sorted(manifest.get('implemented_tools', [])) == sorted(lock['implemented_tools']),
+    native = lock.get('native_tools', [])
+    require(sorted([*manifest.get('implemented_tools', []), *native]) == sorted(lock['implemented_tools']),
             'Supplied MCP implemented tool list does not match the packaged snapshot')
+    require(sorted(manifest.get('exposure', {}).get('public_excluded', [])) == lock.get('public_excluded', []),
+            'Supplied MCP public exposure exclusions do not match the packaged snapshot')
     for name, expected_digest in lock['input_schema_sha256'].items():
         contract_path = contracts_dir / f'{name}.json'
         contract = load_json(contract_path)
