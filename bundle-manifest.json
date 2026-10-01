@@ -1,7 +1,7 @@
 {
-  "version": "0.2.2",
+  "version": "0.2.3",
   "skills_count": 26,
-  "sha256": "92b480090b89a4c1b78307b2c343307e5a9ba5863f9071c4a59404e6bf6a1179",
+  "sha256": "13f89fcd9e4ab1bbd07b6bf70a3a23d42d6549bbb62eda0b7af939574bd1a139",
   "capability_directories": [
     "/workspace/vox-ai/skills"
   ],
@@ -75,7 +75,7 @@
     "references/workflow-examples.md": "93348f0e8fefc535e09ac1ff51da5e6827639149b45223a85a5a7ad1fba373d9",
     "references/workflow-guidance.md": "0748f76f3a4247d59d74445352ab8d0a525eac7745cc0e737c2ae8567f5eec44",
     "skills/agents-platform/SKILL.md": "c0998cb79c59c09d16ac6da7a4cd78a9fad8f20dbcc215761730682bc3cb1440",
-    "skills/build-first-voice-agent/SKILL.md": "93128be2851d89cc2cea7675c9ed84fa0a21be1f21379ba6c4fc2709bb61fc97",
+    "skills/build-first-voice-agent/SKILL.md": "5ef1d15f2d49be8ecee72e56fe7298b3c35dd7f7cddbac8998ac9de1b8e83341",
     "skills/cli-authoring/SKILL.md": "b673ab55c3bc9ef83dc010d679bb1c77ccc49506f16c002578a94ec5de095c97",
     "skills/configure-call-results/SKILL.md": "869f89a12f0b1ba558de6a665c8a52bd6c72b95d27531791f04eee8f5e2b4d13",
     "skills/configure-supporting-channel/SKILL.md": "85b72dfabee62367d07f505b8119ee2cb765056387b5db42fac6f249d2533d6f",
@@ -86,7 +86,7 @@
     "skills/explore-agent-context/SKILL.md": "b8cdd30920ffa26348e42c3305a4335a86e87732f5b8051da2e9be8ab2df9d0d",
     "skills/inspect-call-evidence/SKILL.md": "6023e11c65bcba461ecd6361bdceaeb6dc240d66189fe30af753321b4ac0f225",
     "skills/knowledge-grounding/SKILL.md": "b0a558241398531daee76d758e01ec4dfc9b79ab3e479ab9a0d9aa57d18c94ec",
-    "skills/manual-authoring/SKILL.md": "4128f4914565d388dbcf3d012f638f314513bcb9ea4e3c4e7d6b89c6db2a5546",
+    "skills/manual-authoring/SKILL.md": "077dc589bf1af02df2a1793c74b739505908051c941708cff020b40ae124c503",
     "skills/operate-outbound-and-followup/SKILL.md": "0d00058b3469e7f50fd85be905edc98a2be3870964be6c17ade652f43d4b20cb",
     "skills/post-call-result-design/SKILL.md": "5f4addec0eaf322c83b70c6ace4a2efc8ad0dab210cc0a39bca6d0f0e3dea192",
     "skills/prepare-voice-test/SKILL.md": "d2cf41e5316700a9415e4e46bd07910a95248fbe8323ae3d47d73d3e021a3eef",
@@ -98,7 +98,7 @@
     "skills/troubleshoot-agent-tool/SKILL.md": "52d8476948fe0febe3eeca373ffacfd2385342d12f0c32daa1d678f7ba4f59b3",
     "skills/try-and-improve-voice-agent/SKILL.md": "f2a0718f7917a816b4a84abb6548f9491ae7672989ab693731dfc080751b8926",
     "skills/tune-voice-behavior/SKILL.md": "ba37ec88152e0001b5e03d6a14167e6dd93b46b4f87c3c6c5c4771156daf888d",
-    "skills/voice-agent-design/SKILL.md": "251b951e8ccc0e4e3bd6c8385c44dc39250a8c42423839130ef522cad1220963",
+    "skills/voice-agent-design/SKILL.md": "c37c27aa4125a6035b35188c85405fd8aa0c89597cb2c736b5eb3c68756b5bcf",
     "skills/voice-interaction-design/SKILL.md": "9f2600d8c8e83e71f1514d6a227f97423d0bd932817a8003a2cd3db76f446d29"
   }
 }
