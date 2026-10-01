@@ -301,7 +301,7 @@ def validate(root):
     servers = load_json(root / '.mcp.json')['mcpServers']
     require(set(servers) == {'vox-ai', 'vox-docs'},
             'Public bundle must declare exactly the vox-ai and vox-docs MCP servers')
-    require(servers['vox-ai'] == {'type': 'http', 'url': 'https://mcp.services.tryvox.co/mcp'},
+    require(servers['vox-ai'] == {'type': 'http', 'url': 'https://mcp.tryvox.co/mcp'},
             'Public bundle must use the reviewed public MCP connection without credentials')
     require(servers['vox-docs'] == {'type': 'http', 'url': 'https://docs.tryvox.co/mcp'},
             'Public bundle must connect the public docs MCP without credentials')

@@ -67,7 +67,7 @@ grok plugin marketplace remove vox-ai
 
 플러그인은 두 개의 MCP 서버를 연결합니다.
 
-- `vox-ai`: `https://mcp.services.tryvox.co/mcp`. 제품 조작용입니다. 호스트에서 제공하는 OAuth 로그인 절차를 따르고 작업할 조직을 확인합니다. Claude Code는 `/mcp`, Codex는 `codex mcp login vox-ai`, Grok Build는 TUI의 `/mcps`에서 로그인합니다.
+- `vox-ai`: `https://mcp.tryvox.co/mcp`. 제품 조작용입니다. 호스트에서 제공하는 OAuth 로그인 절차를 따르고 작업할 조직을 확인합니다. Claude Code는 `/mcp`, Codex는 `codex mcp login vox-ai`, Grok Build는 TUI의 `/mcps`에서 로그인합니다.
 - `vox-docs`: `https://docs.tryvox.co/mcp`. 공식 문서 검색용이며 로그인이 필요 없습니다. 문서 MCP를 쓸 수 없는 호스트에서는 `https://docs.tryvox.co/llms.txt`를 읽습니다.
 
 키나 토큰을 대화에 붙여 넣거나 설치 파일에 저장하지 않습니다.
