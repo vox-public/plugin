@@ -128,7 +128,7 @@ static 문구(안내·전환·종료)에는 아라비아 숫자와 기호를 쓰
 - `speech.isAllowInterruption: true`. 노드마다 `is_allow_interruption: true`도 함께 둔다.
 - `presetDynamicVariables`: §2의 초깃값.
 - `prompt.prompt`: "한국어 존댓말. 변수·노드·코드 이름을 고객에게 읽지 않는다."
-- `llm`을 보낼 때는 `model`이 필수다. `list_models`로 확인하고 `temperature: 0`을 권장한다. 보내지 않으면 서버 기본값을 쓴다.
+- 새 agent 모델은 [모델 선택 규칙](../skills/build-first-voice-agent/SKILL.md#모델-고르기)에 따라 정한다. `llm`을 보낼 때는 `model`이 필수이며, 선택된 `model` 값을 `data.llm.model`에 명시한다. 구 API처럼 `list_models(kind=llm)` 결과에 `featured` 필드가 없으면 `llm`을 생략해 서버 추천 기본값을 쓴다. `temperature: 0`을 권장한다.
 - 노드 `data` 키는 snake_case, agent `data` 키는 camelCase다. 섞어 쓰지 않는다.
 
 ## 10. 지금 안 되는 것: 무입력 → 재안내 → 직원 연결
@@ -146,7 +146,7 @@ static 문구(안내·전환·종료)에는 아라비아 숫자와 기호를 쓰
 ## 12. MCP 호출 순서
 1. `get_schema(namespace="flow-schema", schema_type="flow-data")`로 그래프 형식을 확인한다. 노드별 세부는 `node-extraction`, `node-condition`, `node-transferCall`, `node-sendSms`에서 확인한다. 설정 키는 `get_schema("agent-schema","agent-data-create")`로 확인한다. 이름이 다르면 `list_schemas`로 실제 이름을 찾는다.
 2. `validate_flow(level="all", payload={"flow": {nodes, edges}})`를 호출한다. errors를 0으로 만들고 advisories를 읽는다. 검증 오류를 추측으로 우회하지 않는다.
-3. `save_agent(mode="create", payload={name, type:"flow", data:{…§9}, flow:{…}})`로 저장한다. 게시하지 않는다.
+3. §9의 선택 모델을 포함하거나 구 API fallback 규칙에 따라 생략해 `save_agent(mode="create", payload={name, type:"flow", data:{…§9}, flow:{…}})`로 저장한다. 게시하지 않는다.
 4. `get_agent(agent_id)`로 다시 읽고 다음을 확인한다.
    - logic edge 순서(휴무가 영업보다 앞)
    - `transfer_type: "warm"`과 fallback edge

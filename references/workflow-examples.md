@@ -20,6 +20,12 @@
 {"tool":"get_organization","arguments":{}}
 ```
 
+새 agent 모델을 고를 때는 먼저 `list_models(kind=llm)`을 호출한다. 이 예시는 사용자가 모델·계열을 지정하지 않은 경우의 흐름만 보인다. 정확한 모델·계열·공급사 지정과 구 API fallback 우선 규칙은 [모델 선택 규칙](../skills/build-first-voice-agent/SKILL.md#모델-고르기)을 따른다. `featured=true`이고 `deprecated=false`인 결과 중 `display_order`가 가장 작은 항목의 `model`을 사용한다. 아래 모델 값은 placeholder이며 실제 호출에서는 조회 결과의 `model` 값으로 바꾼다. 결과에 `featured` 필드가 없는 구 API에서는 `data.llm`을 생략하고, 서버 기본값을 사용한다고 알린다.
+
+```mcp-call
+{"tool":"list_models","arguments":{"kind":"llm"}}
+```
+
 user-principal 저장 직전에 context를 읽는다. 응답의 context_receipt.token을 아래 한 번의 save_agent에 복사한다. placeholder는 실제 호출 전에 응답 token으로 바꾼다. 영수증용 읽기는 `max_tokens`를 기본값(3000) 아래로 낮추지 않는다. `MEMORY_CONTEXT_BUDGET_TOO_SMALL`이 오면 `details.required_tokens` 이상(최대 3000)으로 한 번만 다시 호출하고, 같은 오류가 반복되면 저장하지 않고 초안으로 안내한다.
 
 ```mcp-call
@@ -27,7 +33,7 @@ user-principal 저장 직전에 context를 읽는다. 응답의 context_receipt.
 ```
 
 ```mcp-call
-{"tool":"save_agent","arguments":{"mode":"create","context_receipt":"<paste the recent context_receipt.token here>","payload":{"name":"샘플 홈케어 문의"}}}
+{"tool":"save_agent","arguments":{"mode":"create","context_receipt":"<paste the recent context_receipt.token here>","payload":{"name":"샘플 홈케어 문의","data":{"llm":{"model":"<selected list_models item model>"}}}}}
 ```
 
 `save_agent` 응답의 실제 `agent_id`를 받아 현재 상태와 revision을 읽는다. 아래 UUID는 모양을 보이는 합성값이며 실제 호출에서는 반환된 ID를 쓴다.

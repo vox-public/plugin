@@ -126,7 +126,7 @@ Manual을 쓸 때 지키고, 저장한 뒤 `get_agent`·`get_manual`로 다시 �
 - 내부 ID·코드·필드명은 읽지 않는다. 고객이 받아 적어야 하는 번호만 한 자리씩 읽는다.
 
 ## 저장 순서와 확인
-1. `save_agent(mode=create)`로 Single을 만든다(`type`은 생략하거나 `single_prompt`). 프롬프트에는 공통 규칙과 Manual 선택 절을 넣는다. 템플릿으로 시작했다면 기본 프롬프트의 업종·방향·완료 문구가 새 Manual과 충돌하지 않게 고쳐 쓴다.
+1. `save_agent(mode=create)`로 Single을 만든다(`type`은 생략하거나 `single_prompt`). 모델 선택과 구 API 예외는 [에이전트 구축의 모델 선택 규칙](../build-first-voice-agent/SKILL.md#모델-고르기)을 따른다. 템플릿으로 시작하면 생성 직후 현재 revision을 읽고 선택한 모델을 적용한다. 프롬프트에는 공통 규칙과 Manual 선택 절을 넣는다. 템플릿으로 시작했다면 기본 프롬프트의 업종·방향·완료 문구가 새 Manual과 충돌하지 않게 고쳐 쓴다.
 2. 다른 Manual이 `@manual:`로 가리킬 대상(공용 상담원 연결, 하위 Manual)을 **먼저** `save_manual(mode=create)`로 저장해 `manual_id`를 받는다. 그다음 참조하는 Manual을 저장한다. 서로 가리키는 경우에는 먼저 저장한 뒤 `mode=update`로 전체 본문을 다시 보낸다.
 3. `save_manual` 호출이 곧 에이전트에 연결하는 일이다. `data.manuals` 맵이나 폐기된 `manualIds`를 손으로 만들지 않는다. 저장할 때마다 revision이 바뀌므로 매번 직전에 읽은 `expected_head_revision`을 쓴다.
 4. 저장한 뒤 확인한다.

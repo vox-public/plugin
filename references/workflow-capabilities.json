@@ -49,6 +49,7 @@
         "The user or assistant supplies source material as conversation text or URLs; knowledge accepts text and URL only, so file contents are registered as text the user confirmed.",
         "Secrets for save_tool come only from the user's current request; masked values are never written back.",
         "New agents default to single_prompt with agent-owned manuals attached through save_manual (mode create); flow is chosen only when the type-selection rule in voice-agent-design applies, and the assistant tells the user the chosen type and a one-line reason before the first save_agent.",
+        "새 agent 모델을 고를 때마다 list_models(kind=llm)을 호출하고 build-first-voice-agent의 모델 선택 규칙을 따른다. featured 정보가 있으면 템플릿 생성 뒤에도 선택 모델을 명시 적용한다.",
         "Built-in tools owned by a manual are referenced in its content as @tool:name, API tools as @tool:<tool_id>, and other manuals as @manual:<manual_id> (save the target manual first to get its id); otherwise they are not used in calls; a template's default prompt is rewritten to fit the new business before manuals are added.",
         "When the agent-type rule in voice-agent-design selects flow, graphs are checked with validate_flow (level all) before save_agent; api-node secrets come back masked (********) and are never sent back, so the real values are re-entered by the user when a flow with api nodes is updated.",
         "create_voice_model registers only a voice the speaker has consented to; the assistant confirms consent and the source (public HTTPS audio, up to 6MB) in the conversation first.",
