@@ -1,7 +1,7 @@
 {
-  "version": "0.2.3",
+  "version": "0.2.4",
   "skills_count": 26,
-  "sha256": "13f89fcd9e4ab1bbd07b6bf70a3a23d42d6549bbb62eda0b7af939574bd1a139",
+  "sha256": "09f3ae809f97f4e443bf1ca43bcdd672c79b332aeb58016815e419bde93b29b8",
   "capability_directories": [
     "/workspace/vox-ai/skills"
   ],
@@ -75,14 +75,14 @@
     "references/workflow-examples.md": "93348f0e8fefc535e09ac1ff51da5e6827639149b45223a85a5a7ad1fba373d9",
     "references/workflow-guidance.md": "0748f76f3a4247d59d74445352ab8d0a525eac7745cc0e737c2ae8567f5eec44",
     "skills/agents-platform/SKILL.md": "c0998cb79c59c09d16ac6da7a4cd78a9fad8f20dbcc215761730682bc3cb1440",
-    "skills/build-first-voice-agent/SKILL.md": "5ef1d15f2d49be8ecee72e56fe7298b3c35dd7f7cddbac8998ac9de1b8e83341",
+    "skills/build-first-voice-agent/SKILL.md": "1ce51a790e079b8217bc2437e65b066816f0e09aa5f1d63ec4e4aa816b5cb8c1",
     "skills/cli-authoring/SKILL.md": "b673ab55c3bc9ef83dc010d679bb1c77ccc49506f16c002578a94ec5de095c97",
     "skills/configure-call-results/SKILL.md": "869f89a12f0b1ba558de6a665c8a52bd6c72b95d27531791f04eee8f5e2b4d13",
     "skills/configure-supporting-channel/SKILL.md": "85b72dfabee62367d07f505b8119ee2cb765056387b5db42fac6f249d2533d6f",
     "skills/connect-agent-tools/SKILL.md": "1ceda2ac8d1102c77911b80f19a962b8ee5c78ea6f7d5bcbe52de32bee61ad32",
     "skills/connect-phone-service/SKILL.md": "ad02db130c4322280368d32143043f60d6fa80856b4323e0b2e2321b0096f896",
     "skills/dashboard-navigation/SKILL.md": "4c0d0cf3cd8b5296f9481349b4c738a481f1abf35e2a46693aa84cd2ee6f7dc4",
-    "skills/edit-manual-safely/SKILL.md": "1e8194f748fbeee930be71cbef92d0935be30409a96d168ce9bf2fdfcfa37963",
+    "skills/edit-manual-safely/SKILL.md": "3ea8d05a3e7bf95fdd2b4206169c82eee4fda4fcad3fc9e88bc579e3edcb097a",
     "skills/explore-agent-context/SKILL.md": "b8cdd30920ffa26348e42c3305a4335a86e87732f5b8051da2e9be8ab2df9d0d",
     "skills/inspect-call-evidence/SKILL.md": "6023e11c65bcba461ecd6361bdceaeb6dc240d66189fe30af753321b4ac0f225",
     "skills/knowledge-grounding/SKILL.md": "b0a558241398531daee76d758e01ec4dfc9b79ab3e479ab9a0d9aa57d18c94ec",
