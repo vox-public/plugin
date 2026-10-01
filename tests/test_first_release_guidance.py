@@ -176,8 +176,63 @@ class FirstReleaseGuidanceTests(unittest.TestCase):
                 self.assertIn(needle, text, f"{name}: {needle}")
         platform = read("skills/agents-platform/SKILL.md")
         for needle in ("`sendSms`", "`transferCall`", "`transferAgent`", "`endCall`", "`note`",
-                       "DTMF 키 입력은 메시지로 들어오므로 AI 조건", "`********`", "실제 비밀값을 다시 받아"):
+                       "DTMF 키 입력은 메시지로 들어오므로 키마다 AI 조건 edge를 달지 않고", "`********`", "실제 비밀값을 다시 받아"):
             self.assertIn(needle, platform, needle)
+
+    def test_agent_type_rule_defaults_to_single_manual_and_flow_is_conditional(self):
+        design = read("skills/voice-agent-design/SKILL.md")
+        for needle in ("## 에이전트 유형 선택", "기본은 **Single + Manual**", "### 만들기 전에 말하기",
+                       "F1 키패드 메뉴", "F2 원문 낭독", "F3 값에 따른 기계적 분기",
+                       "F4 건너뛰기 금지 단계", "F5 아웃바운드 고정 스크립트",
+                       "Flow 신호가 아닌 것", "애매하면 Single + Manual로 만든다"):
+            self.assertIn(needle, design, needle)
+        self.assertIn("Flow로 정해졌을 때만 적용한다", design)
+        self.assertNotIn("Flow agent가 맞는지 먼저 비교한다", design)
+        flow = design.split("## Flow와 ARS 흐름")[1]
+        rest = design.split("## Flow와 ARS 흐름")[0]
+        self.assertLess(len(flow), len(rest) / 2)
+        for name, pointer in (("agents-platform", "Flow로 정해진 경우에만"),
+                              ("build-first-voice-agent", "유형과 이유를 한 줄로 알린다"),
+                              ("manual-authoring", "Flow로 바꾸지 않는다")):
+            text = read(f"skills/{name}/SKILL.md")
+            self.assertIn(pointer.split("(")[0], text, name)
+            self.assertIn("voice-agent-design/SKILL.md", text, name)
+        self.assertNotIn("메뉴·분기·전환이 정해진 흐름은 Flow agent로 만든다", read("skills/agents-platform/SKILL.md"))
+        readme = read("README.md")
+        self.assertLess(readme.index("Single + Manual로 만듭니다"), readme.index("키패드 메뉴 ARS를 Flow"))
+        actions = " ".join(json.loads(read("references/workflow-capabilities.json"))["workflows"][0]["host_actions"])
+        self.assertIn("default to single_prompt", actions)
+
+    def test_manual_authoring_covers_split_triggers_attach_and_tool_references(self):
+        text = read("skills/manual-authoring/SKILL.md")
+        for needle in ("## 어디에 쓸까", "## 몇 개로 나눌까", "## 트리거 쓰기", "## 에이전트에 연결하기",
+                       "트리거를 비운 공용 Manual", "`@manual:`", "`@tool:이름`", "`save_manual(mode=create",
+                       "기본 프롬프트", "8,096자"):
+            self.assertIn(needle, text, needle)
+        self.assertNotIn("초기에는 완결된 Manual 하나를 만들고", text)
+
+    def test_ars_flow_pattern_reference_states_pitfalls_and_the_silence_limit(self):
+        text = read("references/flow-ars-pattern.md")
+        for needle in ("분류 노드 하나", "키마다 AI edge를 다는 설계", "`fallback` edge를 달 수 없다",
+                       "무입력(침묵)은 전환을 일으키지 않는다", "정확히 **\"요청 성공 시\"**",
+                       "`current_time`", "휴무 edge", "`sms_from_number`", "cold 전환",
+                       "만들어도 실행되지 않는다"):
+            self.assertIn(needle, text, needle)
+        skeleton = json.loads(read("references/flow-ars-skeleton.json"))
+        types = {node["type"] for node in skeleton["nodes"]}
+        self.assertTrue({"begin", "condition", "extraction", "transferCall", "sendSms", "endCall"} <= types)
+        self.assertEqual([e for e in skeleton["edges"]
+                          if e["source"] in {n["id"] for n in skeleton["nodes"] if n["type"] == "conversation"}
+                          and e["condition"]["type"] == "fallback"], [])
+        self.assertIn("flow-ars-pattern.md", read("skills/voice-agent-design/SKILL.md"))
+        self.assertIn("flow-ars-pattern.md", read("skills/agents-platform/SKILL.md"))
+
+    def test_guidance_does_not_depend_on_one_host_or_ask_for_docs_changes(self):
+        for relative in ("skills/voice-agent-design/SKILL.md", "skills/manual-authoring/SKILL.md",
+                         "references/flow-ars-pattern.md"):
+            text = read(relative)
+            for host in ("Claude Code", "Codex", "Grok"):
+                self.assertNotIn(host, text, f"{relative}: {host}")
 
     def test_new_work_requires_confirmation_summary_for_every_side_effect_skill(self):
         for name in ("operate-outbound-and-followup", "connect-phone-service", "build-first-voice-agent",
