@@ -1,0 +1,28 @@
+{
+  "name": "list_customers",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "q": {
+        "type": "string",
+        "description": "Case-insensitive substring to match against customer names or identifier values.",
+        "title": "Q"
+      },
+      "cursor": {
+        "type": "string",
+        "title": "Cursor",
+        "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page."
+      },
+      "limit": {
+        "type": "integer",
+        "maximum": 100,
+        "minimum": 1,
+        "default": 50,
+        "title": "Limit",
+        "description": "Maximum number of items to return. v3 list endpoints accept 1-100."
+      }
+    },
+    "required": []
+  }
+}

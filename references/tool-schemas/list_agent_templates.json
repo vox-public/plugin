@@ -1,0 +1,23 @@
+{
+  "name": "list_agent_templates",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "cursor": {
+        "type": "string",
+        "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page.",
+        "title": "Cursor"
+      },
+      "limit": {
+        "type": "integer",
+        "maximum": 100,
+        "minimum": 1,
+        "description": "Maximum number of items to return. v3 list endpoints accept 1-100.",
+        "default": 50,
+        "title": "Limit"
+      }
+    },
+    "required": []
+  }
+}

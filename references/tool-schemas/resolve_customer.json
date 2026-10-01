@@ -1,0 +1,75 @@
+{
+  "name": "resolve_customer",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "payload": {
+        "anyOf": [
+          {
+            "required": [
+              "phone_number"
+            ]
+          },
+          {
+            "required": [
+              "email"
+            ]
+          },
+          {
+            "required": [
+              "external_id"
+            ]
+          }
+        ],
+        "properties": {
+          "phone_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone Number",
+            "description": "Customer phone number. Normalized to canonical KR national format."
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email",
+            "description": "Customer email. Validated and lowercased before resolution."
+          },
+          "external_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Id",
+            "description": "Caller-owned external customer identifier."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ResolveCustomerRequest",
+        "description": "Resolve or create one customer from public identifier fields."
+      }
+    },
+    "required": [
+      "payload"
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "name": "list_calls",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "agent_id": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "description": "Agent UUID filter. Repeat the query parameter to filter by multiple agents.",
+        "title": "Agent Id"
+      },
+      "status": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "queued",
+            "ongoing",
+            "ended",
+            "error",
+            "canceled",
+            "not_connected"
+          ],
+          "type": "string"
+        },
+        "description": "Status filter. Repeat the query parameter to filter by multiple statuses when the endpoint supports multiple values.",
+        "title": "Status"
+      },
+      "call_type": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "web",
+            "phone",
+            "inbound",
+            "outbound",
+            "api"
+          ],
+          "type": "string"
+        },
+        "description": "통화 유형 필터 (반복 가능). 허용값: web/phone/inbound/outbound/api.",
+        "title": "Call Type"
+      },
+      "disconnection_reason": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "user_hangup",
+            "agent_hangup",
+            "dial_no_answer",
+            "dial_failed",
+            "dial_busy",
+            "voicemail_reached",
+            "concurrency_limit_reached",
+            "insufficient_balance",
+            "error_voxai",
+            "max_duration_reached",
+            "inactivity",
+            "flow_error",
+            "call_transfer",
+            "orphaned_no_agent_pickup",
+            "dial_declined",
+            "daily_call_limit_reached",
+            "hourly_call_limit_reached",
+            "blocked_number",
+            "operator_hangup"
+          ],
+          "type": "string"
+        },
+        "description": "통화 종료 사유 필터 (반복 가능).",
+        "title": "Disconnection Reason"
+      },
+      "call_from": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "발신 번호 필터 (반복 가능). 하이픈 없는 국내 번호.",
+        "title": "Call From"
+      },
+      "call_to": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "수신 번호 필터 (반복 가능). 하이픈 없는 국내 번호.",
+        "title": "Call To"
+      },
+      "customer_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "귀속 고객 UUID 필터. 해당 고객에 귀속된 통화만 반환합니다.",
+        "title": "Customer Id"
+      },
+      "campaign_id": {
+        "type": "string",
+        "pattern": "^[0-9]+$",
+        "description": "캠페인 id 필터입니다. `GET /v3/campaigns` 응답의 정수 문자열 `id`를 사용합니다.",
+        "title": "Campaign Id"
+      },
+      "start_at_after": {
+        "type": "integer",
+        "description": "통화 시각 하한 (unix ms, 이 시각 이상). 통화 시각은 연결 시작 시각이고, 연결 전에 끝난 통화는 생성 시각으로 비교한다. 10~11자리 unix 초 입력도 허용 — 자동으로 ms로 변환된다.",
+        "title": "Start At After"
+      },
+      "start_at_before": {
+        "type": "integer",
+        "description": "통화 시각 상한 (unix ms, 이 시각 이하). 통화 시각은 연결 시작 시각이고, 연결 전에 끝난 통화는 생성 시각으로 비교한다. 10~11자리 unix 초 입력도 허용 — 자동으로 ms로 변환된다.",
+        "title": "Start At Before"
+      },
+      "sort_order": {
+        "type": "string",
+        "description": "Sort direction. Allowed values are `asc` and `desc`.",
+        "default": "desc",
+        "title": "Sort Order",
+        "enum": [
+          "asc",
+          "desc"
+        ]
+      },
+      "cursor": {
+        "type": "string",
+        "title": "Cursor",
+        "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page."
+      },
+      "limit": {
+        "type": "integer",
+        "maximum": 100,
+        "minimum": 1,
+        "default": 50,
+        "title": "Limit",
+        "description": "Maximum number of items to return. v3 list endpoints accept 1-100."
+      },
+      "agent_version": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "에이전트 버전 필터 (current 또는 v{n}, 반복 가능). agent_id를 1개 지정할 때만 사용할 수 있습니다.",
+        "title": "Agent Version"
+      },
+      "duration_ms_min": {
+        "type": "integer",
+        "maximum": 9223372036854775807,
+        "minimum": 0,
+        "description": "통화 시간 하한 (밀리초, 이 값 이상).",
+        "title": "Duration Ms Min"
+      },
+      "duration_ms_max": {
+        "type": "integer",
+        "maximum": 9223372036854775807,
+        "minimum": 0,
+        "description": "통화 시간 상한 (밀리초, 이 값 이하).",
+        "title": "Duration Ms Max"
+      },
+      "metadata": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 20,
+        "description": "key:value 형식의 메타데이터 정확 일치 필터 (예: source:crm, 반복 가능). 같은 key는 OR, 다른 key는 AND로 찾습니다.",
+        "title": "Metadata"
+      },
+      "dynamic_variables": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 20,
+        "description": "key:value 형식의 동적 변수 정확 일치 필터 (예: name:홍길동, 반복 가능). 같은 key는 OR, 다른 key는 AND로 찾습니다.",
+        "title": "Dynamic Variables"
+      }
+    },
+    "required": []
+  }
+}

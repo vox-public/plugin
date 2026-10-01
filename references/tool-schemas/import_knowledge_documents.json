@@ -1,0 +1,101 @@
+{
+  "name": "import_knowledge_documents",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "knowledge_id": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Numeric public knowledge ID returned by `GET /v3/knowledges`.",
+        "title": "Knowledge Id"
+      },
+      "payload": {
+        "oneOf": [
+          {
+            "additionalProperties": false,
+            "description": "`text` 타입 document 생성 요청 (application/json).\n\n`name` 은 공백 제외 1~255자. 정의되지 않은 필드를 보내면 400 (`extra=forbid`).",
+            "properties": {
+              "name": {
+                "description": "document 의 이름. 공백을 제외하고 1자 이상, 255자 이하.",
+                "maxLength": 255,
+                "minLength": 1,
+                "title": "Name",
+                "type": "string"
+              },
+              "document_type": {
+                "const": "text",
+                "description": "document 타입. 'text' 고정.",
+                "title": "Document Type",
+                "type": "string"
+              },
+              "text": {
+                "description": "document 본문 텍스트.",
+                "title": "Text",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "document_type",
+              "text"
+            ],
+            "title": "CreateTextDocumentRequest",
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "description": "`webpage` 타입 document 생성 요청 (application/json).\n\n`webpage_urls` 는 http(s) URL 만 허용되며 최소 1개 이상 필요하다. 정의되지\n않은 필드를 보내면 400.",
+            "properties": {
+              "name": {
+                "description": "document 의 이름. 공백을 제외하고 1자 이상, 255자 이하.",
+                "maxLength": 255,
+                "minLength": 1,
+                "title": "Name",
+                "type": "string"
+              },
+              "document_type": {
+                "const": "webpage",
+                "description": "document 타입. 'webpage' 고정.",
+                "title": "Document Type",
+                "type": "string"
+              },
+              "auto_refresh": {
+                "default": false,
+                "description": "Automatically sync registered URLs every 24 hours.",
+                "title": "Auto Refresh",
+                "type": "boolean"
+              },
+              "webpage_urls": {
+                "description": "크롤 대상 웹페이지 URL 목록. 최소 1개, 최대 100개. 각 항목은 유효한 http(s) URL 이어야 한다.",
+                "items": {
+                  "format": "uri",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 100,
+                "minItems": 1,
+                "title": "Webpage Urls",
+                "type": "array"
+              }
+            },
+            "required": [
+              "name",
+              "document_type",
+              "webpage_urls"
+            ],
+            "title": "CreateWebpageDocumentRequest",
+            "type": "object"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "document_type"
+        }
+      }
+    },
+    "required": [
+      "knowledge_id",
+      "payload"
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "create_knowledge",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "payload": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name",
+            "description": "knowledge base 의 이름. 공백을 제외하고 1자 이상, 255자 이하."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "CreateKnowledgeRequest",
+        "description": "knowledge 생성 요청 (`POST /v3/knowledges`).\n\n`name` 은 공백 제거 후 1자 이상이어야 한다. 빈 문자열·공백만 입력은 400.\n정의되지 않은 필드를 보내면 400 (`extra=forbid`)."
+      }
+    },
+    "required": [
+      "payload"
+    ]
+  }
+}

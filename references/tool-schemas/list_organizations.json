@@ -1,0 +1,9 @@
+{
+  "name": "list_organizations",
+  "inputSchema": {
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+  }
+}

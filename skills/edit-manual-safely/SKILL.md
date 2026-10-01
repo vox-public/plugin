@@ -14,6 +14,8 @@ metadata:
 ## 쓰기 전
 [get_agent/get_manual의 실제 결과](../explore-agent-context/SKILL.md)에서 대상 Single의 `agent_id`, Manual의 `manual_id`, 현재 `head_revision`, 완전한 원문을 확보한다. 사용자 요청 부분과 보존할 규칙을 구분한다. 다른 agent와의 영향이 의심되면 [영향 범위](../review-shared-impact/SKILL.md)를 먼저 확인한다.
 
+기존 agent를 수정할 때 모델 변경을 요청받지 않았다면 `data.llm.model`을 바꾸지 않고 현재 값을 보존한다.
+
 ## 본문 편집
 긴 문자열은 현재 원문을 파일에서 수정하고 변경 전후를 비교할 수 있다. 동일 문장이 여러 번 나오면 첫 항목을 임의 치환하지 않고 대상 문맥을 고른다. sandbox 파일 편집을 제품 저장으로 말하지 않는다.
 

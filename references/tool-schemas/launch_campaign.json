@@ -1,0 +1,249 @@
+{
+  "name": "launch_campaign",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "payload": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name",
+            "description": "캠페인 이름. 1~255자. 공백만으로는 생성할 수 없습니다."
+          },
+          "from_number": {
+            "type": "string",
+            "title": "From Number",
+            "description": "발신 번호 (하이픈 없는 국내 번호)."
+          },
+          "presentation_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Presentation Number",
+            "description": "기본 표시 번호. 조직 승인 번호만 허용."
+          },
+          "agent": {
+            "$ref": "#/$defs/AgentMapping",
+            "description": "Agent mapping object with `agent_id` and `agent_version`. Used by cross-resource references (calls / campaigns / telephone_numbers) and by `builtInTools.transfer_agent` / flow `transferAgent` node `data.agent` per v3 §2.7 AgentMapping."
+          },
+          "tasks": {
+            "items": {
+              "$ref": "#/$defs/CampaignTaskV3"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Tasks",
+            "description": "실행할 발신 작업 목록 (최소 1개)."
+          },
+          "scheduled_at": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scheduled At",
+            "description": "Scheduled execution time as a unix timestamp in milliseconds."
+          },
+          "concurrency": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Concurrency",
+            "description": "최대 동시 발신 수 (1~100).",
+            "default": 5
+          },
+          "call_time_window": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/CallTimeWindowV3"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "통화 허용 시간대. 미입력 시 기본값(24시간, 매일)."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "from_number",
+          "agent",
+          "tasks"
+        ],
+        "title": "CreateCampaignV3Request",
+        "description": "v3 캠페인 생성 요청."
+      },
+      "execution_key": {
+        "type": "string",
+        "minLength": 8,
+        "maxLength": 128,
+        "description": "같은 실행에만 같은 키를 쓰고, 새로 시도할 때는 새 키를 쓴다. 결과가 불명(EXECUTION_RESULT_UNKNOWN)이면 다시 실행하지 말고 get_campaign/list_campaigns로 확인한다."
+      }
+    },
+    "required": [
+      "payload",
+      "execution_key"
+    ],
+    "$defs": {
+      "AgentMapping": {
+        "additionalProperties": false,
+        "description": "agent_id + agent_version 매핑.\n\n요청·응답 모두에서 에이전트 매핑이 필요한 경우 이 타입을 사용한다.\n요청 중 version 지정이 불필요한 엔드포인트는 flat `agent_id: UUID` 를 직접 받고,\n`AgentMapping` 을 쓰지 않는다.",
+        "properties": {
+          "agent_id": {
+            "description": "Agent UUID.",
+            "format": "uuid",
+            "title": "Agent Id",
+            "type": "string"
+          },
+          "agent_version": {
+            "default": "current",
+            "description": "에이전트 버전. 허용값: \"current\", \"production\", 또는 \"v{n}\" (n≥1). 미전송 시 \"current\"로 처리됩니다. null 전송은 거부.",
+            "title": "Agent Version",
+            "type": "string",
+            "pattern": "^(current|production|v[1-9][0-9]*)$",
+            "examples": [
+              "current",
+              "production",
+              "v1"
+            ]
+          }
+        },
+        "required": [
+          "agent_id"
+        ],
+        "title": "AgentMapping",
+        "type": "object"
+      },
+      "CampaignTaskV3": {
+        "properties": {
+          "call_to": {
+            "type": "string",
+            "title": "Call To",
+            "description": "수신 번호 (예: '01098765432')."
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "description": "태스크별 메타데이터."
+          },
+          "dynamic_variables": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Dynamic Variables",
+            "description": "태스크별 동적 변수."
+          },
+          "presentation_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Presentation Number",
+            "description": "이 태스크에 한해 사용할 표시 번호. 미지정 시 캠페인 기본값 사용."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "call_to"
+        ],
+        "title": "CampaignTaskV3",
+        "description": "캠페인 생성 요청의 개별 태스크."
+      },
+      "CallTimeWindowV3": {
+        "properties": {
+          "windows": {
+            "items": {
+              "$ref": "#/$defs/TimeWindowItem"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Windows",
+            "description": "허용 시간대 목록 (최소 1개)."
+          },
+          "timezone": {
+            "type": "string",
+            "title": "Timezone",
+            "description": "IANA timezone name, for example `Asia/Seoul`.",
+            "default": "Asia/Seoul"
+          },
+          "auto_resume": {
+            "type": "boolean",
+            "title": "Auto Resume",
+            "description": "허용 시간대 진입 시 자동 재개 여부. 기본 true.",
+            "default": true
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "windows"
+        ],
+        "title": "CallTimeWindowV3",
+        "description": "캠페인 통화 허용 시간대 설정."
+      },
+      "TimeWindowItem": {
+        "properties": {
+          "start_min": {
+            "type": "integer",
+            "exclusiveMaximum": 1440.0,
+            "minimum": 0.0,
+            "title": "Start Min",
+            "description": "시작 시각 (자정 기준 분, 0~1439). 예: 540 = 09:00."
+          },
+          "end_min": {
+            "type": "integer",
+            "maximum": 1440.0,
+            "exclusiveMinimum": 0.0,
+            "title": "End Min",
+            "description": "종료 시각 (자정 기준 분, 1~1440). 예: 1080 = 18:00."
+          },
+          "days": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday"
+              ]
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Days",
+            "description": "Capitalized day names: Monday through Sunday."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "start_min",
+          "end_min",
+          "days"
+        ],
+        "title": "TimeWindowItem",
+        "description": "통화 허용 시간대 단위. 자정 기준 분 + 요일 목록."
+      }
+    }
+  }
+}

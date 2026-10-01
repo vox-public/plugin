@@ -1,6 +1,6 @@
 # 합성 고객 여정: 만들기, 다듬기, 직접 시험, 운영, 재개
 
-이 예시는 합성 자료와 도구 호출 형식을 보여준다. 실제 요청 전에 연결된 호스트의 실제 도구와 schema를 확인한다. 번들에는 14개 도구의 schema 후보가 있으며 실제 사용 가능 여부는 연결된 서버에서 확인한다. user-principal save_agent/save_manual에는 직전 get_work_context에서 받은 context receipt가 필요하다. 도구나 receipt가 없으면 제품 쓰기 대신 초안과 빠진 capability를 안내한다.
+이 예시는 합성 자료와 도구 호출 형식을 보여준다. 실제 요청 전에 연결된 호스트의 실제 도구와 schema를 확인한다. 번들의 도구 schema 후보는 실제 사용 가능 여부를 연결된 서버에서 확인한다. user-principal save_agent/save_manual에는 직전 get_work_context에서 받은 context receipt가 필요하다. 외부 공개 연결처럼 작업 기록 도구가 없는 호스트에서는 receipt 없이 저장을 시도하고 서버가 거부하면 초안과 빠진 capability를 안내한다.
 
 ## 합성 요청과 완료 기준
 
@@ -20,6 +20,12 @@
 {"tool":"get_organization","arguments":{}}
 ```
 
+새 agent 모델을 고를 때는 먼저 `list_models(kind=llm)`을 호출한다. 이 예시는 사용자가 모델·계열을 지정하지 않은 경우의 흐름만 보인다. 정확한 모델·계열·공급사 지정과 구 API fallback 우선 규칙은 [모델 선택 규칙](../skills/build-first-voice-agent/SKILL.md#모델-고르기)을 따른다. `featured=true`이고 `deprecated=false`인 결과 중 `display_order`가 가장 작은 항목의 `model`을 사용한다. 아래 모델 값은 placeholder이며 실제 호출에서는 조회 결과의 `model` 값으로 바꾼다. 결과에 `featured` 필드가 없는 구 API에서는 `data.llm`을 생략하고, 서버 기본값을 사용한다고 알린다.
+
+```mcp-call
+{"tool":"list_models","arguments":{"kind":"llm"}}
+```
+
 user-principal 저장 직전에 context를 읽는다. 응답의 context_receipt.token을 아래 한 번의 save_agent에 복사한다. placeholder는 실제 호출 전에 응답 token으로 바꾼다. 영수증용 읽기는 `max_tokens`를 기본값(3000) 아래로 낮추지 않는다. `MEMORY_CONTEXT_BUDGET_TOO_SMALL`이 오면 `details.required_tokens` 이상(최대 3000)으로 한 번만 다시 호출하고, 같은 오류가 반복되면 저장하지 않고 초안으로 안내한다.
 
 ```mcp-call
@@ -27,7 +33,7 @@ user-principal 저장 직전에 context를 읽는다. 응답의 context_receipt.
 ```
 
 ```mcp-call
-{"tool":"save_agent","arguments":{"mode":"create","context_receipt":"<paste the recent context_receipt.token here>","payload":{"name":"샘플 홈케어 문의"}}}
+{"tool":"save_agent","arguments":{"mode":"create","context_receipt":"<paste the recent context_receipt.token here>","payload":{"name":"샘플 홈케어 문의","data":{"llm":{"model":"<selected list_models item model>"}}}}}
 ```
 
 `save_agent` 응답의 실제 `agent_id`를 받아 현재 상태와 revision을 읽는다. 아래 UUID는 모양을 보이는 합성값이며 실제 호출에서는 반환된 ID를 쓴다.
@@ -45,7 +51,7 @@ user-principal 저장 직전에 context를 읽는다. 응답의 context_receipt.
 ```
 
 ```mcp-call
-{"tool":"save_manual","arguments":{"mode":"create","agent_id":"11111111-1111-4111-8111-111111111111","context_receipt":"<paste the recent context_receipt.token here>","payload":{"expected_head_revision":7,"name":"샘플 홈케어 문의 접수","trigger":"고객이 홈케어 서비스나 방문 가능성을 문의할 때","content":"목표: 서비스 문의를 정확히 접수하고 담당자가 이어서 확인할 수 있도록 요약한다.\n\n진행: 1) 원하는 서비스 종류를 묻는다. 2) 가능한 날짜 범위를 묻는다. 3) 서비스 범위를 좁힌 뒤 위치와 주소를 한 번 확인한다. 4) 접수 내용을 요약하고 빠진 점이나 정정이 있는지 묻는다.\n\n제한: 연결된 가격표와 예약 확인 기능이 없다. 확정 가격, 방문 시각, 예약 완료를 말하지 않는다. 확인이 필요한 질문은 추측하지 말고 담당자 확인이 필요하다고 설명한다.\n\n마무리: 접수된 내용을 요약하고 담당자가 확인할 다음 단계를 안내한다. 고객이 정정하면 요약을 갱신한다."}}}
+{"tool":"save_manual","arguments":{"mode":"create","agent_id":"11111111-1111-4111-8111-111111111111","context_receipt":"<paste the recent context_receipt.token here>","payload":{"expected_head_revision":7,"name":"샘플 홈케어 문의 접수","trigger":"고객이 홈케어 서비스나 방문 가능 여부를 문의할 때, 서비스 종류나 지역을 먼저 말할 때, 또는 앞서 말한 접수 정보를 정정할 때. 이미 잡힌 방문의 변경·취소는 제외한다.","content":"## 규칙\n- 범위: 홈케어 서비스 문의 접수만 한다. 가격 확정, 방문 시각 약속, 예약 완료 안내는 하지 않는다.\n- 연결된 가격표와 예약 확인 기능이 없다. 확인이 필요한 질문은 추측하지 않고 \"담당자 확인이 필요합니다.\"라고 말한다.\n- 이미 들은 정보는 다시 묻지 않는다. 정정되면 그 값만 고친다.\n- 완료 조건: 서비스 종류, 날짜 범위, 위치를 확인하고 요약에 고객이 동의했을 때만 접수되었다고 말한다.\n## 진행 절차\n### 시작\n1. 고객이 이미 말한 서비스 종류, 날짜 범위, 위치를 기억하고 아직 듣지 못한 항목의 단계로 이동한다.\n### 서비스 종류\n1. 원하는 서비스 종류를 묻는다.\n### 날짜 범위\n1. 가능한 날짜 범위를 묻는다. 모른다고 하면 \"모름\"으로 기억하고 넘어간다.\n### 위치\n1. 서비스 범위를 좁힌 뒤 위치와 주소를 한 번만 확인한다.\n### 요약 확인\n1. 접수 내용을 요약하고 빠진 점이나 정정이 있는지 묻는다.\n2. 정정하면 그 항목만 고치고 요약을 다시 확인한다.\n3. 맞다고 하면 접수된 내용과 담당자가 확인할 다음 단계를 안내하고 끝낸다."}}}
 ```
 
 저장 결과의 `manual_id`를 보존하고 실제 리소스를 재조회한다.
@@ -73,7 +79,7 @@ Manual의 최신 revision을 다시 읽고, 저장 직전에 새 context receipt
 ```
 
 ```mcp-call
-{"tool":"save_manual","arguments":{"mode":"update","agent_id":"11111111-1111-4111-8111-111111111111","manual_id":"22222222-2222-4222-8222-222222222222","context_receipt":"<paste the recent context_receipt.token here>","payload":{"expected_head_revision":8,"content":"목표: 서비스 문의를 정확히 접수하고 담당자가 이어서 확인할 수 있도록 요약한다.\n\n진행: 1) 원하는 서비스 종류를 묻는다. 2) 가능한 날짜 범위를 묻는다. 3) 고객이 원하는 업무 범위를 파악한 다음 위치와 주소를 한 번만 확인한다. 이미 주소를 들었다면 반복 질문하지 않는다. 4) 접수 내용을 요약하고 빠진 점이나 정정이 있는지 묻는다.\n\n제한: 연결된 가격표와 예약 확인 기능이 없다. 확정 가격, 방문 시각, 예약 완료를 말하지 않는다. 확인이 필요한 질문은 추측하지 말고 담당자 확인이 필요하다고 설명한다.\n\n마무리: 접수된 내용을 요약하고 담당자가 확인할 다음 단계를 안내한다. 고객이 정정하면 요약을 갱신한다."}}}
+{"tool":"save_manual","arguments":{"mode":"update","agent_id":"11111111-1111-4111-8111-111111111111","manual_id":"22222222-2222-4222-8222-222222222222","context_receipt":"<paste the recent context_receipt.token here>","payload":{"expected_head_revision":8,"content":"## 규칙\n- 범위: 홈케어 서비스 문의 접수만 한다. 가격 확정, 방문 시각 약속, 예약 완료 안내는 하지 않는다.\n- 연결된 가격표와 예약 확인 기능이 없다. 확인이 필요한 질문은 추측하지 않고 \"담당자 확인이 필요합니다.\"라고 말한다.\n- 이미 들은 정보는 다시 묻지 않는다. 정정되면 그 값만 고친다.\n- 완료 조건: 서비스 종류, 날짜 범위, 위치를 확인하고 요약에 고객이 동의했을 때만 접수되었다고 말한다.\n## 진행 절차\n### 시작\n1. 고객이 이미 말한 서비스 종류, 날짜 범위, 위치를 기억하고 아직 듣지 못한 항목의 단계로 이동한다.\n### 서비스 종류\n1. 원하는 서비스 종류를 묻는다.\n### 날짜 범위\n1. 가능한 날짜 범위를 묻는다. 모른다고 하면 \"모름\"으로 기억하고 넘어간다.\n### 위치\n1. 고객이 원하는 업무 범위를 파악한 다음 위치와 주소를 한 번만 확인한다. 이미 주소를 들었다면 반복 질문하지 않는다.\n### 요약 확인\n1. 접수 내용을 요약하고 빠진 점이나 정정이 있는지 묻는다.\n2. 정정하면 그 항목만 고치고 요약을 다시 확인한다.\n3. 맞다고 하면 접수된 내용과 담당자가 확인할 다음 단계를 안내하고 끝낸다."}}}
 ```
 
 `get_manual(agent_id, manual_id)`로 다시 읽어 주소 규칙이 한 번만 반영되고 다른 제한이 남았는지 확인한다. `409`이면 최신 본문을 다시 읽고 의도를 재적용한다. 쓰기 응답이 불명이면 중복 update를 보내지 말고 알려진 ID를 재조회한다.
@@ -82,15 +88,21 @@ Manual의 최신 revision을 다시 읽고, 저장 직전에 새 context receipt
 
 Assistant는 고객이 확인할 사례와 기대 동작을 준비한다. 예를 들어 고객은 “이번 주 금요일에 에어컨 청소 가능해요? 가격도 알려주세요”라고 말해 본다. 기대 동작은 서비스 종류와 날짜 범위를 접수하고, 연결되지 않은 가격·예약 확정을 약속하지 않는 것이다. 두 번째 사례에서는 고객이 먼저 주소를 말하고 서비스 종류를 바꾼다. 기대 동작은 주소를 되묻지 않고 새 서비스 범위를 반영하는 것이다.
 
-고객은 기존 vox.ai 제품 UI에서 음성 시험을 직접 실행한다. 이 번들 후보에는 시험 시작이나 통화 결과 조회가 없다. 고객이 “두 번째 사례에서 주소를 다시 물었어요”라고 보고하면 이후 작업에 영향을 줄 피드백으로 보고 기록한다. 실제 call 조회가 확인되지 않았으므로 independent call evidence라고 부르지 않는다. call reference는 locator로만 남기고 전체 transcript를 수집하지 않는다.
+음성 시험을 시작하는 도구는 없어 고객이 제품 UI에서 직접 시험한다. 고객이 “두 번째 사례에서 주소를 다시 물었어요”라고 보고하면 이후 작업에 영향을 줄 피드백으로 보고 기록한다. 고객이 callId를 주거나 `list_calls`로 해당 통화를 찾아 `get_call`로 읽기 전에는 independent call evidence라고 부르지 않는다. 조회한 뒤에는 상태·당시 버전·추출 결과를 근거로 쓰고 원문은 필요할 때만 `include_transcript`로 읽는다. call reference는 locator로만 남기고 전체 transcript를 수집하지 않는다.
 
 피드백이 Manual 분기 수정으로 이어지면 위 refine 흐름으로 좁게 바꾸고 저장값을 재조회한다. 고객의 보고는 feedback_reported 또는 customer_voice_report로 요약 기록하고 계속 reported 상태로 둔다. 전달에는 고객이 다시 말할 문장과 기대 결과를 적는다. 실제 재시험 전에는 “저장 확인·고객 재시험 대기”로 상태를 표현한다.
 
-## 4. Operate: 실제 운영과 개선 근거 구분
+## 4. Operate: 게시, 번호 연결, 발신, 결과 확인
 
-고객이 “오늘부터 실제 문의를 받아도 될까요?”라고 묻는다. `get_agent`와 `get_manual`은 설정을 확인하는 선택적 조회다. 현재 구현 도구에는 번호 연결, 게시·활성화, 실전화·캠페인 발신, call history 조회가 없다. 저장된 설정만 보고 운영 가능하다고 판정하거나 MCP로 실제 전화를 실행했다고 말하지 않는다.
+고객이 “오늘부터 실제 문의를 받아도 될까요?”라고 묻는다. 순서는 다음과 같다. 각 단계 뒤에 응답과 재조회로 확인한다.
 
-고객이 제품 UI에서 권한·연결 상태를 확인하고 실제 운영을 진행한다. 이후 고객이 “오늘 접수는 괜찮았지만 주소를 중복 질문했다”고 알려주면, 그 내용을 고객 보고로 분류하고 수정 가설·확인 사례를 제안한다. 실제 통화 원문이나 결과가 필요하면 고객이 접근 가능한 근거를 제공하도록 안내한다. 조회가 되지 않은 운영 결과는 관측된 call 통계로 표현하지 않는다.
+1. 현재 설정을 `create_agent_version`으로 버전에 남기고 `list_agent_versions`로 확인한다.
+2. 어느 버전을 production으로 지정할지 대화에서 요약해 확인받고 `publish_agent_version`을 호출한 뒤 `get_agent`로 production 설정을 읽는다.
+3. 이미 가진 번호를 `list_numbers`/`get_number`로 찾아 연결 변경(현재 → 변경, 해제 여부)을 요약해 확인받고 `set_number_agents`를 호출한 뒤 `get_number`로 확인한다. 번호 획득은 웹에서만 한다.
+4. 통제된 인바운드 전화나, 대상·발신 번호·agent 버전을 요약해 확인받은 `place_call`(새 `execution_key`)로 첫 통화를 만든다. 대량은 `create_sheet` → `launch_campaign`(새 `execution_key`)이며 `pause_campaign`/`resume_campaign`/`cancel_campaign`으로 제어한다.
+5. `list_calls`/`get_call`로 접수·연결·종료·추출 결과를 읽는다. 응답이 불명(`EXECUTION_RESULT_UNKNOWN`·`EXECUTION_IN_PROGRESS`)이면 다시 실행하지 않고 `list_calls`·`get_campaign`으로 확인한다.
+
+이후 고객이 “오늘 접수는 괜찮았지만 주소를 중복 질문했다”고 알려주면 고객 보고로 분류하고, 해당 통화가 조회되면 `get_call` 근거로 수정 가설·확인 사례를 제안한다. 조회되지 않은 운영 결과는 관측된 call 통계로 표현하지 않는다. 저장된 설정만 보고 운영 가능하다고 판정하거나 실제 전화가 나갔다고 말하지 않는다.
 
 ## 5. Resume: 부분 성공을 보존하고 다른 세션에서도 안전하게 이어가기
 

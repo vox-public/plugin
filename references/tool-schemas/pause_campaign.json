@@ -1,0 +1,23 @@
+{
+  "name": "pause_campaign",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "campaign_id": {
+        "type": "string",
+        "title": "Campaign Id",
+        "description": "Campaign identifier."
+      },
+      "execution_key": {
+        "type": "string",
+        "minLength": 8,
+        "maxLength": 128,
+        "description": "같은 실행에만 같은 키를 쓰고, 새로 시도할 때는 새 키를 쓴다. 결과가 불명(EXECUTION_RESULT_UNKNOWN)이면 다시 실행하지 말고 get_campaign/list_campaigns로 확인한다."
+      }
+    },
+    "required": [
+      "campaign_id"
+    ]
+  }
+}

@@ -1,0 +1,1882 @@
+{
+  "name": "validate_flow",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "level": {
+        "enum": [
+          "critical",
+          "runtime",
+          "all"
+        ],
+        "type": "string",
+        "description": "`critical`(기본)은 저장을 막는 errors만, `runtime`은 advisories만, `all`은 둘 다 돌려준다. 저장 전에는 `all`을 권장한다.",
+        "default": "critical",
+        "title": "Level"
+      },
+      "agent_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "수정할 기존 Flow 에이전트의 UUID. 주면 그 에이전트의 현재 flow를 기준으로 update 저장 검사를 한다. 새로 만들 flow는 생략한다.",
+        "title": "Agent Id"
+      },
+      "payload": {
+        "properties": {
+          "flow": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/FlowInput"
+              }
+            ],
+            "description": "`flow` graph ({nodes, edges}) to validate without persisting."
+          }
+        },
+        "type": "object",
+        "required": [
+          "flow"
+        ],
+        "title": "ValidateFlowRequest",
+        "description": "검증할 flow 그래프. {flow: {nodes, edges}} 형태이며 저장하지 않는다. 노드·엣지 구조는 get_schema의 flow-schema/flow-data를 따른다.",
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "payload"
+    ],
+    "$defs": {
+      "FlowInput": {
+        "properties": {
+          "nodes": {
+            "items": {
+              "$ref": "#/$defs/FlowNode"
+            },
+            "type": "array",
+            "title": "Nodes",
+            "description": "Flow graph nodes. Each node has an `id`, `type`, a required `position` (`{x, y}` canvas coordinates), and a type-specific `data` object."
+          },
+          "edges": {
+            "items": {
+              "$ref": "#/$defs/FlowEdgeInput"
+            },
+            "type": "array",
+            "title": "Edges",
+            "description": "Flow graph edges that connect source and target nodes."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "nodes",
+          "edges"
+        ],
+        "title": "Flow",
+        "description": "Public ``flow`` document: ``{nodes, edges}``."
+      },
+      "FlowNode": {
+        "title": "FlowNode",
+        "description": "Public `flow` graph node. `type` is the discriminator and determines the schema of `data`.",
+        "oneOf": [
+          {
+            "$ref": "#/$defs/BeginFlowNode"
+          },
+          {
+            "$ref": "#/$defs/ConversationFlowNode"
+          },
+          {
+            "$ref": "#/$defs/ToolFlowNode"
+          },
+          {
+            "$ref": "#/$defs/ConditionFlowNode"
+          },
+          {
+            "$ref": "#/$defs/ExtractionFlowNode"
+          },
+          {
+            "$ref": "#/$defs/ApiFlowNode"
+          },
+          {
+            "$ref": "#/$defs/SendSmsFlowNode"
+          },
+          {
+            "$ref": "#/$defs/TransferCallFlowNode"
+          },
+          {
+            "$ref": "#/$defs/TransferAgentFlowNode"
+          },
+          {
+            "$ref": "#/$defs/EndCallFlowNode"
+          },
+          {
+            "$ref": "#/$defs/NoteFlowNode"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "begin": "#/components/schemas/BeginFlowNode",
+            "conversation": "#/components/schemas/ConversationFlowNode",
+            "tool": "#/components/schemas/ToolFlowNode",
+            "condition": "#/components/schemas/ConditionFlowNode",
+            "extraction": "#/components/schemas/ExtractionFlowNode",
+            "api": "#/components/schemas/ApiFlowNode",
+            "sendSms": "#/components/schemas/SendSmsFlowNode",
+            "transferCall": "#/components/schemas/TransferCallFlowNode",
+            "transferAgent": "#/components/schemas/TransferAgentFlowNode",
+            "endCall": "#/components/schemas/EndCallFlowNode",
+            "note": "#/components/schemas/NoteFlowNode"
+          }
+        }
+      },
+      "BeginFlowNode": {
+        "type": "object",
+        "title": "BeginFlowNode",
+        "description": "Public `flow` node with `type=begin`.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "position"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Identifier of the response object itself, or a local identifier inside a nested configuration object."
+          },
+          "type": {
+            "type": "string",
+            "const": "begin",
+            "description": "Discriminator value for flow node type `begin`."
+          },
+          "position": {
+            "$ref": "#/$defs/Position",
+            "description": "Node canvas coordinates {x, y}. Required — the builder cannot render a node without a position, and the server does not invent one."
+          },
+          "data": {
+            "$ref": "#/$defs/BeginFlowNodeData",
+            "description": "Type-specific data payload for `begin`."
+          }
+        }
+      },
+      "Position": {
+        "properties": {
+          "x": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "X"
+          },
+          "y": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Y"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "x",
+          "y"
+        ],
+        "title": "Position",
+        "description": "Node canvas coordinates ``{x, y}``.\n\nRequired on the v2 surface: the builder cannot render a node without a\nposition, and the server never invents one. Carried verbatim so a\nread -> edit -> write cycle preserves layout. ``int | float`` keeps the\nbuilder's integer coordinates integer (lossless round-trip)."
+      },
+      "BeginFlowNodeData": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Human-readable node label. Optional on input: when omitted, the server fills a stable label from the node id at save time, so it is always present on the stored graph.",
+            "title": "Name"
+          },
+          "first_line_type": {
+            "enum": [
+              "aiFirst",
+              "userFirst"
+            ],
+            "type": "string",
+            "description": "First-turn mode for a flow begin node: `aiFirst` or `userFirst`.",
+            "title": "First Line Type"
+          },
+          "pause_before_speaking_seconds": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pause Before Speaking Seconds",
+            "description": "Delay in seconds before the agent speaks first."
+          }
+        },
+        "title": "BeginFlowNodeData",
+        "type": "object",
+        "description": "Type-specific `data` payload for node type `begin` in the public `flow` graph. Field names use snake_case (e.g. `prompt_type`, `first_line_type`). `transitions`, `logical_transitions`, and `global_node_settings` are represented by `flow.edges` and `data.global_node_setting`, so do not send those routing keys here. The v2 surface is strict: only the documented per-node fields (plus `global_node_setting`) are accepted on write; any other top-level key is rejected (FLOW_V2_INVALID).",
+        "required": [
+          "first_line_type"
+        ]
+      },
+      "ConversationFlowNode": {
+        "type": "object",
+        "title": "ConversationFlowNode",
+        "description": "Public `flow` node with `type=conversation`.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "position"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Identifier of the response object itself, or a local identifier inside a nested configuration object."
+          },
+          "type": {
+            "type": "string",
+            "const": "conversation",
+            "description": "Discriminator value for flow node type `conversation`."
+          },
+          "position": {
+            "$ref": "#/$defs/Position",
+            "description": "Node canvas coordinates {x, y}. Required — the builder cannot render a node without a position, and the server does not invent one."
+          },
+          "data": {
+            "$ref": "#/$defs/ConversationFlowNodeData",
+            "description": "Type-specific data payload for `conversation`."
+          }
+        }
+      },
+      "ConversationFlowNodeData": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Human-readable node label. Optional on input: when omitted, the server fills a stable label from the node id at save time, so it is always present on the stored graph.",
+            "title": "Name"
+          },
+          "prompt_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "static",
+                  "dynamic"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt Type"
+          },
+          "prompt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt",
+            "description": "Agent prompt settings."
+          },
+          "static_sentence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Static Sentence"
+          },
+          "first_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Message",
+            "description": "Optional first message override for this conversation node."
+          },
+          "loop_condition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Loop Condition",
+            "description": "Condition text that controls when this conversation node should loop."
+          },
+          "is_allow_interruption": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Allow Interruption",
+            "description": "Whether the user may interrupt speech from this node."
+          },
+          "is_skip_user_response": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Skip waiting for a user reply after this conversation node speaks.",
+            "title": "Is Skip User Response"
+          },
+          "llm": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Llm",
+            "description": "Large language model settings."
+          },
+          "knowledge": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/NodeKnowledgeConfig"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Agent knowledge-base settings."
+          },
+          "global_node_setting": {
+            "$ref": "#/$defs/GlobalNodeSetting",
+            "description": "Node-level global marker. Its presence marks this node as a global node; omit it for a normal node. Use the snake_case key ``global_node_setting`` — the camelCase ``globalNodeSettings`` is rejected on write."
+          }
+        },
+        "title": "ConversationFlowNodeData",
+        "type": "object",
+        "description": "Type-specific `data` payload for node type `conversation` in the public `flow` graph. Field names use snake_case (e.g. `prompt_type`, `first_line_type`). `transitions`, `logical_transitions`, and `global_node_settings` are represented by `flow.edges` and `data.global_node_setting`, so do not send those routing keys here. The v2 surface is strict: only the documented per-node fields (plus `global_node_setting`) are accepted on write; any other top-level key is rejected (FLOW_V2_INVALID)."
+      },
+      "NodeKnowledgeConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "rag_enabled": {
+            "default": false,
+            "title": "Rag Enabled",
+            "type": "boolean",
+            "description": "Whether retrieval-augmented generation is enabled for this flow node."
+          },
+          "knowledge_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Knowledge Ids",
+            "description": "Numeric public knowledge IDs connected to this flow node."
+          }
+        },
+        "title": "NodeKnowledgeConfig",
+        "type": "object"
+      },
+      "GlobalNodeSetting": {
+        "additionalProperties": false,
+        "description": "Node-level global marker. Presence of this object == global node.\n\nA global node is reachable from anywhere, so the public v2 graph carries no\nentry edges for it — only this marker plus its enter ``condition``.\n\nThe enter condition is the ``ai`` variant only. A ``logic`` / ``fallback``\nenter condition is rejected on write (``global_node_condition_unsupported``),\nso the schema is narrowed to ``AiCondition`` to advertise exactly what is\naccepted.",
+        "properties": {
+          "condition": {
+            "$ref": "#/$defs/AiCondition",
+            "description": "Condition under which the agent may jump to this global node. Only the ``ai`` variant is supported (the builder stores the entry as a ``transitionCondition`` string)."
+          }
+        },
+        "required": [
+          "condition"
+        ],
+        "title": "GlobalNodeSetting",
+        "type": "object"
+      },
+      "AiCondition": {
+        "additionalProperties": false,
+        "description": "Natural-language edge condition, evaluated by the LLM during the call.",
+        "properties": {
+          "type": {
+            "const": "ai",
+            "title": "Type",
+            "type": "string",
+            "description": "Resource or configuration type."
+          },
+          "prompt": {
+            "default": "",
+            "description": "Natural-language transition condition.",
+            "title": "Prompt",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "AiCondition",
+        "type": "object"
+      },
+      "ToolFlowNode": {
+        "type": "object",
+        "title": "ToolFlowNode",
+        "description": "Public `flow` node with `type=tool`.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "position"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Identifier of the response object itself, or a local identifier inside a nested configuration object."
+          },
+          "type": {
+            "type": "string",
+            "const": "tool",
+            "description": "Discriminator value for flow node type `tool`."
+          },
+          "position": {
+            "$ref": "#/$defs/Position",
+            "description": "Node canvas coordinates {x, y}. Required — the builder cannot render a node without a position, and the server does not invent one."
+          },
+          "data": {
+            "$ref": "#/$defs/ToolFlowNodeData",
+            "description": "Type-specific data payload for `tool`."
+          }
+        }
+      },
+      "ToolFlowNodeData": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Human-readable node label. Optional on input: when omitted, the server fills a stable label from the node id at save time, so it is always present on the stored graph.",
+            "title": "Name"
+          },
+          "tool_call_sound": {
+            "anyOf": [
+              {
+                "enum": [
+                  "none",
+                  "typing",
+                  "elevator_1",
+                  "elevator_2",
+                  "elevator_3",
+                  "elevator_4"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tool Call Sound"
+          },
+          "tool_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tool Id",
+            "description": "Custom tool UUID. Use an `id` returned by `GET /v3/tools`."
+          },
+          "prompt_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "static",
+                  "dynamic",
+                  "none"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt Type"
+          },
+          "prompt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt",
+            "description": "Agent prompt settings."
+          },
+          "static_sentence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Static Sentence"
+          }
+        },
+        "title": "ToolFlowNodeData",
+        "type": "object",
+        "description": "Type-specific `data` payload for node type `tool` in the public `flow` graph. Field names use snake_case (e.g. `prompt_type`, `first_line_type`). `transitions`, `logical_transitions`, and `global_node_settings` are represented by `flow.edges` and `data.global_node_setting`, so do not send those routing keys here. The v2 surface is strict: only the documented per-node fields (plus `global_node_setting`) are accepted on write; any other top-level key is rejected (FLOW_V2_INVALID)."
+      },
+      "ConditionFlowNode": {
+        "type": "object",
+        "title": "ConditionFlowNode",
+        "description": "Public `flow` node with `type=condition`.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "position"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Identifier of the response object itself, or a local identifier inside a nested configuration object."
+          },
+          "type": {
+            "type": "string",
+            "const": "condition",
+            "description": "Discriminator value for flow node type `condition`."
+          },
+          "position": {
+            "$ref": "#/$defs/Position",
+            "description": "Node canvas coordinates {x, y}. Required — the builder cannot render a node without a position, and the server does not invent one."
+          },
+          "data": {
+            "$ref": "#/$defs/ConditionFlowNodeData",
+            "description": "Type-specific data payload for `condition`."
+          }
+        }
+      },
+      "ConditionFlowNodeData": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Human-readable node label. Optional on input: when omitted, the server fills a stable label from the node id at save time, so it is always present on the stored graph.",
+            "title": "Name"
+          }
+        },
+        "title": "ConditionFlowNodeData",
+        "type": "object",
+        "description": "Type-specific `data` payload for node type `condition` in the public `flow` graph. Field names use snake_case (e.g. `prompt_type`, `first_line_type`). `transitions`, `logical_transitions`, and `global_node_settings` are represented by `flow.edges` and `data.global_node_setting`, so do not send those routing keys here. The v2 surface is strict: only the documented per-node fields (plus `global_node_setting`) are accepted on write; any other top-level key is rejected (FLOW_V2_INVALID)."
+      },
+      "ExtractionFlowNode": {
+        "type": "object",
+        "title": "ExtractionFlowNode",
+        "description": "Public `flow` node with `type=extraction`.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "position"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Identifier of the response object itself, or a local identifier inside a nested configuration object."
+          },
+          "type": {
+            "type": "string",
+            "const": "extraction",
+            "description": "Discriminator value for flow node type `extraction`."
+          },
+          "position": {
+            "$ref": "#/$defs/Position",
+            "description": "Node canvas coordinates {x, y}. Required — the builder cannot render a node without a position, and the server does not invent one."
+          },
+          "data": {
+            "$ref": "#/$defs/ExtractionFlowNodeData",
+            "description": "Type-specific data payload for `extraction`."
+          }
+        }
+      },
+      "ExtractionFlowNodeData": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Human-readable node label. Optional on input: when omitted, the server fills a stable label from the node id at save time, so it is always present on the stored graph.",
+            "title": "Name"
+          },
+          "extraction_configuration": {
+            "$ref": "#/$defs/ExtractionConfiguration"
+          },
+          "is_skip_user_response": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": true,
+            "title": "Is Skip User Response",
+            "description": "Whether this node should execute without waiting for a user response."
+          },
+          "llm": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Llm",
+            "description": "Large language model settings."
+          },
+          "tool_call_sound": {
+            "anyOf": [
+              {
+                "enum": [
+                  "none",
+                  "typing",
+                  "elevator_1",
+                  "elevator_2",
+                  "elevator_3",
+                  "elevator_4"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tool Call Sound"
+          }
+        },
+        "title": "ExtractionFlowNodeData",
+        "type": "object",
+        "description": "Type-specific `data` payload for node type `extraction` in the public `flow` graph. Field names use snake_case (e.g. `prompt_type`, `first_line_type`). `transitions`, `logical_transitions`, and `global_node_settings` are represented by `flow.edges` and `data.global_node_setting`, so do not send those routing keys here. The v2 surface is strict: only the documented per-node fields (plus `global_node_setting`) are accepted on write; any other top-level key is rejected (FLOW_V2_INVALID)."
+      },
+      "ExtractionConfiguration": {
+        "additionalProperties": false,
+        "properties": {
+          "extraction_prompt": {
+            "default": "",
+            "title": "Extraction Prompt",
+            "type": "string",
+            "description": "Prompt that tells the extraction node what information to collect."
+          },
+          "variables": {
+            "items": {
+              "$ref": "#/$defs/VariableDefinition"
+            },
+            "title": "Variables",
+            "type": "array",
+            "description": "Variables produced by this extraction configuration."
+          }
+        },
+        "title": "ExtractionConfiguration",
+        "type": "object"
+      },
+      "VariableDefinition": {
+        "additionalProperties": false,
+        "properties": {
+          "variable_name": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_]{0,39}$",
+            "title": "Variable Name",
+            "type": "string",
+            "description": "Name of the variable produced from an API response."
+          },
+          "variable_type": {
+            "default": "string",
+            "enum": [
+              "string",
+              "number",
+              "boolean"
+            ],
+            "title": "Variable Type",
+            "type": "string",
+            "description": "Type of extracted or API response variable."
+          },
+          "variable_description": {
+            "default": "",
+            "title": "Variable Description",
+            "type": "string",
+            "description": "Human-readable description of the variable."
+          }
+        },
+        "required": [
+          "variable_name"
+        ],
+        "title": "VariableDefinition",
+        "type": "object"
+      },
+      "ApiFlowNode": {
+        "type": "object",
+        "title": "ApiFlowNode",
+        "description": "Public `flow` node with `type=api`.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "position"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Identifier of the response object itself, or a local identifier inside a nested configuration object."
+          },
+          "type": {
+            "type": "string",
+            "const": "api",
+            "description": "Discriminator value for flow node type `api`."
+          },
+          "position": {
+            "$ref": "#/$defs/Position",
+            "description": "Node canvas coordinates {x, y}. Required — the builder cannot render a node without a position, and the server does not invent one."
+          },
+          "data": {
+            "$ref": "#/$defs/ApiFlowNodeData",
+            "description": "Type-specific data payload for `api`."
+          }
+        }
+      },
+      "ApiFlowNodeData": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Human-readable node label. Optional on input: when omitted, the server fills a stable label from the node id at save time, so it is always present on the stored graph.",
+            "title": "Name"
+          },
+          "tool_call_sound": {
+            "anyOf": [
+              {
+                "enum": [
+                  "none",
+                  "typing",
+                  "elevator_1",
+                  "elevator_2",
+                  "elevator_3",
+                  "elevator_4"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tool Call Sound"
+          },
+          "response_mode": {
+            "default": "wait",
+            "enum": [
+              "wait",
+              "fire_and_forget"
+            ],
+            "title": "Response Mode",
+            "type": "string"
+          },
+          "api_configuration": {
+            "$ref": "#/$defs/ApiConfiguration"
+          },
+          "response_variables": {
+            "items": {
+              "$ref": "#/$defs/ApiResponseVariable"
+            },
+            "title": "Response Variables",
+            "type": "array",
+            "description": "Variables extracted from this API node response."
+          },
+          "prompt_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "static",
+                  "dynamic",
+                  "none"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt Type"
+          },
+          "prompt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt",
+            "description": "Agent prompt settings."
+          },
+          "static_sentence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Static Sentence"
+          }
+        },
+        "required": [
+          "api_configuration"
+        ],
+        "title": "ApiFlowNodeData",
+        "type": "object",
+        "description": "Type-specific `data` payload for node type `api` in the public `flow` graph. Field names use snake_case (e.g. `prompt_type`, `first_line_type`). `transitions`, `logical_transitions`, and `global_node_settings` are represented by `flow.edges` and `data.global_node_setting`, so do not send those routing keys here. The v2 surface is strict: only the documented per-node fields (plus `global_node_setting`) are accepted on write; any other top-level key is rejected (FLOW_V2_INVALID)."
+      },
+      "ApiConfiguration": {
+        "additionalProperties": false,
+        "properties": {
+          "method": {
+            "default": "GET",
+            "enum": [
+              "GET",
+              "POST",
+              "PUT",
+              "DELETE"
+            ],
+            "title": "Method",
+            "type": "string",
+            "description": "HTTP method used by this API node."
+          },
+          "url": {
+            "description": "API endpoint URL. Dynamic path values allow only ASCII letters, digits, `_`, and `-`; arbitrary strings belong in query values.",
+            "title": "Url",
+            "type": "string"
+          },
+          "authorization_enabled": {
+            "default": false,
+            "title": "Authorization Enabled",
+            "type": "boolean",
+            "description": "Whether this API node sends authorization credentials."
+          },
+          "auth_type": {
+            "default": "None",
+            "enum": [
+              "None",
+              "Basic",
+              "Bearer"
+            ],
+            "title": "Auth Type",
+            "type": "string",
+            "description": "Authorization scheme used by this API node."
+          },
+          "auth_credentials": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auth Credentials",
+            "description": "Authorization credential value or template for this API node."
+          },
+          "auth_encode_required": {
+            "default": false,
+            "title": "Auth Encode Required",
+            "type": "boolean",
+            "description": "Whether authorization credentials should be encoded before sending."
+          },
+          "headers_enabled": {
+            "default": false,
+            "title": "Headers Enabled",
+            "type": "boolean",
+            "description": "Whether custom headers are sent by this API node."
+          },
+          "headers": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Headers",
+            "type": "object",
+            "description": "Custom HTTP headers sent by this API node."
+          },
+          "body_enabled": {
+            "default": false,
+            "title": "Body Enabled",
+            "type": "boolean",
+            "description": "Whether this API node sends a request body."
+          },
+          "body": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body",
+            "description": "Request body payload or template sent by this API node."
+          },
+          "timeout_seconds": {
+            "default": 10,
+            "exclusiveMinimum": 0,
+            "title": "Timeout Seconds",
+            "type": "integer",
+            "description": "Maximum seconds to wait for this API node request."
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "ApiConfiguration",
+        "type": "object"
+      },
+      "ApiResponseVariable": {
+        "additionalProperties": false,
+        "properties": {
+          "variable_name": {
+            "title": "Variable Name",
+            "type": "string",
+            "description": "Name of the variable produced from an API response."
+          },
+          "json_path": {
+            "title": "Json Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "variable_name",
+          "json_path"
+        ],
+        "title": "ApiResponseVariable",
+        "type": "object"
+      },
+      "SendSmsFlowNode": {
+        "type": "object",
+        "title": "SendSmsFlowNode",
+        "description": "Public `flow` node with `type=sendSms`.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "position"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Identifier of the response object itself, or a local identifier inside a nested configuration object."
+          },
+          "type": {
+            "type": "string",
+            "const": "sendSms",
+            "description": "Discriminator value for flow node type `sendSms`."
+          },
+          "position": {
+            "$ref": "#/$defs/Position",
+            "description": "Node canvas coordinates {x, y}. Required — the builder cannot render a node without a position, and the server does not invent one."
+          },
+          "data": {
+            "$ref": "#/$defs/SendSmsFlowNodeData",
+            "description": "Type-specific data payload for `sendSms`."
+          }
+        }
+      },
+      "SendSmsFlowNodeData": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Human-readable node label. Optional on input: when omitted, the server fills a stable label from the node id at save time, so it is always present on the stored graph.",
+            "title": "Name"
+          },
+          "tool_call_sound": {
+            "anyOf": [
+              {
+                "enum": [
+                  "none",
+                  "typing",
+                  "elevator_1",
+                  "elevator_2",
+                  "elevator_3",
+                  "elevator_4"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tool Call Sound"
+          },
+          "response_mode": {
+            "default": "wait",
+            "enum": [
+              "wait",
+              "fire_and_forget"
+            ],
+            "title": "Response Mode",
+            "type": "string"
+          },
+          "prompt_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "static",
+                  "dynamic"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "static",
+            "title": "Prompt Type"
+          },
+          "prompt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt",
+            "description": "Agent prompt settings."
+          },
+          "static_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Static Title"
+          },
+          "static_sentence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Static Sentence"
+          },
+          "static_image_file_keys": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 3,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Static MMS image attachment file keys. Values are opaque file_key strings returned by the file upload endpoint.",
+            "title": "Static Image File Keys"
+          },
+          "sms_from_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sms From Number"
+          },
+          "global_node_setting": {
+            "$ref": "#/$defs/GlobalNodeSetting",
+            "description": "Node-level global marker. Its presence marks this node as a global node; omit it for a normal node. Use the snake_case key ``global_node_setting`` — the camelCase ``globalNodeSettings`` is rejected on write."
+          }
+        },
+        "title": "SendSmsFlowNodeData",
+        "type": "object",
+        "description": "Type-specific `data` payload for node type `sendSms` in the public `flow` graph. Field names use snake_case (e.g. `prompt_type`, `first_line_type`). `transitions`, `logical_transitions`, and `global_node_settings` are represented by `flow.edges` and `data.global_node_setting`, so do not send those routing keys here. The v2 surface is strict: only the documented per-node fields (plus `global_node_setting`) are accepted on write; any other top-level key is rejected (FLOW_V2_INVALID)."
+      },
+      "TransferCallFlowNode": {
+        "type": "object",
+        "title": "TransferCallFlowNode",
+        "description": "Public `flow` node with `type=transferCall`.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "position"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Identifier of the response object itself, or a local identifier inside a nested configuration object."
+          },
+          "type": {
+            "type": "string",
+            "const": "transferCall",
+            "description": "Discriminator value for flow node type `transferCall`."
+          },
+          "position": {
+            "$ref": "#/$defs/Position",
+            "description": "Node canvas coordinates {x, y}. Required — the builder cannot render a node without a position, and the server does not invent one."
+          },
+          "data": {
+            "$ref": "#/$defs/TransferCallFlowNodeData",
+            "description": "Type-specific data payload for `transferCall`."
+          }
+        }
+      },
+      "TransferCallFlowNodeData": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Human-readable node label. Optional on input: when omitted, the server fills a stable label from the node id at save time, so it is always present on the stored graph.",
+            "title": "Name"
+          },
+          "transfer_configuration": {
+            "$ref": "#/$defs/TransferConfiguration"
+          },
+          "transfer_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "cold",
+                  "warm"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "cold",
+            "title": "Transfer Type",
+            "description": "Transfer mode used by this flow node."
+          },
+          "transfer_message_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "static",
+                  "dynamic"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "static",
+            "title": "Transfer Message Type"
+          },
+          "warm_transfer_prompt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warm Transfer Prompt",
+            "description": "Prompt used to generate a warm-transfer message."
+          },
+          "warm_transfer_static_sentence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warm Transfer Static Sentence",
+            "description": "Static warm-transfer message."
+          },
+          "displayed_caller_id": {
+            "anyOf": [
+              {
+                "enum": [
+                  "agent",
+                  "user"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "agent",
+            "title": "Displayed Caller Id",
+            "description": "Caller ID source displayed during call transfer."
+          },
+          "sip_headers": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/$defs/SipHeader"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sip Headers",
+            "description": "SIP headers attached to the transfer call."
+          },
+          "prompt_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "static",
+                  "dynamic",
+                  "none"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt Type"
+          },
+          "prompt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt",
+            "description": "Agent prompt settings."
+          },
+          "static_sentence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Static Sentence"
+          }
+        },
+        "required": [
+          "transfer_configuration"
+        ],
+        "title": "TransferCallFlowNodeData",
+        "type": "object",
+        "description": "Type-specific `data` payload for node type `transferCall` in the public `flow` graph. Field names use snake_case (e.g. `prompt_type`, `first_line_type`). `transitions`, `logical_transitions`, and `global_node_settings` are represented by `flow.edges` and `data.global_node_setting`, so do not send those routing keys here. The v2 surface is strict: only the documented per-node fields (plus `global_node_setting`) are accepted on write; any other top-level key is rejected (FLOW_V2_INVALID)."
+      },
+      "TransferConfiguration": {
+        "additionalProperties": false,
+        "properties": {
+          "transfer_to": {
+            "description": "Phone number or SIP URI to transfer to. When `transfer_type` is `operator`, this is a display label shown to the operator, not a dialed destination.",
+            "title": "Transfer To",
+            "type": "string"
+          },
+          "transfer_type": {
+            "default": "phone",
+            "description": "Destination transport. `operator` routes to a live human operator via the takeover handoff control plane (warm-only; `transfer_to` is a display label).",
+            "enum": [
+              "phone",
+              "sip",
+              "operator"
+            ],
+            "title": "Transfer Type",
+            "type": "string"
+          },
+          "transfer_condition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transfer Condition",
+            "description": "Condition that determines whether the transfer should run."
+          }
+        },
+        "required": [
+          "transfer_to"
+        ],
+        "title": "TransferConfiguration",
+        "type": "object"
+      },
+      "SipHeader": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "Human-readable resource name."
+          },
+          "value": {
+            "title": "Value",
+            "type": "string",
+            "description": "Comparison value used by this condition."
+          }
+        },
+        "required": [
+          "name",
+          "value"
+        ],
+        "title": "SipHeader",
+        "type": "object"
+      },
+      "TransferAgentFlowNode": {
+        "type": "object",
+        "title": "TransferAgentFlowNode",
+        "description": "Public `flow` node with `type=transferAgent`.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "position"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Identifier of the response object itself, or a local identifier inside a nested configuration object."
+          },
+          "type": {
+            "type": "string",
+            "const": "transferAgent",
+            "description": "Discriminator value for flow node type `transferAgent`."
+          },
+          "position": {
+            "$ref": "#/$defs/Position",
+            "description": "Node canvas coordinates {x, y}. Required — the builder cannot render a node without a position, and the server does not invent one."
+          },
+          "data": {
+            "$ref": "#/$defs/TransferAgentFlowNodeData",
+            "description": "Type-specific data payload for `transferAgent`."
+          }
+        }
+      },
+      "TransferAgentFlowNodeData": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Human-readable node label. Optional on input: when omitted, the server fills a stable label from the node id at save time, so it is always present on the stored graph.",
+            "title": "Name"
+          },
+          "agent": {
+            "$ref": "#/$defs/AgentMapping",
+            "description": "Agent mapping object with `agent_id` and `agent_version`. Used by cross-resource references (calls / campaigns / telephone_numbers) and by `builtInTools.transfer_agent` / flow `transferAgent` node `data.agent` per v3 §2.7 AgentMapping."
+          },
+          "preserve_chat_context": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preserve Chat Context",
+            "description": "Whether the target agent should receive prior conversation context."
+          }
+        },
+        "required": [
+          "agent"
+        ],
+        "title": "TransferAgentFlowNodeData",
+        "type": "object",
+        "description": "Type-specific `data` payload for node type `transferAgent` in the public `flow` graph. Field names use snake_case (e.g. `prompt_type`, `first_line_type`). `transitions`, `logical_transitions`, and `global_node_settings` are represented by `flow.edges` and `data.global_node_setting`, so do not send those routing keys here. The v2 surface is strict: only the documented per-node fields (plus `global_node_setting`) are accepted on write; any other top-level key is rejected (FLOW_V2_INVALID)."
+      },
+      "AgentMapping": {
+        "additionalProperties": false,
+        "description": "agent_id + agent_version 매핑.\n\n요청·응답 모두에서 에이전트 매핑이 필요한 경우 이 타입을 사용한다.\n요청 중 version 지정이 불필요한 엔드포인트는 flat `agent_id: UUID` 를 직접 받고,\n`AgentMapping` 을 쓰지 않는다.",
+        "properties": {
+          "agent_id": {
+            "description": "Agent UUID.",
+            "format": "uuid",
+            "title": "Agent Id",
+            "type": "string"
+          },
+          "agent_version": {
+            "default": "current",
+            "description": "에이전트 버전. 허용값: \"current\", \"production\", 또는 \"v{n}\" (n≥1). 미전송 시 \"current\"로 처리됩니다. null 전송은 거부.",
+            "title": "Agent Version",
+            "type": "string",
+            "pattern": "^(current|production|v[1-9][0-9]*)$",
+            "examples": [
+              "current",
+              "production",
+              "v1"
+            ]
+          }
+        },
+        "required": [
+          "agent_id"
+        ],
+        "title": "AgentMapping",
+        "type": "object"
+      },
+      "EndCallFlowNode": {
+        "type": "object",
+        "title": "EndCallFlowNode",
+        "description": "Public `flow` node with `type=endCall`.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "position"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Identifier of the response object itself, or a local identifier inside a nested configuration object."
+          },
+          "type": {
+            "type": "string",
+            "const": "endCall",
+            "description": "Discriminator value for flow node type `endCall`."
+          },
+          "position": {
+            "$ref": "#/$defs/Position",
+            "description": "Node canvas coordinates {x, y}. Required — the builder cannot render a node without a position, and the server does not invent one."
+          },
+          "data": {
+            "$ref": "#/$defs/EndCallFlowNodeData",
+            "description": "Type-specific data payload for `endCall`."
+          }
+        }
+      },
+      "EndCallFlowNodeData": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Human-readable node label. Optional on input: when omitted, the server fills a stable label from the node id at save time, so it is always present on the stored graph.",
+            "title": "Name"
+          },
+          "prompt_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "static",
+                  "dynamic",
+                  "none"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt Type"
+          },
+          "prompt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt",
+            "description": "Agent prompt settings."
+          },
+          "static_sentence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Static Sentence"
+          },
+          "global_node_setting": {
+            "$ref": "#/$defs/GlobalNodeSetting",
+            "description": "Node-level global marker. Its presence marks this node as a global node; omit it for a normal node. Use the snake_case key ``global_node_setting`` — the camelCase ``globalNodeSettings`` is rejected on write."
+          }
+        },
+        "title": "EndCallFlowNodeData",
+        "type": "object",
+        "description": "Type-specific `data` payload for node type `endCall` in the public `flow` graph. Field names use snake_case (e.g. `prompt_type`, `first_line_type`). `transitions`, `logical_transitions`, and `global_node_settings` are represented by `flow.edges` and `data.global_node_setting`, so do not send those routing keys here. The v2 surface is strict: only the documented per-node fields (plus `global_node_setting`) are accepted on write; any other top-level key is rejected (FLOW_V2_INVALID)."
+      },
+      "NoteFlowNode": {
+        "type": "object",
+        "title": "NoteFlowNode",
+        "description": "Public `flow` node with `type=note`.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "position"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Identifier of the response object itself, or a local identifier inside a nested configuration object."
+          },
+          "type": {
+            "type": "string",
+            "const": "note",
+            "description": "Discriminator value for flow node type `note`."
+          },
+          "position": {
+            "$ref": "#/$defs/Position",
+            "description": "Node canvas coordinates {x, y}. Required — the builder cannot render a node without a position, and the server does not invent one."
+          },
+          "data": {
+            "$ref": "#/$defs/NoteFlowNodeData",
+            "description": "Type-specific data payload for `note`."
+          }
+        }
+      },
+      "NoteFlowNodeData": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content",
+            "description": "Text content for this flow node or message object."
+          },
+          "width": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Width"
+          },
+          "height": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Height"
+          }
+        },
+        "title": "NoteFlowNodeData",
+        "type": "object",
+        "description": "Type-specific `data` payload for node type `note` in the public `flow` graph. Field names use snake_case (e.g. `prompt_type`, `first_line_type`). `transitions`, `logical_transitions`, and `global_node_settings` are represented by `flow.edges` and `data.global_node_setting`, so do not send those routing keys here. The v2 surface is strict: only the documented per-node fields (plus `global_node_setting`) are accepted on write; any other top-level key is rejected (FLOW_V2_INVALID)."
+      },
+      "FlowEdgeInput": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id",
+            "description": "Optional. Server generates one if omitted; reused verbatim when provided. Empty string is rejected."
+          },
+          "source": {
+            "type": "string",
+            "title": "Source",
+            "description": "Source flow node ID."
+          },
+          "target": {
+            "type": "string",
+            "title": "Target",
+            "description": "Target flow node ID."
+          },
+          "condition": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/AiCondition"
+              },
+              {
+                "$ref": "#/$defs/LogicCondition"
+              },
+              {
+                "$ref": "#/$defs/FallbackCondition"
+              }
+            ],
+            "title": "Condition",
+            "discriminator": {
+              "propertyName": "type",
+              "mapping": {
+                "ai": "#/components/schemas/AiCondition",
+                "fallback": "#/components/schemas/FallbackCondition",
+                "logic": "#/components/schemas/LogicCondition"
+              }
+            }
+          },
+          "skip_user_response": {
+            "type": "boolean",
+            "title": "Skip User Response",
+            "description": "v1 ``isSkipUserResponse`` — skip waiting for a user reply on this hop.",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "source",
+          "target",
+          "condition"
+        ],
+        "title": "FlowEdge",
+        "description": "Public ``flow`` edge: ``{id?, source, target, condition, skip_user_response}``."
+      },
+      "LogicCondition": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "logic",
+            "title": "Type",
+            "description": "Resource or configuration type."
+          },
+          "equations": {
+            "items": {
+              "$ref": "#/$defs/LogicEquation"
+            },
+            "type": "array",
+            "title": "Equations"
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "&&",
+              "||"
+            ],
+            "title": "Operator",
+            "description": "How the equations combine. ``&&`` = AND, ``||`` = OR.",
+            "default": "&&"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "title": "LogicCondition",
+        "description": "Deterministic edge condition using the Retell-aligned ``equations`` shape.\n\nSource node must be a ``condition`` node (logic-source constraint, enforced elsewhere)."
+      },
+      "LogicEquation": {
+        "properties": {
+          "left": {
+            "type": "string",
+            "title": "Left",
+            "description": "Left operand — usually an extracted variable name."
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "equals",
+              "not_equals",
+              "contains",
+              "does_not_contain",
+              "greater_than",
+              "greater_than_or_equal",
+              "less_than",
+              "less_than_or_equal",
+              "exists",
+              "does_not_exist"
+            ],
+            "title": "Operator",
+            "description": "Comparison operator in snake_case (e.g. greater_than, does_not_exist)."
+          },
+          "right": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Right",
+            "description": "Right operand. May be string/number/bool, or null for exists/does_not_exist."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "left",
+          "operator"
+        ],
+        "title": "LogicEquation",
+        "description": "A single deterministic comparison inside a ``logic`` condition (Retell-aligned equations shape).\n\nRetell-aligned naming: ``left`` is the extracted variable, ``right`` is the\ncompared value (omitted for ``exists`` / ``does_not_exist``)."
+      },
+      "FallbackCondition": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "fallback",
+            "title": "Type",
+            "description": "Resource or configuration type."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "title": "FallbackCondition",
+        "description": "Default edge taken when no other condition on the source node matches."
+      }
+    }
+  }
+}

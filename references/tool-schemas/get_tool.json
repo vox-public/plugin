@@ -1,0 +1,18 @@
+{
+  "name": "get_tool",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "tool_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "도구 ID.",
+        "title": "Tool Id"
+      }
+    },
+    "required": [
+      "tool_id"
+    ]
+  }
+}

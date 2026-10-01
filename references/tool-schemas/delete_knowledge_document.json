@@ -1,0 +1,25 @@
+{
+  "name": "delete_knowledge_document",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "knowledge_id": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Numeric public knowledge ID returned by `GET /v3/knowledges`.",
+        "title": "Knowledge Id"
+      },
+      "document_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Knowledge document identifier.",
+        "title": "Document Id"
+      }
+    },
+    "required": [
+      "knowledge_id",
+      "document_id"
+    ]
+  }
+}

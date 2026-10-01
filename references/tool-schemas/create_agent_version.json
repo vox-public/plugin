@@ -1,0 +1,45 @@
+{
+  "name": "create_agent_version",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "agent_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Agent UUID returned as `agent_id`.",
+        "title": "Agent Id"
+      },
+      "payload": {
+        "properties": {
+          "expected_head_revision": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Expected Head Revision",
+            "description": "Optional. The agent `head_revision` you last read; 409 if the agent changed since."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Human-readable description."
+          }
+        },
+        "type": "object",
+        "title": "CreateAgentVersionRequest",
+        "description": "버전 생성 요청. 모든 필드는 선택이며 payload 자체를 생략할 수 있다. expected_head_revision을 보내면 그 사이 에이전트가 바뀌었을 때 409로 막는다.",
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "agent_id"
+    ]
+  }
+}

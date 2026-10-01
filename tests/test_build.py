@@ -78,6 +78,17 @@ class BuildTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Public bundle'):
             self.run_build()
 
+    def test_docs_connection_must_be_the_public_docs_mcp(self):
+        self.change_json('.mcp.json', lambda p: p['mcpServers']['vox-docs'].update(
+            url='https://fleek.mintlify.app/mcp'))
+        with self.assertRaisesRegex(ValueError, 'docs MCP'):
+            self.run_build()
+
+    def test_docs_connection_cannot_be_dropped_or_extended(self):
+        self.change_json('.mcp.json', lambda p: p['mcpServers'].pop('vox-docs'))
+        with self.assertRaisesRegex(ValueError, 'exactly the vox-ai and vox-docs'):
+            self.run_build()
+
     def test_required_workflow_tool_must_be_in_implemented_snapshot(self):
         def remove_save_manual(snapshot):
             snapshot['implemented_tools'].remove('save_manual')
@@ -109,10 +120,10 @@ class BuildTests(unittest.TestCase):
 
     def test_catalog_rejects_unavailable_tool_as_implemented(self):
         def misclassify(catalog):
-            skill = next(skill for skill in catalog['skills'] if skill['name'] == 'agents-platform')
+            skill = next(skill for skill in catalog['skills'] if skill['name'] == 'configure-supporting-channel')
             tools = skill['tools']
-            tools['designed_only'].remove('get_call')
-            tools['implemented'].append('get_call')
+            tools['designed_only'].remove('save_widget')
+            tools['implemented'].append('save_widget')
         self.change_json('catalog.json', misclassify)
         with self.assertRaisesRegex(ValueError, 'classifies unavailable tools as implemented'):
             self.run_build()

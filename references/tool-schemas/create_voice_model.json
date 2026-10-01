@@ -1,0 +1,76 @@
+{
+  "name": "create_voice_model",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "payload": {
+        "type": "object",
+        "title": "Body_createVoiceModel",
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Voice name. Must not be empty.",
+            "minLength": 1
+          },
+          "language": {
+            "enum": [
+              "ko",
+              "en",
+              "ja",
+              "zh",
+              "es",
+              "fr",
+              "de",
+              "id",
+              "th",
+              "vi"
+            ],
+            "description": "보이스 언어. 샘플 음성의 언어와 일치해야 한다."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Optional human-readable voice description."
+          },
+          "enhance": {
+            "type": "boolean",
+            "title": "Enhance",
+            "description": "Whether to apply background-noise reduction to the audio sample before cloning.",
+            "default": false
+          },
+          "audio_url": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://",
+            "maxLength": 2048,
+            "description": "복제할 음성 샘플의 공개 HTTPS URL(포트 443). wav·mp3·m4a, 6 MiB 이하. 인증이 필요한 URL, 사설망·localhost 주소, 로컬 파일 경로, base64는 지원하지 않는다. 리다이렉트는 최대 2회까지 매번 다시 검사한다."
+          }
+        },
+        "required": [
+          "name",
+          "language",
+          "audio_url"
+        ],
+        "additionalProperties": false
+      },
+      "consent_confirmed": {
+        "type": "boolean",
+        "const": true,
+        "description": "화자 본인의 동의를 받았음을 확인합니다. 반드시 true여야 하며 API로 전달되지 않습니다."
+      }
+    },
+    "required": [
+      "payload",
+      "consent_confirmed"
+    ],
+    "additionalProperties": false
+  }
+}

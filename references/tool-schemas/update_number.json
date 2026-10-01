@@ -1,0 +1,102 @@
+{
+  "name": "update_number",
+  "inputSchema": {
+    "type": "object",
+    "oneOf": [
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "organization_telephone_number_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Organization Telephone Number Id",
+            "description": "Organization-owned telephone number identifier. Use the `id` returned by `GET /v3/organization-telephone-numbers`, not the phone number string."
+          },
+          "kind": {
+            "const": "general"
+          },
+          "payload": {
+            "properties": {
+              "memo": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Memo",
+                "description": "전화번호에 대한 메모. 최대 200자. 필드를 생략하면 기존 값이 유지됩니다. null 전송 시 삭제됩니다."
+              }
+            },
+            "type": "object",
+            "minProperties": 1,
+            "title": "UpdateTelephoneNumberRequest",
+            "description": "전화번호 일반 정보 수정 (memo 등).\n\nPATCH semantics (v3 convention, §2.3):\n- 필드 생략 → 기존 값 유지\n- 필드=null → 해당 값 삭제 (nullable column)\n- 빈 body(`{}`) → PatchRequest base가 400으로 거부한다.",
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "organization_telephone_number_id",
+          "kind",
+          "payload"
+        ]
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "uan_telephone_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Uan Telephone Id",
+            "description": "UAN telephone identifier. Use the `id` returned by `GET /v3/telephone-numbers/uan`, not the phone number string."
+          },
+          "kind": {
+            "const": "uan"
+          },
+          "payload": {
+            "properties": {
+              "forwarding_telephone_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Forwarding Telephone Id"
+              },
+              "memo": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Memo"
+              }
+            },
+            "type": "object",
+            "minProperties": 1,
+            "title": "UpdateUanTelephoneRequest",
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "uan_telephone_id",
+          "kind",
+          "payload"
+        ]
+      }
+    ]
+  }
+}

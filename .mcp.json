@@ -2,7 +2,11 @@
   "mcpServers": {
     "vox-ai": {
       "type": "http",
-      "url": "https://mcp.services.tryvox.co/mcp"
+      "url": "https://mcp.tryvox.co/mcp"
+    },
+    "vox-docs": {
+      "type": "http",
+      "url": "https://docs.tryvox.co/mcp"
     }
   }
 }
