@@ -1,7 +1,7 @@
 # vox.ai Plugin
 
 Codex와 Claude Code에서 vox.ai에 연결하고 음성 에이전트를 설계·개선하는 플러그인입니다.
-매뉴얼 작성, 도구 연결, 통화 결과 검토 등 업무별 지침 26개와 원격 MCP 연결 설정을 제공합니다.
+매뉴얼 작성·개선, 고객 직접 시험, 운영 판단 등 업무별 지침 26개와 원격 MCP 연결 설정을 제공합니다.
 
 현재 **preview**입니다. 스킬은 업무 진행 지침이며, 실행 가능한 기능은 연결된 서버가 제공하는 도구와 계정 권한에 따라 달라집니다. 로그인과 실제 업무 실행은 사용하는 환경에서 확인해야 합니다.
 
@@ -35,7 +35,9 @@ Codex의 업데이트 방법은 설치된 버전의 `codex plugin marketplace --
 플러그인은 `https://mcp.services.tryvox.co/mcp`에 연결합니다. 호스트에서 제공하는 OAuth 로그인 절차를 따르고 작업할 조직을 확인합니다.
 키나 토큰을 대화에 붙여 넣거나 설치 파일에 저장하지 않습니다.
 
-설치 후 연결된 서버의 도구 목록과 입력 스키마를 확인합니다. 필요한 도구가 없으면 준비한 초안과 남은 작업을 안내합니다. 설치 성공만으로 로그인이나 제품 작업이 완료된 것은 아닙니다.
+설치 후 연결된 서버의 도구 목록과 입력 스키마를 확인합니다. 번들에는 agent/Manual 작성·조회 도구 10개와 work context·record·operation 도구 4개의 schema 후보가 있습니다. 실제 호스트의 노출 도구와 권한은 다를 수 있습니다. workflow별 capability는 [workflow-capabilities.json](references/workflow-capabilities.json), 입력 schema와 출처 상태는 [implemented-tools.snapshot.json](references/implemented-tools.snapshot.json)에 있습니다. `get_work_context`는 자동 기록이 기본 켜짐인지와 현재 settings revision/epoch를 반환합니다. routine case/event를 저장하기 전 최신 값을 읽고 둘을 요청에 복사하며, 꺼져 있거나 값이 바뀌면 automatic API가 쓰기를 거부하므로 저장하지 말고 설정 변경 또는 새 context를 기다립니다. 사용자가 현재 대화에서 저장하지 말라고 직접 요청하면 설정과 무관하게 기록하지 않습니다. OFF는 자동 수집·기록을 중지하지만 사용자가 명시적으로 요청한 기존 기록 조회·정정·삭제는 지원합니다. user-principal `save_agent`/`save_manual`에는 별도로 직전 `get_work_context`의 일회용 receipt가 필요하며, 이 읽기는 `max_tokens`를 기본값(3000) 아래로 낮추지 않고 `MEMORY_CONTEXT_BUDGET_TOO_SMALL`이 오면 `details.required_tokens`로 한 번만 다시 호출합니다. 필요한 도구나 receipt가 없으면 초안을 안내합니다. 설치 성공만으로 로그인, 도구 노출 또는 제품 작업이 완료된 것은 아닙니다.
+
+`get_work_context`의 각 항목은 일반 claim/case/evidence에 `guidance: null`을 포함하고, guidance 항목에는 종류·상태·현재 지침·보존 조건·버전이 든 typed object를 포함합니다. `evaluation_reported.register_holdout`은 별도 text-contract 사례 등록에만 사용하며, 사용자가 현재 임베디드 Copilot 대화에서 직접 입력한 본인의 말을 출처로 명시적 경로에서만 등록되며, 출처 ID는 `get_work_context`의 `pending_recent_inputs`에 있는 해당 입력의 값을 사용하고, 시나리오는 JSON 문자열 대신 구조화 필드 `holdout_scenario`(`base_configuration`, `requested_change`, `required_preservation`)로 보냅니다(등록 가능 여부는 호스트 이름이 아니라 `get_work_context`를 먼저 호출해 해당 항목이 있는지로 판단합니다). 등록이나 자동 text 비교는 실제 voice test가 아니며, 고객이 직접 수행한 시험 결과는 계속 고객 보고로 표시합니다.
 
 ## 사용 예
 
@@ -43,23 +45,24 @@ Codex의 업데이트 방법은 설치된 버전의 `codex plugin marketplace --
 
 - “예약 문의를 받는 음성 에이전트의 매뉴얼을 작성해줘.”
 - “이 에이전트의 기존 설정을 확인하고 안내 문구를 수정해줘.”
-- “최근 통화에서 고객이 반복해서 되묻는 부분을 찾아 개선안을 제안해줘.”
+- “고객이 직접 시험한 결과에서 반복 질문을 발견했어. 이 피드백으로 Manual의 바뀔 부분을 제안해줘.”
 
 Claude Code에서는 `/vox-ai:voice-agent-design`처럼 스킬을 직접 호출할 수도 있습니다. Codex에서는 설치된 vox.ai 스킬을 선택하거나 관련 업무를 요청합니다.
 
-변경 전 대상 조직과 리소스를 확인하고, 저장 후 다시 조회해 결과를 확인합니다. 실제 전화 발신과 메시지 전송은 대상·비용·영향 범위를 확인한 뒤 진행합니다. 음성 시험과 실제 전화 운영의 성공 여부는 각각 확인합니다.
+변경 전 대상 조직과 리소스를 확인하고, 저장 후 다시 조회해 결과를 확인합니다. 고객은 기존 vox.ai 제품 UI에서 직접 음성 시험과 실운영을 수행합니다. 현재 구현 snapshot은 시험 시작, call history, 전화 발신, 캠페인, 메시지 전송 도구를 포함하지 않으므로, 고객 보고를 서버에서 확인한 call 결과처럼 설명하지 않습니다.
 
-전체 스킬 목록은 [catalog.json](catalog.json), 실행 원칙은 [execution-contract.md](references/execution-contract.md)에 있습니다.
+전체 스킬 목록은 [catalog.json](catalog.json)에 있습니다. 각 스킬의 `tools.implemented`는 현재 snapshot에서 실행 가능한 도구이고 `tools.designed_only`는 지침에 남아 있는 설계 참조입니다. 상단 `designed_tool_references`가 해당 참조의 전체 목록입니다. 실행 원칙은 [execution-contract.md](references/execution-contract.md)에 있습니다.
 
 ## 빌드와 검증
 
 ```sh
-python3 -m pip install -r requirements-build.txt
-python3 -m unittest discover -s tests -v
-python3 scripts/build.py
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-build.txt
+.venv/bin/python -m unittest discover -s tests -v
+.venv/bin/python scripts/build.py
 ```
 
-빌드는 스킬 목록·경로·메타데이터, 문서 링크, 호스트 설정과 버전 일치를 검증합니다.
+빌드는 스킬 목록·경로·메타데이터, 문서 링크, 구현 tool/schema snapshot, 워크플로 required/optional capability, JSON 예제 입력 schema, 호스트 설정과 버전 일치를 검증합니다. `scripts/build.py --mcp-root <mcp-checkout>` 또는 `scripts/build.py --manifest <manifest.json>`을 주면 pinned MCP manifest와 tool schema digest도 대조합니다. 번들된 [구현 도구 스냅샷](references/implemented-tools.snapshot.json)은 원본 MCP commit·manifest digest와 각 입력 schema digest를 기록합니다.
 
 - `dist/vox-ai-plugin.zip`: 호스트 manifest, MCP 연결 설정, 스킬과 공통 문서.
 - `dist/vox-ai-skills.zip`: 같은 스킬과 공통 문서. 연결 설정과 호스트 manifest는 제외.

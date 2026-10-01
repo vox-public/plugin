@@ -1,0 +1,26 @@
+{
+  "name": "list_schemas",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "namespace": {
+        "description": "Schema namespace. Common values: `agent-schema`, `flow-schema`, and `tool-schema`.",
+        "title": "Namespace",
+        "type": "string"
+      },
+      "category": {
+        "description": "Optional category filter. Common values: agent-authoring, built_in.",
+        "title": "Category",
+        "type": "string"
+      },
+      "include_schema": {
+        "type": "boolean",
+        "description": "Include JSON Schema bodies inline. Defaults to metadata-only listing.",
+        "default": false,
+        "title": "Include Schema"
+      }
+    },
+    "required": [],
+    "additionalProperties": false
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "get_schema",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "namespace": {
+        "type": "string",
+        "description": "Schema namespace. Common values: `agent-schema`, `flow-schema`, and `tool-schema`.",
+        "title": "Namespace"
+      },
+      "schema_type": {
+        "type": "string",
+        "description": "Schema type within the namespace, e.g. flow-data, agent-data-create, or send_sms.",
+        "title": "Schema Type"
+      },
+      "version": {
+        "description": "Schema version, e.g. v1. Defaults to latest.",
+        "title": "Version",
+        "type": "string"
+      },
+      "detail": {
+        "enum": [
+          "minimal",
+          "standard"
+        ],
+        "type": "string",
+        "description": "Detail level. 'standard' (default) returns the full JSON Schema with all descriptions and metadata. 'minimal' strips description, title, and examples fields recursively to reduce token cost when the caller already knows the schema shape.",
+        "default": "standard",
+        "title": "Detail"
+      }
+    },
+    "required": [
+      "namespace",
+      "schema_type"
+    ],
+    "additionalProperties": false
+  }
+}

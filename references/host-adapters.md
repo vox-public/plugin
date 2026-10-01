@@ -1,26 +1,37 @@
-# 호스트별 사용 지침
+# 호스트별 실행 어댑터
 
-vox.ai 스킬은 호스트가 제공하는 질문·파일·연결 기능을 사용한다. 같은 스킬을 사용하더라도 인증과 실행 기능은 실제 호스트에서 확인한다. MCP 연결 등록과 스킬 설치는 각각 확인한다.
+공통 업무 흐름은 [합성 고객 여정](workflow-examples.md)을 따른다. 각 호스트는 독립적으로 사용할 수 있다. plugin/skill 파일은 지침을 제공하고, MCP 권한·제품 상태·도구 schema는 연결된 서버가 제공한다. 번들의 14개 도구 schema 후보는 [구현 도구 스냅샷](implemented-tools.snapshot.json)에 있다. 실제 사용 가능 여부는 연결된 서버의 도구 목록과 schema로 확인한다. 업무별 후보 capability와 미지원 fallback은 [워크플로 capability 표](workflow-capabilities.json)에 있다. 매 작업에서 호스트가 실제 보여주는 도구와 입력 schema를 다시 확인한다.
 
-| 작업 | 사용 원칙 |
-| --- | --- |
-| 인증 | 호스트의 로그인 절차를 사용하고 대상 조직과 권한을 확인한다. |
-| 질문 | 결과를 바꾸는 선택은 호스트 질문 UI 또는 자연어로 확인한다. |
-| 상태 확인 | 화면이나 대화의 정보는 탐색에 활용하고, 변경 전 제품 상태를 다시 조회한다. |
-| 음성 시험 | 실제 제공되는 시험 화면이나 링크를 사용하고 대상 agent와 버전을 확인한다. |
-| 파일 | 호스트가 허용한 첨부·작업 디렉터리·업로드 기능을 사용한다. |
-| 작업 재개 | 저장된 결과 ID와 미확인 실행을 다시 조회한 뒤 진행한다. |
+## 내장 Copilot
 
-## 연결과 파일
+- 제품이 제공하는 연결과 인증을 사용한다. 외부 marketplace 설치나 Claude/Codex OAuth 절차를 요구하지 않는다.
+- 호스트가 get_work_context, get_work_record, save_work_record, get_work_operation을 실제 목록과 schema에 제공하면 공통 작업을 조회·갱신한다. 다음 작업에 영향을 줄 결정·피드백은 별도 기억 키워드를 요구하지 않고 짧게 기록한다. get_work_context의 background_settings로 기본 켜짐 상태와 현재 revision/epoch를 확인하고 routine case/event 쓰기에 그 값을 전달한다. OFF이거나 settings CAS가 거부되면 automatic 저장을 중단한다. 사용자가 명시적으로 요청한 기존 기록 조회·정정·삭제는 계속 지원한다. `source_retracted`·`delete_source`·`delete_case`는 선택한 기록 하나가 아니라 같은 출처에서 나온 사용자의 모든 case 기록을 함께 지운다. 중복 기억 중 하나만 지우거나 기억 하나만 철회할 때는 `claim_withdrawn`(claim_id, reason, 중복이면 duplicate_of_claim_id)을 쓴다. 출처 자체를 지워 달라는 요청일 때만 source/case 삭제를 쓰고, 실행 전에 함께 지워지는 다른 기록을 알린다. 사용자가 기존 결정과 다른 새 지시를 분명히 하면 되묻지 말고 `claim_corrected`로 기존 결정을 정정해 기록한다. 되묻는 것은 지시가 모호할 때뿐이다. 사용자가 현재 대화에서 저장하지 말라고 직접 요청하면 기록하지 않는다. 전체 통화 transcript는 수집하지 않는다.
+- user-principal save_agent/save_manual 호출 전에는 매번 get_work_context를 새로 호출하고 반환된 context_receipt.token을 최상위 context_receipt에 담아 바로 다음 한 번에만 사용한다. 이 읽기는 max_tokens를 기본값(3000) 아래로 낮추지 않고 `MEMORY_CONTEXT_BUDGET_TOO_SMALL`이 오면 `details.required_tokens` 이상(최대 3000)으로 한 번만 다시 호출한다. tool이나 receipt가 없으면 초안만 제공한다. save_work_record routine event에는 별도 settings revision/epoch CAS가 필요하다.
+- 고객 직접 음성 시험과 실사용 운영은 고객이 기존 vox.ai 제품 UI에서 수행한다. 완료 여부는 고객 보고와 MCP readback을 구분한다.
+- 예: “첨부한 합성 서비스 설명으로 첫 Manual을 만들고, 저장 후 전체 본문과 revision을 다시 읽어줘.” 공유 도구가 없고 이전 Thread에도 접근할 수 없을 때만 실제 ID와 마지막 결정을 사용자에게 받아 검증한다.
 
-스킬 전용 묶음은 연결 설정을 포함하지 않는다. 해당 호스트가 MCP 연결과 인증을 별도로 제공해야 한다. 키와 OAuth 토큰은 스킬이나 작업 파일에 저장하지 않는다.
+## Codex
 
-첨부 참조, 로컬 경로와 제품 파일 ID는 서로 바꾸어 쓰지 않는다. 파일 업로드나 결과 내보내기는 실제 지원되는 경로를 사용하고, 사용자가 접근할 수 있는 결과를 전달한다.
+- Codex plugin marketplace 흐름으로 plugin을 설치하고 MCP 연결은 Codex 호스트의 OAuth UI에서 완료한다. 토큰을 대화나 작업 파일에 복사하지 않는다.
+- 설치 후 현재 연결, 조직과 노출 도구를 확인한다. plugin이 내장 Copilot의 Thread DB, E2B 작업 경로 또는 private 파일을 읽을 수 있다고 가정하지 않는다.
+- 저장소 작업공간의 자료나 사용자가 첨부한 파일만 실제 호스트가 읽을 수 있는 범위에서 사용한다. URL 열람 여부도 그 Codex 세션의 도구로 확인한다.
+- 자연어로 요청하거나 설치된 vox.ai skill을 호출한다. 저장은 받은 실제 `agent_id`/`manual_id`와 현재 revision을 사용하고, 결과를 재조회한다.
+- 직접 음성 시험·운영은 고객이 vox.ai 제품 UI에서 한다. 공통 improvement case 도구가 있으면 해당 기록으로 재개하고, 없을 때만 Codex가 접근 가능한 대화 기록이나 사용자 handoff를 사용한다.
+- 예: “`service-brief.md`를 근거로 첫 Manual을 만들고 저장값을 확인해줘.” 공유 도구가 없고 새 Codex 대화에서 이어갈 때는 사용자가 실제 ID, 마지막 결정, 시험 상태를 전달한다.
 
-새 스킬이 기존 대화에 자동으로 반영된다고 가정하지 않는다. 업데이트 후 호스트의 다시 로드 절차를 따르고 필요하면 새 대화를 시작한다.
+## Claude Code
 
-## 문서와 작업 기록
+- Claude Code plugin marketplace 흐름으로 plugin을 설치하고 MCP OAuth 연결을 호스트에서 완료한다. Codex 설정이나 내장 연결을 재사용한다고 가정하지 않는다.
+- Claude Code에서는 `/vox-ai:build-first-voice-agent` 또는 `/vox-ai:try-and-improve-voice-agent`처럼 관련 skill을 명시적으로 부를 수 있고, 일반 자연어 요청도 가능하다.
+- shared-work 도구가 실제 제공되면 그 MCP 기록으로 공통 case를 읽고 갱신한다. 다음 작업에 영향을 줄 결정·피드백은 별도 기억 키워드 없이 간결히 기록한다. get_work_context가 자동 기록 설정의 enabled/revision/epoch를 제공하며, routine case/event는 최신 CAS 값과 함께 automatic route로 보낸다. OFF는 자동 기록을 중지하고 명시적인 기존 기록 조회·정정·삭제는 계속 지원한다. `source_retracted`·`delete_source`·`delete_case`는 선택한 기록 하나가 아니라 같은 출처에서 나온 사용자의 모든 case 기록을 함께 지운다. 중복 기억 중 하나만 지우거나 기억 하나만 철회할 때는 `claim_withdrawn`(claim_id, reason, 중복이면 duplicate_of_claim_id)을 쓴다. 출처 자체를 지워 달라는 요청일 때만 source/case 삭제를 쓰고, 실행 전에 함께 지워지는 다른 기록을 알린다. 사용자가 기존 결정과 다른 새 지시를 분명히 하면 되묻지 말고 `claim_corrected`로 기존 결정을 정정해 기록한다. 되묻는 것은 지시가 모호할 때뿐이다. 사용자가 현재 대화에서 저장하지 말라고 직접 요청하면 기록하지 않는다. plugin이 내장 Thread·Codex 세션·다른 조직의 작업공간을 검색한다고 가정하지 않는다.
+- 제품 변경 뒤 실제 MCP 응답을 재조회한다. 고객이 직접 시험한 결과는 `customer_reported`; 실제 제품 call 조회 근거는 조회 도구와 결과가 확인된 경우에만 별도로 표시한다.
+- 직접 시험과 실운영은 기존 vox.ai 제품 UI에서 고객이 수행한다. 공통 improvement case 도구가 없을 때에만 새 Claude Code 대화에서 사용자가 제공한 handoff로 재개하고, 도구가 있으면 해당 MCP 기록을 다시 확인한다.
+- 예: `/vox-ai:build-first-voice-agent`를 사용해 사용자가 제공한 서비스 자료로 첫 Manual을 만들고, 저장한 `agent_id`와 `manual_id`를 기록해줘. shared-work 도구가 있으면 그 기록을 확인하고, 없으면 새 호스트 대화에 상태가 자동 전달됐다고 가정하지 않는다.
 
-공식 문서는 호스트가 제공하는 검색 기능이나 연결된 문서 도구로 확인한다. 문서 접근은 제품 데이터 조회·변경 권한을 부여하지 않는다.
+## 연결·파일·재개 공통 원칙
 
-목표, 주요 결정, 완료된 결과 ID와 다음 행동을 간결하게 기록한다. 대화의 완료 기록만으로 제품 상태를 확정하지 않는다. 여러 연결을 사용할 때에는 각 연결의 조직·권한·리소스 ID를 따로 확인한다.
+- MCP 연결 성공, 인증, 제품 업무 완료는 서로 다른 상태다. 실제 호스트가 제공하는 조직·도구·schema를 확인한다.
+- 호스트가 required tool을 제공하지 않으면 제품 write를 추측하거나 REST/CLI/DB로 우회하지 않는다. 가능한 자료 정리와 Manual 초안을 이어가고 빠진 capability를 말한다.
+- 제품 file reference, 호스트 첨부, 로컬 경로는 서로 대체할 수 없다. 자료를 실제로 읽지 못했으면 분석했다고 표현하지 않는다.
+- Thread/호스트 간 연속성은 현재 호스트가 네 shared-work 도구를 실제 tool list와 schema에 제공하면 공통 case로 처리한다. 그 도구가 없을 때만 접근 가능한 대화 기록이나 사용자 제공 handoff로 이어가며, 자동 공유 기억이 있다고 설명하지 않는다.
+- 시험과 운영은 사용자 또는 고객이 제품 UI에서 한다. 고객의 음성 피드백은 reported로 기록하고 독립 조회한 call evidence로 올리지 않는다. 짧은 요약과 필요한 최소 locator만 기록하며 외부 transcript 전체를 가져오지 않는다.

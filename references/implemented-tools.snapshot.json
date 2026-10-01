@@ -1,0 +1,85 @@
+{
+  "snapshot_date": "2026-09-29",
+  "scope": "Local MCP source contract candidate. The source worktree state is recorded below; this is not a deployed-server inventory. A connected host may expose fewer tools or permissions; inspect its live tools and schemas before acting.",
+  "source": {
+    "mcp_commit": "99e1dae03d66aa77541aa7952917a0197805c1dd",
+    "manifest_sha256": "643559119480ecb3f4096719b5afb8f7801cbe5aebf35e4d4a772bfef1c38aab",
+    "source_manifest_sha256": "f7c583c38b19d9d910233c285f012783acb840f0aa027dd9821e42d919224c3c",
+    "source_state": "clean_commit",
+    "dirty_contracts": []
+  },
+  "implemented_tools": [
+    "get_agent",
+    "get_manual",
+    "get_organization",
+    "get_schema",
+    "get_work_context",
+    "get_work_operation",
+    "get_work_record",
+    "list_agents",
+    "list_manuals",
+    "list_models",
+    "list_schemas",
+    "save_agent",
+    "save_manual",
+    "save_work_record"
+  ],
+  "input_schemas": {
+    "get_agent": {
+      "path": "tool-schemas/get_agent.json",
+      "sha256": "5254bc374d8e7c843decf09c3394f09615e3734c681321017a4353e790e30ea9"
+    },
+    "get_manual": {
+      "path": "tool-schemas/get_manual.json",
+      "sha256": "51cb642adfcb55345b5d967ae551a18a532347ac52c854a18a76aad022c9947c"
+    },
+    "get_organization": {
+      "path": "tool-schemas/get_organization.json",
+      "sha256": "d746974fa9afd5e951f76f9af38954b0ad7f436f2120dc974da65e5ee39f856f"
+    },
+    "get_schema": {
+      "path": "tool-schemas/get_schema.json",
+      "sha256": "789277d15774453a626e9575ba78c391f94f60bb3fe79c449b1b891dbf808590"
+    },
+    "get_work_context": {
+      "path": "tool-schemas/get_work_context.json",
+      "sha256": "d77dee09c2daf09cf2c325170f0c15d4bb229047617a80c93429aee58ca9282c"
+    },
+    "get_work_operation": {
+      "path": "tool-schemas/get_work_operation.json",
+      "sha256": "8c2574ce37d138a76d5659f69012a8e95affc2b2ee8345e986f6b364ad6ba878"
+    },
+    "get_work_record": {
+      "path": "tool-schemas/get_work_record.json",
+      "sha256": "270097691ac49ef4422ef5167e1b7e02fd1f555a9c540d028858da4abae5e38e"
+    },
+    "list_agents": {
+      "path": "tool-schemas/list_agents.json",
+      "sha256": "b45e2bc5e04b7dcfdbb6fb03e42fa4d0d428bf8acde9fcc0a998833ae11c7ec9"
+    },
+    "list_manuals": {
+      "path": "tool-schemas/list_manuals.json",
+      "sha256": "20014e7fb31e92c85c6a9c563c20764de1b19b4f95cad2c04d0eb963a97477c9"
+    },
+    "list_models": {
+      "path": "tool-schemas/list_models.json",
+      "sha256": "08a290c606fc9cda60570c8dc7a01a0eb08407774b83df5fde6a3258a40aa114"
+    },
+    "list_schemas": {
+      "path": "tool-schemas/list_schemas.json",
+      "sha256": "8d81377d1ae2f903515f0e3b98a1ad38f09136d88bb96fcdc13ba62b3dde4124"
+    },
+    "save_agent": {
+      "path": "tool-schemas/save_agent.json",
+      "sha256": "eaf6cfe4590c1f56d71bf3d825b1ad5552f9e8592324e06878753f799fa83d27"
+    },
+    "save_manual": {
+      "path": "tool-schemas/save_manual.json",
+      "sha256": "925ea71430c479e688527230debd1b56e5cb68e168754d9516168acb3e7ce061"
+    },
+    "save_work_record": {
+      "path": "tool-schemas/save_work_record.json",
+      "sha256": "72afeb763c7e2f2ad7eca74ddc5baebc60695f8f5200440e6694b6512ac54350"
+    }
+  }
+}

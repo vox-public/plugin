@@ -1,0 +1,58 @@
+{
+  "name": "list_agents",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "q": {
+        "anyOf": [
+          {
+            "type": "string"
+          }
+        ],
+        "description": "Search by partial agent name.",
+        "title": "Q"
+      },
+      "type": {
+        "anyOf": [
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "description": "Repeatable agent type filter: `?type=single_prompt&type=flow`.",
+        "title": "Type"
+      },
+      "sort_order": {
+        "type": "string",
+        "description": "Sort direction. Allowed values are `asc` and `desc`.",
+        "default": "desc",
+        "title": "Sort Order",
+        "enum": [
+          "asc",
+          "desc"
+        ]
+      },
+      "cursor": {
+        "anyOf": [
+          {
+            "type": "string"
+          }
+        ],
+        "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page.",
+        "title": "Cursor"
+      },
+      "limit": {
+        "type": "integer",
+        "maximum": 100,
+        "minimum": 1,
+        "description": "Maximum number of items to return. v3 list endpoints accept 1-100.",
+        "default": 50,
+        "title": "Limit"
+      }
+    },
+    "required": [],
+    "additionalProperties": false
+  }
+}

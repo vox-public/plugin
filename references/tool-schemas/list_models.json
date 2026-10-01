@@ -1,0 +1,68 @@
+{
+  "name": "list_models",
+  "inputSchema": {
+    "type": "object",
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page.",
+            "title": "Cursor",
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of items to return. v3 list endpoints accept 1-100.",
+            "default": 50,
+            "title": "Limit"
+          },
+          "kind": {
+            "const": "llm"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "description": "Voice provider filter. Allowed values include `google`, `elevenlabs`, `cartesia`, and `openai`.",
+            "title": "Provider",
+            "type": "string"
+          },
+          "language": {
+            "description": "Voice language filter. Use values returned by this endpoint, such as `ko-KR` or `*`.",
+            "title": "Language",
+            "type": "string"
+          },
+          "cursor": {
+            "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page.",
+            "title": "Cursor",
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of items to return. v3 list endpoints accept 1-100.",
+            "default": 50,
+            "title": "Limit"
+          },
+          "kind": {
+            "const": "voice"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  }
+}
