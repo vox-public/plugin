@@ -14,6 +14,14 @@ metadata:
 ## 먼저 읽을 상태와 판단
 기존 agent를 고치는 요청인지 새 구축인지 구분한다. 기존 대상이 있으면 [현재 상태](../explore-agent-context/SKILL.md)를 읽는다. 자료는 [근거 정리](../knowledge-grounding/SKILL.md), 업무 선택은 [음성 업무 설계](../voice-agent-design/SKILL.md)를 적용한다. 핵심 업무·방향·실제 완료 결과를 짧게 제안하고 중요한 미확정 판단만 묻는다. 새 구축이면 [유형 선택](../voice-agent-design/SKILL.md)을 적용하고, 유형과 이유를 한 줄로 알린다. 첫 `save_agent` 호출 직전 응답에 `유형: <Single + Manual n개 | Flow>. 이유: <한 문장>`을 반드시 쓴다(무인 실행이어도 쓴다). 사용자가 Flow를 지정했더라도 대화로 받는 접수·상담이 중심이면, 첫 저장 전에 'Single + Manual이 더 맞는 이유'를 한 번만 말하고 요청대로 진행한다. 기본은 Single + Manual이며 Flow로 정해지면 이 스킬 대신 [Flow 절차](../agents-platform/SKILL.md)를 따른다.
 
+## 사용자가 준 자료 나눠 넣기
+파일(이미지·PDF·CSV·엑셀·TXT)이나 웹 주소를 받으면 먼저 직접 읽고, 아래처럼 나눠 넣은 뒤 자료마다 "어디에 무엇을 넣었는지" 한 줄씩 알린다.
+- **바뀔 수 있는 사실**(가격표·메뉴·진료비·운영시간·주소·FAQ): 텍스트로 정리해 `import_knowledge_documents`(`document_type=text`)로 지식에 넣고 에이전트에 연결한다. 지식이 없으면 `list_knowledges`로 찾은 뒤 `create_knowledge`로 만들고, 연결은 `save_agent`의 `data.knowledge.knowledgeIds`에 그 지식 ID를 넣어 하며 `ragEnabled`가 꺼져 있으면 함께 켠다. 표는 한 행을 한 줄 문장으로 풀어 쓴다(예: "순대 1인분 5,500원"). 프롬프트에는 한두 줄 요약만 두고, Manual 본문에는 가격·번호·주소를 쓰지 않는다("가격은 지식에서 확인해 안내한다"). 넣은 뒤 `list_knowledge_documents`로 상태를 확인하고 `get_agent`로 연결을 다시 읽는다. 지식 import는 텍스트와 URL만 받으므로 파일은 직접 읽어 텍스트로 바꿔 보낸다.
+- **절차·조건·그대로 말할 문장**: Manual에 넣는다. 그대로 말할 문장은 원문 그대로 큰따옴표로 옮긴다.
+- **통화 대상 목록**(CSV·엑셀): 번호 형식 오류와 중복을 정리하고 그 결과를 표로 알린 뒤 시트를 만든다. 열 이름을 `{{변수}}`로 쓰면 같은 이름을 `presetDynamicVariables`에 선언하고 값이 비었을 때 할 말을 정한다. 발신·캠페인은 사용자가 따로 요청할 때만 한다.
+- **읽기 불확실한 값**(흐린 숫자, 잘린 표, 손글씨): 추측해 넣지 않고 비워 둔 뒤 확인을 요청한다.
+- 사용자가 "저장만"이라고 하면 버전 생성·게시 없이 저장과 확인까지만 한다.
+
 ## 구축
 1. Manual 목록(이름·트리거·제외절)과 프롬프트·Manual·지식 분담을 정한다. 아래 '프롬프트와 Manual 골격'과 '운영 수준 점검'은 반드시 지키고, 더 자세한 규칙과 예시는 [Manual 작성](../manual-authoring/SKILL.md)에 있다. 외부 동작이 필수라면 [도구 연결](../connect-agent-tools/SKILL.md)의 의존성을 먼저 확인한다.
 2. 시작점을 고른다. 맞는 업무 템플릿이 있으면 `list_agent_templates` → `get_agent_template`로 내용을 확인하고 `instantiate_agent_template`(payload.name)으로 Single을 만든다. 템플릿은 자동 게시되지 않으며 부분 실패 결과를 그대로 읽는다. 템플릿의 기본 프롬프트와 Manual은 업종·방향·완료 문구가 새 업무와 충돌할 수 있으므로 그대로 두지 않고 고쳐 쓴다. 없으면 `save_agent(mode=create)`로 Single을 만들고 다시 쓴 프롬프트를 `data.prompt.prompt`에 넣는다. 반환된 `agent_id`를 보존한다.
