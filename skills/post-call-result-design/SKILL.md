@@ -23,3 +23,5 @@ metadata:
 제품에 해당 평가 기능이 없으면 개발용 판정표로 남긴다. 별도 고객용 Tests 프로젝트를 만들지 않는다.
 
 실제 설정 저장은 [configure-call-results](../configure-call-results/SKILL.md), 운영 수치 해석은 [review-call-performance](../review-call-performance/SKILL.md)로 연결한다.
+
+Flow 업무에서는 [Flow 업무 계약](../../references/flow-business-contract.md)의 재조회·등록값 비교·문항별 기록·시험 입력 계약을 함께 적용한다.
