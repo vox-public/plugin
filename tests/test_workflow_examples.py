@@ -90,7 +90,7 @@ class WorkflowExampleTests(unittest.TestCase):
             "references/workflow-examples.md",
             "references/host-adapters.md",
             "skills/agents-platform/SKILL.md",
-            "README.md",
+            "DEVELOPMENT.md",
         ):
             text = (ROOT / path).read_text()
             self.assertIn("MEMORY_CONTEXT_BUDGET_TOO_SMALL", text, path)
@@ -167,10 +167,11 @@ class WorkflowExampleTests(unittest.TestCase):
             "references/execution-contract.md",
             "skills/resume-agent-work/SKILL.md",
             "README.md",
+            "DEVELOPMENT.md",
         ):
             text = (ROOT / path).read_text()
             self.assertIsNone(prohibition.search(text), path)
-            if path != "README.md":
+            if path not in ("README.md", "DEVELOPMENT.md"):
                 self.assertIn("호스트 이름", text, path)
                 self.assertIn("get_work_context(agent_id)", text, path)
                 self.assertIn("해당 항목이 없으면 등록할 수 없다고 안내한다", text, path)
