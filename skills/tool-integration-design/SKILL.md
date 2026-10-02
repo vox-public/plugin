@@ -4,7 +4,7 @@ description: "vox.ai 음성 에이전트가 외부 API로 실제 조회·예약�
 metadata:
   product: vox.ai
   layer: general
-  status: preview
+  status: stable
 ---
 
 # tool-integration-design
@@ -23,3 +23,5 @@ endpoint·method·인증 방식·필수 입력·응답/오류 예·부작용·�
 반복·불명 결과의 처리와 인증 오류를 정상 결과와 구분한다. 외부 실행이 불명일 때 새 요청을 보내는 정책을 임의로 만들지 않는다.
 
 저장·연결은 [connect-agent-tools](../connect-agent-tools/SKILL.md), 실제 오류는 [troubleshoot-agent-tool](../troubleshoot-agent-tool/SKILL.md)로 이어간다.
+
+Flow 업무에서는 [Flow 업무 계약](../../references/flow-business-contract.md)의 재조회·등록값 비교·문항별 기록·시험 입력 계약을 함께 적용한다.

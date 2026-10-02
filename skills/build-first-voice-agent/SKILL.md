@@ -4,7 +4,7 @@ description: "URL·파일·설명으로 vox.ai의 첫 Single 음성 에이전트
 metadata:
   product: vox.ai
   layer: architect
-  status: preview
+  status: stable
 ---
 
 # build-first-voice-agent
@@ -28,15 +28,31 @@ metadata:
 1. Manual 목록(이름·트리거·제외절)과 프롬프트·Manual·지식 분담을 정한다. 아래 '프롬프트와 Manual 골격'과 '운영 수준 점검'은 반드시 지키고, 더 자세한 규칙과 예시는 [Manual 작성](../manual-authoring/SKILL.md)에 있다. 외부 동작이 필수라면 [도구 연결](../connect-agent-tools/SKILL.md)의 의존성을 먼저 확인한다.
 2. 시작점을 고른다. 새 agent는 위 [모델 고르기](#모델-고르기) 규칙을 템플릿과 직접 생성 모두에 적용한다. 맞는 업무 템플릿이 있으면 `list_agent_templates` → `get_agent_template`로 내용을 확인하고 `instantiate_agent_template`(payload.name)으로 Single을 만든다. 템플릿은 자동 게시되지 않으며 부분 실패 결과를 그대로 읽는다. 템플릿의 기본 프롬프트와 Manual은 업종·방향·완료 문구가 새 업무와 충돌할 수 있으므로 그대로 두지 않고 고쳐 쓴다. 없으면 `save_agent(mode=create)`로 Single을 만들고 선택 모델은 `data.llm.model`, 다시 쓴 프롬프트는 `data.prompt.prompt`에 넣는다. 반환된 `agent_id`를 보존한다.
 3. `get_agent` 또는 `list_manuals`로 현재 `head_revision`을 읽은 뒤 Manual마다 `save_manual`로 본문을 저장한다(생성이면 `mode=create`와 같은 `agent_id`, `payload.expected_head_revision`, `name`, `trigger`, `content`; 템플릿이 만든 Manual은 수정). 이 호출이 Manual을 에이전트에 연결하며, Manual을 저장할 때마다 revision이 바뀌므로 다음 Manual 전에 다시 읽는다. 다른 Manual이 `@manual:<manual_id>`로 가리킬 대상은 UUID가 필요하므로 먼저 저장한다. 폐기된 `manualIds`를 agent payload에 만들지 않는다. Manual이 쓰는 내장 도구는 본문에서 `@tool:이름`, API 도구는 `list_tools`가 돌려준 `@tool:<tool_id>`로 참조해야 실행된다.
+
 4. `list_manuals`로 Manual 수와 진단 건수를, `get_manual(agent_id, manual_id)`와 `get_agent(agent_id)`로 본문·참조·현재 revision을 재조회한다. 자료는 [지식](../knowledge-grounding/SKILL.md)(텍스트·URL), 외부 연동은 [도구](../connect-agent-tools/SKILL.md), 내부 추출·저장은 [결과 설정](../configure-call-results/SKILL.md)으로 연결한다. 실제 입력·ID 흐름은 [완성된 합성 여정](../../references/workflow-examples.md)에 있다. 그다음 아래 '운영 수준 점검' 1~8을 다시 읽은 본문에 대고 확인하고, 어긋난 Manual은 고친다.
 5. 저장한 상태를 `create_agent_version`으로 버전에 남긴다(반환된 버전 번호 보존, `list_agent_versions`로 확인). 운영에 쓰려면 사용자에게 어느 버전을 production으로 지정할지 요약해 확인받고 `publish_agent_version`을 호출한 뒤 `get_agent`(production)로 재조회한다. 게시는 번호·발신 경로에 바로 영향을 주며 모든 의존성의 불변 게시가 아니다.
 6. 이미 가진 번호에 연결하려면 [번호 연결](../connect-phone-service/SKILL.md), 발신하려면 [발신 운영](../operate-outbound-and-followup/SKILL.md), 결과 확인은 [통화 근거](../inspect-call-evidence/SKILL.md)로 이어간다. 음성 시험은 [직접 음성 시험](../prepare-voice-test/SKILL.md)에서 고객이 직접 한다. 번호 획득은 웹에서만 하며 첫 체험의 필수 단계가 아니다.
+
+### 업무 신호 → 내장 도구
+| 업무 신호 | 내장 도구 |
+|---|---|
+| 사람 연결 | `transfer_call` |
+| 다른 에이전트가 이어받기 | `transfer_agent` |
+| 문자로 보내기 | `send_sms` |
+| 고객 주소 받기(방문·배송·출동) | `search_address` |
+| 끝인사 후 종료 | `end_call` |
+| 아웃바운드에서 상대 ARS 번호 누르기 | `send_dtmf` |
+
+- 내장 도구는 그 Manual의 `built_in_tools`에 넣고 같은 이름으로 `@tool:이름`을 참조한다. 에이전트 수준 도구는 Manual에서 참조할 수 없다. `skill`은 통화에서 무시되므로 Manual에 넣지 않는다.
+- 고객 주소를 업무에 쓰면 `@tool:search_address`로 후보를 읽어 주고 고객이 확인한 뒤 확정한다. 가게 위치 안내처럼 고객 주소를 받지 않는 업무에는 붙이지 않는다. 결과값별 행동은 [주소 수집 패턴](../manual-authoring/SKILL.md#주소-수집-패턴)과 [내장 도구별 신호와 결과](../manual-authoring/SKILL.md#내장-도구별-신호와-결과)를 따른다.
+- 고객사 주소 조회 API가 따로 있으면 어느 쪽을 쓸지 고객에게 확인하고, 정하지 않았으면 `search_address`를 기본으로 권한다.
+- 텍스트 채팅 시험에서는 종료 도구 말고는 내장 도구(주소 검색·연결·문자·DTMF)가 실행되지 않는다. 내장 도구 동작은 음성 통화 시험으로 확인하도록 고객에게 안내한다.
 
 ## 프롬프트와 Manual 골격
 프롬프트(보통 1,500~4,000자)는 모든 업무에 공통인 것만 담는다.
 ```
 # 역할
-# 말투와 발화: 한 턴에 질문 하나, 이미 들은 값은 다시 묻지 않음, 숫자 읽는 법, 큰따옴표 문장은 그대로 말함, 대괄호는 실제 값으로 바꿔 말함
+# 말투와 발화: 한 턴에 질문 하나, 이미 들은 값은 다시 묻지 않음, 숫자 읽는 법, 큰따옴표 문장은 그대로 말함, 대괄호는 실제 값으로 바꿔 말함, 날짜를 되물을 때 시스템 날짜로 계산할 수 없으면 요일을 붙이지 않는다; 접수만 하고 확정은 나중에 하는 업무면 '아직 확정은 아니다'를 마무리에 한 번 말한다
 # 공통 규칙: 모든 업무의 금지와 범위 밖 응대
 # Manual 선택: ① 위급·안전 ② 진행 중인 Manual 계속 ③ 트리거가 하나만 맞으면 그 Manual ④ 없으면 용건을 한 번 묻기
 # 마무리: 더 필요한 것 묻기 → 끝인사 → 종료 도구. 고객이 말을 마치기 전에 끊지 않는다
@@ -77,7 +93,18 @@ Manual을 쓸 때 지키고, 저장한 뒤 `get_agent`·`get_manual`로 다시 �
 ## 부분 성공과 전달
 Single만 저장됐다면 그 `agent_id`에서 Manual 생성 단계를 계속한다. Manual 저장 성공 뒤에는 같은 `agent_id`·`manual_id`로 확인한다. 게시 응답이 불명이면 `list_agent_versions`/`get_agent`로 production 상태를 읽고 다시 호출하지 않는다. `409` revision conflict는 최신 상태를 다시 읽고 의도를 다시 적용할 때만 처리하며, unknown 응답은 새 Single·Manual 생성이나 같은 쓰기로 자동 재시도하지 않는다. Agent 저장 성공을 시험 성공으로 보고하지 않는다. 실제 예약이 목표인데 연동이 없으면 그 결손을 알리고 사용자 목표를 유지한다.
 
-전달은 agent/Manual 참조, 처리 범위, 시험 상황, 결과 위치, 현재 완료 단계와 남은 의존성으로 구성한다. 사용자가 변경 의견을 주면 해당 전문 스킬을 읽어 필요한 부분만 고친다. 가정한 값(번호·시간·정책)과 고객 확인이 필요한 문구는 따로 목록으로 적고, 시험 방법과 다음 할 일(시험 → 번호 연결 → 게시 확인 → 출시 뒤 통화 점검)을 짧게 안내한다.
+사용자가 변경 의견을 주거나 새 대화에서 이어서 고치려 하면 [edit-manual-safely](../edit-manual-safely/SKILL.md)의 '피드백·재개 반영 순서'를 따른다.
+
+## 마무리 보고
+저장과 점검을 마치면 사용자에게 아래 순서로 짧게 알린다. 항목마다 한두 줄이면 된다.
+1. **만든 것**: 유형과 이유 한 줄, Manual 이름 목록, 연결한 지식·도구·통화 결과 항목.
+2. **점검 결과**: `get_manual`로 본문을 다시 읽어 '운영 수준 점검'과 대조한 결과. 고친 것이 있으면 무엇을 고쳤는지.
+3. **가정과 확인할 것**: 사용자가 주지 않아 가정한 값(번호·시간·정책), 그대로 말하게 한 문구 중 고객 확인이 필요한 것, 개인정보를 받는다면 수집·녹취 안내가 필요한지.
+4. **한계**: 지금 연결하지 못한 것(예: 실제 예약 시스템 연동 없음)과 그 때문에 통화에서 생기는 일.
+5. **다음 할 일**: 체크리스트로 쓴다.
+   - [ ] 직접 시험할 대화 3개(정상 / 예외·거절 / 위급·연결)
+   - [ ] 번호 연결과 게시 전 확인할 것
+   - [ ] 출시 뒤 첫 주에 볼 것: 결과별 종료 비율, 연결 실패, 도중 종료, 같은 질문 반복
 
 ## 업무 판단
 

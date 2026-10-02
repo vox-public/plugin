@@ -4,7 +4,7 @@ description: "vox.ai의 공식 문서에서 SDK·CLI·요금·기능·UI 사용�
 metadata:
   product: vox.ai
   layer: mcp
-  status: preview
+  status: stable
 ---
 
 # product-documentation

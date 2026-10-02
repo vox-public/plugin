@@ -177,3 +177,6 @@ static 문구(안내·전환·종료)에는 아라비아 숫자와 기호를 쓰
 - 골격의 `extraction_prompt`는 이 문서 §2 템플릿을 줄인 것이다. 실제로는 §2 템플릿 전문에 업무의 키 표를 넣어 채운다.
 - 착신 번호(`+821000000000`)와 휴일 날짜(`2026-12-25`), 매장 문구는 자리표시자다. 사용자에게 받은 값으로 바꾼다.
 - 노드 `position`은 필수다. 필드는 `get_schema`의 구성요소(`BeginFlowNodeData`의 `first_line_type` 필수, `LogicCondition`의 `equations[{left,operator,right}]`와 `operator` `&&`·`||`)를 따른다.
+
+## 14. 조회·확인 업무와 시험 계약
+접수·지역 조회·등록값 확인을 더할 때는 [Flow 업무 계약](flow-business-contract.md)을 따른다. 실패 후 접수 또는 대표 연결이 필요하면 warm과 실패 fallback을 반드시 둔다. 모의 시험은 원본을 보존한 별도 변형 그래프를 사용한다.

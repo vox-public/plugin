@@ -4,7 +4,7 @@ description: "홈페이지·문서·기존 업무 자료를 vox.ai 에이전트�
 metadata:
   product: vox.ai
   layer: general
-  status: preview
+  status: stable
 ---
 
 # knowledge-grounding

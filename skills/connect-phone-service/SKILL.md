@@ -4,7 +4,7 @@ description: "vox.ai 에이전트에 이미 가진 번호를 연결·해제하�
 metadata:
   product: vox.ai
   layer: architect
-  status: preview
+  status: stable
 ---
 
 # connect-phone-service

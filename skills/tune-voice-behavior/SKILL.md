@@ -4,7 +4,7 @@ description: "vox.ai 에이전트의 끼어들기·무응답·속도·언어·�
 metadata:
   product: vox.ai
   layer: architect
-  status: preview
+  status: stable
 ---
 
 # tune-voice-behavior

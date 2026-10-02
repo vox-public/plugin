@@ -4,7 +4,7 @@ description: "vox.ai 채팅·위젯을 구성하거나 음성 업무를 보조 �
 metadata:
   product: vox.ai
   layer: architect
-  status: preview
+  status: stable
 ---
 
 # configure-supporting-channel

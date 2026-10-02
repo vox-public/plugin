@@ -4,7 +4,7 @@ description: "vox.ai 특정 통화의 발화·도구·추출 결과와 당시 �
 metadata:
   product: vox.ai
   layer: architect
-  status: preview
+  status: stable
 ---
 
 # inspect-call-evidence

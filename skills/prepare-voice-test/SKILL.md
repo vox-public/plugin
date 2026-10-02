@@ -4,7 +4,7 @@ description: "고객이 vox.ai 에이전트를 직접 음성 시험하도록 준
 metadata:
   product: vox.ai
   layer: architect
-  status: preview
+  status: stable
 ---
 
 # prepare-voice-test
@@ -15,6 +15,8 @@ metadata:
 agent·대상 버전·해당 Single의 agent-scoped Manual을 확인한다. `get_agent`·`list_agent_versions`·`list_manuals`로 시험할 버전과 본문을 읽고, 읽지 못한 정보는 사용자가 준 것임을 표시한다. 자료가 아웃바운드 업무면 합성 사전 정보를 사용해 도입/거절을 시험할 수 있는지 현재 진입 경로를 확인한다. 실고객 데이터나 실제 발신을 기본값으로 쓰지 않는다.
 
 [시험 사례](../../references/voice-test-cases.md)에서 목표에 맞는 정상/변경/오류 상황을 고른다. 시험 대화와 기대 저장값을 짝짓고 브라우저 음성으로 확인할 것과 실제 전화로 확인할 것을 구분한다.
+
+텍스트 채팅 시험에서는 종료 도구 말고는 내장 도구(주소 검색·연결·문자·DTMF)가 실행되지 않는다. 내장 도구 동작은 음성 통화 시험으로 확인하도록 고객에게 안내한다.
 
 ## 고객 직접 시험과 결과
 음성 시험을 시작하는 도구는 없다. 고객이 제품 UI에서 대상 agent와 버전을 확인해 직접 음성 시험을 하고, 우리는 시험할 대상·발화·기대 결과를 안내한 뒤 고객의 보고를 기다린다. 실제 전화로 확인하려면 보유 번호 연결([번호 연결](../connect-phone-service/SKILL.md))이나 사용자가 명시·확인한 단건 발신([발신 운영](../operate-outbound-and-followup/SKILL.md))을 쓴다. 임의 URL이나 토큰 포함 링크를 만들지 않는다.

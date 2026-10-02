@@ -4,7 +4,7 @@ description: "vox.ai 에이전트를 직접 말해 보고 피드백·실패 통�
 metadata:
   product: vox.ai
   layer: architect
-  status: preview
+  status: stable
 ---
 
 # try-and-improve-voice-agent
