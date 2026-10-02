@@ -46,7 +46,7 @@ def guidance_files():
     paths += [ROOT / "references" / name for name in (
         "execution-contract.md", "host-adapters.md", "workflow-guidance.md",
         "workflow-examples.md", "workflow-capabilities.json")]
-    paths.append(ROOT / "README.md")
+    paths += [ROOT / "README.md", ROOT / "DEVELOPMENT.md"]
     return paths
 
 
@@ -147,7 +147,7 @@ class FirstReleaseGuidanceTests(unittest.TestCase):
             self.assertFalse(work & set(workflow["implemented"]["required_tools"]), workflow["id"])
 
     def test_work_record_tools_may_be_absent_on_external_hosts(self):
-        for path in ("references/host-adapters.md", "references/execution-contract.md", "README.md"):
+        for path in ("references/host-adapters.md", "references/execution-contract.md", "DEVELOPMENT.md"):
             text = read(path)
             self.assertIn("작업 기록", text, path)
         adapters = read("references/host-adapters.md")
