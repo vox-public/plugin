@@ -4,8 +4,9 @@
   "description": "vox.ai 음성 에이전트 설계·구축·운영을 위한 MCP 연결과 공통 스킬",
   "author": {
     "name": "vox.ai",
-    "url": "https://vox.ai"
+    "url": "https://www.tryvox.co"
   },
+  "license": "MIT",
   "skills": "./skills/",
   "mcpServers": "./.mcp.json"
 }
