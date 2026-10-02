@@ -10,6 +10,7 @@
         "description": "Agent UUID returned as `agent_id`."
       },
       "mode": {
+        "type": "string",
         "enum": [
           "create",
           "update"
@@ -47,6 +48,7 @@
             "description": "Agent UUID returned as `agent_id`."
           },
           "mode": {
+            "type": "string",
             "const": "create"
           },
           "payload": {
@@ -81,6 +83,7 @@
             "title": "Manual Id"
           },
           "mode": {
+            "type": "string",
             "const": "update"
           },
           "payload": {

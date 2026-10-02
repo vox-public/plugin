@@ -49,6 +49,7 @@
             "title": "Sort Order"
           },
           "kind": {
+            "type": "string",
             "const": "general"
           }
         },
@@ -79,6 +80,7 @@
             "description": "Maximum number of items to return. v3 list endpoints accept 1-100."
           },
           "kind": {
+            "type": "string",
             "const": "uan"
           }
         },
@@ -134,6 +136,7 @@
             "title": "Sort Order"
           },
           "kind": {
+            "type": "string",
             "const": "presentation"
           }
         },

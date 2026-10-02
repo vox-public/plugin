@@ -2,7 +2,7 @@
   "snapshot_date": "2026-10-01",
   "scope": "Local MCP source contract candidate. The source worktree state is recorded below; this is not a deployed-server inventory. A connected host may expose fewer tools or permissions; inspect its live tools and schemas before acting.",
   "source": {
-    "mcp_commit": "41afe415d5ec5ac380c5df6a8ecd188f2a7e1c9a",
+    "mcp_commit": "54b6b91c2c3ce10af76433bee63573781d24fb62",
     "manifest_sha256": "e9667808b0679a4d0dd414e312c0a48f51836e472bfc8c5782189b1ba7e55736",
     "source_manifest_sha256": "f7c583c38b19d9d910233c285f012783acb840f0aa027dd9821e42d919224c3c",
     "source_state": "clean_commit",
@@ -97,7 +97,7 @@
     },
     "create_voice_model": {
       "path": "tool-schemas/create_voice_model.json",
-      "sha256": "82338dc094bce5aa5532f05de96e7514ee924fce25f243843e7e3df7ec10a477"
+      "sha256": "5009dcabf9b06286d5428f938a9129aa2756bb7a4224cf6696aaa1cf645df4b0"
     },
     "delete_knowledge_document": {
       "path": "tool-schemas/delete_knowledge_document.json",
@@ -137,7 +137,7 @@
     },
     "get_number": {
       "path": "tool-schemas/get_number.json",
-      "sha256": "ee754fea5e0639cf510dabf614ce07081d0a18fc5e9af7de8a71f57854581b1f"
+      "sha256": "ab8b3692ce92dec3f05e27c42b716463fd156cbd128aef4e6620d92dca2ca182"
     },
     "get_organization": {
       "path": "tool-schemas/get_organization.json",
@@ -221,11 +221,11 @@
     },
     "list_models": {
       "path": "tool-schemas/list_models.json",
-      "sha256": "08a290c606fc9cda60570c8dc7a01a0eb08407774b83df5fde6a3258a40aa114"
+      "sha256": "be7b97654fe852d59a474a26a9118ac2f56fbb71befb76459f2d2803e5b7e1c0"
     },
     "list_numbers": {
       "path": "tool-schemas/list_numbers.json",
-      "sha256": "8744630961a85549f9b9fb6769fe2d2d70a6e3c8b50a79b4dd4a6d514b08e0b8"
+      "sha256": "0e8723b00547b2b88754968df6ea0c4a251b01fd6bf6f78baa28251848ef5a05"
     },
     "list_organization_members": {
       "path": "tool-schemas/list_organization_members.json",
@@ -253,7 +253,7 @@
     },
     "place_call": {
       "path": "tool-schemas/place_call.json",
-      "sha256": "8e45b516a96681ea03042ea324913408efbbd65ebf15d7fd3cf998a10b057f44"
+      "sha256": "1e9a1d4766626b55cb49203e03d08240e0e18a70efe3a82956a497776f5c8be3"
     },
     "publish_agent_version": {
       "path": "tool-schemas/publish_agent_version.json",
@@ -269,23 +269,23 @@
     },
     "save_agent": {
       "path": "tool-schemas/save_agent.json",
-      "sha256": "822926c4a26994f544c342bae9d4e1ef6992a2a0749bfa6267f10845db5b56c8"
+      "sha256": "e500f0dc77325ae149d8687bdf8c62ff3f93a29e252f0b80ac6fd8676d6ba6be"
     },
     "save_customer": {
       "path": "tool-schemas/save_customer.json",
-      "sha256": "18c69a0e335abb42e1c5abc5a082a51ae1f24f3e1eff80ec4f99fb8e387f7160"
+      "sha256": "66a41781581eef0961ea3f03b572e4bb8927b3cc4b0604867ee75ed17480872b"
     },
     "save_customer_attribute_definition": {
       "path": "tool-schemas/save_customer_attribute_definition.json",
-      "sha256": "f3121842e806fc0ca724acc88f1d2ac28ee544c678e189ee23c463f62c51e65d"
+      "sha256": "f6f964fbac7d91421d55eb9ce99fac8af481c2225ac623fc404388e9fff15521"
     },
     "save_manual": {
       "path": "tool-schemas/save_manual.json",
-      "sha256": "5d951ee342ed4d7af55f41ee26937362b6e0a1d9d9897b1a401d8ada599a0986"
+      "sha256": "3c14e54bf3023ed0072f0794d455c3c89b2607c50d48814ecf3e81b210513bb5"
     },
     "save_tool": {
       "path": "tool-schemas/save_tool.json",
-      "sha256": "7a0e80009e14e5220cd5a9c8e8686c9dca7d25bc2e1bfc1c64d13dfcc40021db"
+      "sha256": "eed63880366b141980f680e70057a6e48b843cd75ffdf8b143af211e302df74d"
     },
     "save_work_record": {
       "path": "tool-schemas/save_work_record.json",
@@ -293,7 +293,7 @@
     },
     "set_number_agents": {
       "path": "tool-schemas/set_number_agents.json",
-      "sha256": "050529618bfb3365fa72d582e1c71712032af22d91064e7dd6e348ff457ca763"
+      "sha256": "2ed40604eae7ab66cf87b6a031138c00f5dba8851f8c88b35efb1867a84b3b5b"
     },
     "set_organization": {
       "path": "tool-schemas/set_organization.json",
@@ -301,7 +301,7 @@
     },
     "update_number": {
       "path": "tool-schemas/update_number.json",
-      "sha256": "54eb5c648c5b91ba2c22446b862e8226a8ef9dc0fcd3b948d1fae2e5ea961bda"
+      "sha256": "f9a3206c8e52988ffccac582947fe0d1f56a71426097d80a026e41e5ed16e505"
     },
     "update_organization": {
       "path": "tool-schemas/update_organization.json",
@@ -309,7 +309,7 @@
     },
     "validate_flow": {
       "path": "tool-schemas/validate_flow.json",
-      "sha256": "59a2edf7e30534d5da9b839d904811b1bea5962143216fba2331a4f55b81d11c"
+      "sha256": "920af07ce938b84441a71bff01d05a327b5e80be97e665d480737f1ab381390a"
     }
   }
 }
