@@ -39,8 +39,8 @@ Codex는 `codex mcp login vox-ai`까지 실행해야 vox.ai 도구를 쓸 수 �
 
 | 이름 | 주소 | 용도 | 로그인 |
 | --- | --- | --- | --- |
-| `vox-ai` | `https://mcp.tryvox.co/mcp` | 에이전트·번호·통화·캠페인 등 vox.ai 조작 | 필요 |
-| `vox-docs` | `https://docs.tryvox.co/mcp` | vox.ai 공식 문서 검색 | 불필요 |
+| `vox-ai` | <https://mcp.tryvox.co/mcp> | 에이전트·번호·통화·캠페인 등 vox.ai 조작 | 필요 |
+| `vox-docs` | <https://docs.tryvox.co/mcp> | vox.ai 공식 문서 검색 | 불필요 |
 
 `vox-ai`는 호스트에서 로그인합니다. Claude Code는 `/mcp`, Codex는 `codex mcp login vox-ai`, Grok Build는 TUI의 `/mcps`를 사용합니다.
 
