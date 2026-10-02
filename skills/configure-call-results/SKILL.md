@@ -4,7 +4,7 @@ description: "vox.ai 통화 후 추출·내부 결과 저장을 새로 연결하
 metadata:
   product: vox.ai
   layer: architect
-  status: preview
+  status: stable
 ---
 
 # configure-call-results

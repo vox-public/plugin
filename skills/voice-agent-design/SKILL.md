@@ -4,7 +4,7 @@ description: "vox.ai 음성 에이전트의 목적·대상·방향·채널·완�
 metadata:
   product: vox.ai
   layer: general
-  status: preview
+  status: stable
 ---
 
 # voice-agent-design

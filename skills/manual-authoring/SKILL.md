@@ -4,7 +4,7 @@ description: "vox.ai Single 에이전트의 Manual(업무 절차)을 한 번에 
 metadata:
   product: vox.ai
   layer: general
-  status: preview
+  status: stable
 ---
 
 # manual-authoring

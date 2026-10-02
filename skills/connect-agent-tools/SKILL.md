@@ -4,7 +4,7 @@ description: "vox.ai 음성 에이전트가 외부 업무 API를 호출하도록
 metadata:
   product: vox.ai
   layer: architect
-  status: preview
+  status: stable
 ---
 
 # connect-agent-tools

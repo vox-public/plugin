@@ -4,7 +4,7 @@ description: "연결된 vox.ai Agents MCP에서 조직·현재 도구 capability
 metadata:
   product: vox.ai
   layer: mcp
-  status: preview
+  status: stable
 ---
 
 # agents-platform

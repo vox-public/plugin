@@ -4,7 +4,7 @@ description: "고객이 vox.ai 에이전트를 직접 음성 시험하도록 준
 metadata:
   product: vox.ai
   layer: architect
-  status: preview
+  status: stable
 ---
 
 # prepare-voice-test

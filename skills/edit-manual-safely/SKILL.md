@@ -4,7 +4,7 @@ description: "기존 vox.ai 에이전트를 고칠 때 사용한다. 같은 대�
 metadata:
   product: vox.ai
   layer: architect
-  status: preview
+  status: stable
 ---
 
 # edit-manual-safely

@@ -1,5 +1,5 @@
 {
-  "status": "preview",
+  "status": "stable",
   "updated": "2026-10-01",
   "implemented_tools_snapshot": "references/implemented-tools.snapshot.json",
   "workflow_capabilities": "references/workflow-capabilities.json",

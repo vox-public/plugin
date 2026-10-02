@@ -4,7 +4,7 @@ description: "vox.ai 구축·운영 작업이 연결 단절·권한 만료·부�
 metadata:
   product: vox.ai
   layer: architect
-  status: preview
+  status: stable
 ---
 
 # resume-agent-work

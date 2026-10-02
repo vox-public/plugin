@@ -4,7 +4,7 @@ description: "vox.ai 일정 기간의 완료 통화를 집계하고 이상 집�
 metadata:
   product: vox.ai
   layer: architect
-  status: preview
+  status: stable
 ---
 
 # review-call-performance

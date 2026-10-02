@@ -4,7 +4,7 @@ description: "vox.ai의 단건 발신과 시트 기반 캠페인 실행·중지�
 metadata:
   product: vox.ai
   layer: architect
-  status: preview
+  status: stable
 ---
 
 # operate-outbound-and-followup

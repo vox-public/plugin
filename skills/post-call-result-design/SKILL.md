@@ -4,7 +4,7 @@ description: "vox.ai 통화 후 추출 필드·내부 저장·업무 성공 기�
 metadata:
   product: vox.ai
   layer: general
-  status: preview
+  status: stable
 ---
 
 # post-call-result-design

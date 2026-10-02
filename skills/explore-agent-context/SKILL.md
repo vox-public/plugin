@@ -4,7 +4,7 @@ description: "기존 vox.ai 에이전트의 설정·Manual·도구·버전을 �
 metadata:
   product: vox.ai
   layer: architect
-  status: preview
+  status: stable
 ---
 
 # explore-agent-context

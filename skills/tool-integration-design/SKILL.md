@@ -4,7 +4,7 @@ description: "vox.ai 음성 에이전트가 외부 API로 실제 조회·예약�
 metadata:
   product: vox.ai
   layer: general
-  status: preview
+  status: stable
 ---
 
 # tool-integration-design

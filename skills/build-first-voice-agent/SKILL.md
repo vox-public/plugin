@@ -4,7 +4,7 @@ description: "URL·파일·설명으로 vox.ai의 첫 Single 음성 에이전트
 metadata:
   product: vox.ai
   layer: architect
-  status: preview
+  status: stable
 ---
 
 # build-first-voice-agent

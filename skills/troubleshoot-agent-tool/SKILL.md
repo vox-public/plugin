@@ -4,7 +4,7 @@ description: "vox.ai 통화 중 외부 도구가 호출되지 않거나 오류·
 metadata:
   product: vox.ai
   layer: architect
-  status: preview
+  status: stable
 ---
 
 # troubleshoot-agent-tool

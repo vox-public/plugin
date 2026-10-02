@@ -4,7 +4,7 @@ description: "특정 vox.ai Single의 Manual·지식·도구 변경 범위를 �
 metadata:
   product: vox.ai
   layer: architect
-  status: preview
+  status: stable
 ---
 
 # review-shared-impact
