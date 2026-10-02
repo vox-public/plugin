@@ -4,7 +4,7 @@
   "description": "vox.ai 음성 에이전트 설계·구축·운영을 위한 MCP 연결과 공통 스킬",
   "author": {
     "name": "vox.ai",
-    "url": "https://vox.ai"
+    "url": "https://www.tryvox.co"
   },
   "license": "MIT",
   "skills": "./skills/",
@@ -23,10 +23,10 @@
       "자료로 첫 음성 에이전트를 만들어줘.",
       "기존 에이전트의 응대 매뉴얼을 개선해줘."
     ],
-    "websiteURL": "https://vox.ai",
-    "supportURL": "https://vox.ai/contact",
-    "privacyPolicyURL": "https://vox.ai/privacy-policy/",
-    "termsOfServiceURL": "https://vox.ai/terms",
+    "websiteURL": "https://www.tryvox.co",
+    "supportURL": "https://www.tryvox.co",
+    "privacyPolicyURL": "https://www.tryvox.co/legal/privacy-policy",
+    "termsOfServiceURL": "https://www.tryvox.co/legal/terms-of-service",
     "composerIcon": "./assets/logo.png",
     "logo": "./assets/logo.png"
   }
