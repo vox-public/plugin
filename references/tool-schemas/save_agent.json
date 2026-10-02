@@ -2336,7 +2336,7 @@
               }
             ],
             "title": "Loop Condition",
-            "description": "Condition text that controls when this conversation node should loop."
+            "description": "이 대화 노드를 나가도 되는 조건이다. 참이 되면 다음 간선을 평가하고, 거짓이면 노드에 머물며 대화를 이어 간다. \"~하지 않으면 다시 묻는다\"가 아니라 \"~를 모두 받았다\", \"~를 분명히 골랐다\"처럼 완료 상태로 쓴다."
           },
           "is_allow_interruption": {
             "anyOf": [
@@ -2542,9 +2542,9 @@
             "anyOf": [
               {
                 "enum": [
+                  "none",
                   "static",
-                  "dynamic",
-                  "none"
+                  "dynamic"
                 ],
                 "type": "string"
               },
@@ -2875,9 +2875,9 @@
             "anyOf": [
               {
                 "enum": [
+                  "none",
                   "static",
-                  "dynamic",
-                  "none"
+                  "dynamic"
                 ],
                 "type": "string"
               },
@@ -3341,9 +3341,9 @@
             "anyOf": [
               {
                 "enum": [
+                  "none",
                   "static",
-                  "dynamic",
-                  "none"
+                  "dynamic"
                 ],
                 "type": "string"
               },
@@ -3563,9 +3563,9 @@
             "anyOf": [
               {
                 "enum": [
+                  "none",
                   "static",
-                  "dynamic",
-                  "none"
+                  "dynamic"
                 ],
                 "type": "string"
               },

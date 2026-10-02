@@ -31,6 +31,14 @@ metadata:
 - 결과 확인: `list_calls`, `get_call`(원문은 명시 요청 시만), 고객 `list_customers`/`get_customer`/`find_customer`/`save_customer`/`resolve_customer`와 속성 정의 3개. → [통화 근거](../inspect-call-evidence/SKILL.md)
 - 이 범위 밖(음성 시험 시작, 독립 SMS 발송, 채팅·위젯, 번호 구매, 파일 업로드)은 도구가 없다. 통화 중 문자와 전환은 별도 MCP 도구가 아니라 agent 안의 내장 도구(`send_sms`, `transfer_call`)나 Flow 노드(`sendSms`, `transferCall`)로 설정한다. 음성 시험은 고객이 제품 UI에서 직접 하고 결과를 보고한다. 호스트가 추가 tool을 실제로 노출하면 그 입력 schema를 확인한 뒤 사용한다. 예제와 schema 검증은 [합성 고객 여정](../../references/workflow-examples.md)을 따른다.
 
+## Flow 저장 전 점검
+- API 노드 저장 전에 응답을 실제로 한 번 받아 `response_variables` 경로를 그 형태에 맞춘다. [구현 도구 스냅샷](../../references/implemented-tools.snapshot.json)에는 API 시험 호출 도구가 없으므로, 현재 연결에도 없거나 응답을 받을 수 없으면 명세의 응답 예시를 그대로 따르고 실측하지 않았으며 추측한 부분이 있으면 사용자에게 알린다.
+- 접수·기록 업무는 확인 응답 뒤 저장 API 노드로 실제로 이어지는 간선을 확인한다. 대화 노드의 `loop_condition`은 참일 때 다음 단계로 나갈 수 있는 조건이므로 “아직 선택하지 않았다” 같은 반복 지시 대신 “고객이 접수 방식을 선택했다” 또는 “다섯 항목을 수집하고 요약에 동의했다”처럼 완료 조건으로 쓴다.
+- `outcome` 값과 문항별 결과 필드는 명세 값 그대로 쓴다.
+- 실패 뒤 대안이 필요한 연결은 warm 연결에 실패 간선을 붙인다.
+- 지원하지 않는 재조회나 동작은 완성됐다고 말하지 않는다. 자세한 기준은 [Flow 업무 계약](../../references/flow-business-contract.md)을 따른다.
+
+
 실제 전화·대량 발신·운영 반영·번호 연결 변경·삭제·인증 변경은 [실행 계약](../../references/execution-contract.md)의 ‘실제 영향이 있는 도구’(사용자 확인, `execution_key`, 결과 불명, 비밀값 마스킹)를 따른다. agent 저장이나 게시가 실고객 발신을 허가하지 않는다.
 
 ## Context와 기록

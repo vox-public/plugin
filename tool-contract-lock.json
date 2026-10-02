@@ -1,5 +1,5 @@
 {
-  "mcp_commit": "41afe415d5ec5ac380c5df6a8ecd188f2a7e1c9a",
+  "mcp_commit": "ed3c909c8e1136dfcc82d8f3fe052d5f86f9c4ab",
   "manifest_sha256": "e9667808b0679a4d0dd414e312c0a48f51836e472bfc8c5782189b1ba7e55736",
   "source_manifest_sha256": "f7c583c38b19d9d910233c285f012783acb840f0aa027dd9821e42d919224c3c",
   "source_state": "clean_commit",
@@ -122,7 +122,7 @@
     "publish_agent_version": "8c42adee4091cc0eb599beb5b9e05fdcd00c923142ea4ee514c4007af645a8d1",
     "resolve_customer": "e9a9cb6440d2b97756d3a5b40f2ed086e999b90cfe0d5097193f274e3d2e51f4",
     "resume_campaign": "013d55a39ff1c8c0db4b8caf25778c44cec709a59f12bd53cafca7dafeb14847",
-    "save_agent": "822926c4a26994f544c342bae9d4e1ef6992a2a0749bfa6267f10845db5b56c8",
+    "save_agent": "52bf8249ee5b3399ff3c67293bac4c2e3857e8c4d3fb4e7d45652663ab4bb78a",
     "save_customer": "18c69a0e335abb42e1c5abc5a082a51ae1f24f3e1eff80ec4f99fb8e387f7160",
     "save_customer_attribute_definition": "f3121842e806fc0ca724acc88f1d2ac28ee544c678e189ee23c463f62c51e65d",
     "save_manual": "5d951ee342ed4d7af55f41ee26937362b6e0a1d9d9897b1a401d8ada599a0986",
@@ -132,6 +132,6 @@
     "set_organization": "b12310a95ff2b797dbb045b0b53cff7fc013b2412e69be193778d2755df00031",
     "update_number": "54eb5c648c5b91ba2c22446b862e8226a8ef9dc0fcd3b948d1fae2e5ea961bda",
     "update_organization": "6aa847bdbf6fb23ce6c79d81a5ea6a36228b44660efd4c9b05f539d7ef94657f",
-    "validate_flow": "59a2edf7e30534d5da9b839d904811b1bea5962143216fba2331a4f55b81d11c"
+    "validate_flow": "920af07ce938b84441a71bff01d05a327b5e80be97e665d480737f1ab381390a"
   }
 }

@@ -5,11 +5,12 @@
     "oneOf": [
       {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "cursor": {
+            "type": "string",
             "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page.",
-            "title": "Cursor",
-            "type": "string"
+            "title": "Cursor"
           },
           "limit": {
             "type": "integer",
@@ -25,26 +26,26 @@
         },
         "required": [
           "kind"
-        ],
-        "additionalProperties": false
+        ]
       },
       {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "provider": {
+            "type": "string",
             "description": "Voice provider filter. Allowed values include `google`, `elevenlabs`, `cartesia`, and `openai`.",
-            "title": "Provider",
-            "type": "string"
+            "title": "Provider"
           },
           "language": {
+            "type": "string",
             "description": "Voice language filter. Use values returned by this endpoint, such as `ko-KR` or `*`.",
-            "title": "Language",
-            "type": "string"
+            "title": "Language"
           },
           "cursor": {
+            "type": "string",
             "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page.",
-            "title": "Cursor",
-            "type": "string"
+            "title": "Cursor"
           },
           "limit": {
             "type": "integer",
@@ -60,8 +61,7 @@
         },
         "required": [
           "kind"
-        ],
-        "additionalProperties": false
+        ]
       }
     ]
   }
