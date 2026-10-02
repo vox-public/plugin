@@ -28,14 +28,23 @@ metadata:
 1. Manual 목록(이름·트리거·제외절)과 프롬프트·Manual·지식 분담을 정한다. 아래 '프롬프트와 Manual 골격'과 '운영 수준 점검'은 반드시 지키고, 더 자세한 규칙과 예시는 [Manual 작성](../manual-authoring/SKILL.md)에 있다. 외부 동작이 필수라면 [도구 연결](../connect-agent-tools/SKILL.md)의 의존성을 먼저 확인한다.
 2. 시작점을 고른다. 새 agent는 위 [모델 고르기](#모델-고르기) 규칙을 템플릿과 직접 생성 모두에 적용한다. 맞는 업무 템플릿이 있으면 `list_agent_templates` → `get_agent_template`로 내용을 확인하고 `instantiate_agent_template`(payload.name)으로 Single을 만든다. 템플릿은 자동 게시되지 않으며 부분 실패 결과를 그대로 읽는다. 템플릿의 기본 프롬프트와 Manual은 업종·방향·완료 문구가 새 업무와 충돌할 수 있으므로 그대로 두지 않고 고쳐 쓴다. 없으면 `save_agent(mode=create)`로 Single을 만들고 선택 모델은 `data.llm.model`, 다시 쓴 프롬프트는 `data.prompt.prompt`에 넣는다. 반환된 `agent_id`를 보존한다.
 3. `get_agent` 또는 `list_manuals`로 현재 `head_revision`을 읽은 뒤 Manual마다 `save_manual`로 본문을 저장한다(생성이면 `mode=create`와 같은 `agent_id`, `payload.expected_head_revision`, `name`, `trigger`, `content`; 템플릿이 만든 Manual은 수정). 이 호출이 Manual을 에이전트에 연결하며, Manual을 저장할 때마다 revision이 바뀌므로 다음 Manual 전에 다시 읽는다. 다른 Manual이 `@manual:<manual_id>`로 가리킬 대상은 UUID가 필요하므로 먼저 저장한다. 폐기된 `manualIds`를 agent payload에 만들지 않는다. Manual이 쓰는 내장 도구는 본문에서 `@tool:이름`, API 도구는 `list_tools`가 돌려준 `@tool:<tool_id>`로 참조해야 실행된다.
-   - 방문·배송·출동처럼 고객 주소가 업무에 쓰이면 해당 Manual의 `built_in_tools`에 내장 `search_address`를 붙인다(현재 저장 schema 확인).
-   - 주소 단계는 단서 받기 → `@tool:search_address` → 후보를 읽고 고객 확인받기 → 확정이며, 확정값은 업무의 저장 도구에 전달한다.
-   - `recommended_action` 값별 행동·후보 없음·오류 처리는 [Manual 주소 수집 패턴](../manual-authoring/SKILL.md#주소-수집-패턴)을 따른다.
-   - 고객 주소를 받지 않는 업무(가게 위치 안내 등)에는 `search_address`를 붙이지 않는다.
 
 4. `list_manuals`로 Manual 수와 진단 건수를, `get_manual(agent_id, manual_id)`와 `get_agent(agent_id)`로 본문·참조·현재 revision을 재조회한다. 자료는 [지식](../knowledge-grounding/SKILL.md)(텍스트·URL), 외부 연동은 [도구](../connect-agent-tools/SKILL.md), 내부 추출·저장은 [결과 설정](../configure-call-results/SKILL.md)으로 연결한다. 실제 입력·ID 흐름은 [완성된 합성 여정](../../references/workflow-examples.md)에 있다. 그다음 아래 '운영 수준 점검' 1~8을 다시 읽은 본문에 대고 확인하고, 어긋난 Manual은 고친다.
 5. 저장한 상태를 `create_agent_version`으로 버전에 남긴다(반환된 버전 번호 보존, `list_agent_versions`로 확인). 운영에 쓰려면 사용자에게 어느 버전을 production으로 지정할지 요약해 확인받고 `publish_agent_version`을 호출한 뒤 `get_agent`(production)로 재조회한다. 게시는 번호·발신 경로에 바로 영향을 주며 모든 의존성의 불변 게시가 아니다.
 6. 이미 가진 번호에 연결하려면 [번호 연결](../connect-phone-service/SKILL.md), 발신하려면 [발신 운영](../operate-outbound-and-followup/SKILL.md), 결과 확인은 [통화 근거](../inspect-call-evidence/SKILL.md)로 이어간다. 음성 시험은 [직접 음성 시험](../prepare-voice-test/SKILL.md)에서 고객이 직접 한다. 번호 획득은 웹에서만 하며 첫 체험의 필수 단계가 아니다.
+
+### 업무 신호 → 내장 도구
+| 업무 신호 | 내장 도구 |
+|---|---|
+| 사람 연결 | `transfer_call` |
+| 다른 에이전트가 이어받기 | `transfer_agent` |
+| 문자로 보내기 | `send_sms` |
+| 고객 주소 받기(방문·배송·출동) | `search_address` |
+| 끝인사 후 종료 | `end_call` |
+| 아웃바운드에서 상대 ARS 번호 누르기 | `send_dtmf` |
+
+- 내장 도구는 그 Manual의 `built_in_tools`에 넣고 같은 이름으로 `@tool:이름`을 참조한다. 에이전트 수준 도구는 Manual에서 참조할 수 없다. `skill`은 통화에서 무시되므로 Manual에 넣지 않는다.
+- 고객 주소를 업무에 쓰면 `@tool:search_address`로 후보를 읽어 주고 고객이 확인한 뒤 확정한다. 가게 위치 안내처럼 고객 주소를 받지 않는 업무에는 붙이지 않는다. 결과값별 행동은 [주소 수집 패턴](../manual-authoring/SKILL.md#주소-수집-패턴)과 [내장 도구별 신호와 결과](../manual-authoring/SKILL.md#내장-도구별-신호와-결과)를 따른다.
 
 ## 프롬프트와 Manual 골격
 프롬프트(보통 1,500~4,000자)는 모든 업무에 공통인 것만 담는다.
