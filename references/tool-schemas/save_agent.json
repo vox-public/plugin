@@ -4,6 +4,7 @@
     "type": "object",
     "properties": {
       "mode": {
+        "type": "string",
         "enum": [
           "create",
           "update"
@@ -35,6 +36,7 @@
         "type": "object",
         "properties": {
           "mode": {
+            "type": "string",
             "const": "create"
           },
           "payload": {
@@ -63,6 +65,7 @@
             "title": "Agent Id"
           },
           "mode": {
+            "type": "string",
             "const": "update"
           },
           "payload": {
@@ -674,6 +677,7 @@
             "if": {
               "properties": {
                 "promptType": {
+                  "type": "string",
                   "const": "static"
                 }
               },
@@ -698,6 +702,7 @@
             "if": {
               "properties": {
                 "promptType": {
+                  "type": "string",
                   "const": "dynamic"
                 }
               },

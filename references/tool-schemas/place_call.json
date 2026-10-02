@@ -9,6 +9,7 @@
       {
         "properties": {
           "routing": {
+            "type": "string",
             "const": "explicit_agent"
           }
         },
@@ -19,6 +20,7 @@
       {
         "properties": {
           "routing": {
+            "type": "string",
             "const": "phone_default"
           }
         },
@@ -69,6 +71,7 @@
         "description": "수신자에게 표시할 번호. 조직 승인 번호만 허용. 미지정은 null."
       },
       "routing": {
+        "type": "string",
         "enum": [
           "explicit_agent",
           "phone_default"

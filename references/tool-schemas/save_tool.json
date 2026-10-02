@@ -8,6 +8,7 @@
         "additionalProperties": false,
         "properties": {
           "mode": {
+            "type": "string",
             "const": "create"
           },
           "payload": {
@@ -117,6 +118,7 @@
             "title": "Tool Id"
           },
           "mode": {
+            "type": "string",
             "const": "update"
           },
           "payload": {

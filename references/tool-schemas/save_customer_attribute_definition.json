@@ -8,6 +8,7 @@
         "additionalProperties": false,
         "properties": {
           "mode": {
+            "type": "string",
             "const": "create"
           },
           "payload": {
@@ -91,6 +92,7 @@
             "title": "Definition Id"
           },
           "mode": {
+            "type": "string",
             "const": "update"
           },
           "payload": {

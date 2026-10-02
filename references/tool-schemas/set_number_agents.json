@@ -14,6 +14,7 @@
             "description": "Organization-owned telephone number identifier. Use the `id` returned by `GET /v3/organization-telephone-numbers`, not the phone number string."
           },
           "kind": {
+            "type": "string",
             "const": "general"
           },
           "payload": {
@@ -76,6 +77,7 @@
             "description": "Telephone presentation number identifier. Use the `id` returned by `GET /v3/telephone-presentation-numbers` or `POST /v3/telephone-presentation-numbers`."
           },
           "kind": {
+            "type": "string",
             "const": "presentation"
           },
           "payload": {

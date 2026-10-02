@@ -21,6 +21,7 @@
             "title": "Limit"
           },
           "kind": {
+            "type": "string",
             "const": "llm"
           }
         },
@@ -56,6 +57,7 @@
             "title": "Limit"
           },
           "kind": {
+            "type": "string",
             "const": "voice"
           }
         },

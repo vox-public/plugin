@@ -14,6 +14,7 @@
             "description": "Organization-owned telephone number identifier. Use the `id` returned by `GET /v3/organization-telephone-numbers`, not the phone number string."
           },
           "kind": {
+            "type": "string",
             "const": "general"
           },
           "payload": {
@@ -56,6 +57,7 @@
             "description": "UAN telephone identifier. Use the `id` returned by `GET /v3/telephone-numbers/uan`, not the phone number string."
           },
           "kind": {
+            "type": "string",
             "const": "uan"
           },
           "payload": {
