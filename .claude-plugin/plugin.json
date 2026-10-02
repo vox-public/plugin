@@ -6,6 +6,7 @@
     "name": "vox.ai",
     "url": "https://vox.ai"
   },
+  "license": "MIT",
   "skills": "./skills/",
   "mcpServers": "./.mcp.json"
 }
