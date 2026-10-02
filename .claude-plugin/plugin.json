@@ -1,12 +1,19 @@
 {
   "name": "vox-ai",
+  "displayName": "vox.ai",
   "version": "0.2.11",
   "description": "vox.ai 음성 에이전트 설계·구축·운영을 위한 MCP 연결과 공통 스킬",
   "author": {
     "name": "vox.ai",
     "url": "https://www.tryvox.co"
   },
+  "homepage": "https://www.tryvox.co",
+  "repository": "https://github.com/vox-public/plugin",
   "license": "MIT",
+  "privacyPolicyUrl": "https://www.tryvox.co/legal/privacy-policy",
+  "termsOfServiceUrl": "https://www.tryvox.co/legal/terms-of-service",
+  "supportUrl": "https://www.tryvox.co",
+  "documentationUrl": "https://docs.tryvox.co/docs/ai/plugin",
   "skills": "./skills/",
   "mcpServers": "./.mcp.json"
 }
