@@ -1,7 +1,7 @@
 {
-  "version": "0.2.11",
+  "version": "0.2.12",
   "skills_count": 26,
-  "sha256": "ced2614206ababf8d2a9b78d1ccc396e4a157a192af313edacc13e8c7a323b25",
+  "sha256": "443dfedc68da620feae90b41e1c92cd6099784c4147761f7c19366b0248317a3",
   "capability_directories": [
     "/workspace/vox-ai/skills"
   ],
@@ -76,7 +76,7 @@
     "references/workflow-examples.md": "da4548a89f9be7116e77bbd108e87f0aa21c748d2f01f0adf8ab5748ac0cb744",
     "references/workflow-guidance.md": "0748f76f3a4247d59d74445352ab8d0a525eac7745cc0e737c2ae8567f5eec44",
     "skills/agents-platform/SKILL.md": "d5342008cabca17bdb8b3f04464b0a6a9a9bdaf5300af2c424671a6d63353c2c",
-    "skills/build-first-voice-agent/SKILL.md": "69e3a292d05868110789eeda80cbd1df4ef014c6e603a81e743326e95e741349",
+    "skills/build-first-voice-agent/SKILL.md": "94b0383948290aae42de5a45af9f3b4d75eab90acadf8d990a5919d39cca93d0",
     "skills/cli-authoring/SKILL.md": "2e2a7d292172144400bec6be029c0b8bb31d0bd8c96b20b45d87e8e504f757f1",
     "skills/configure-call-results/SKILL.md": "93dc075d06e7d0049c9efdb4cbf6e6edcbb1767df394b8e7ee4e202afd625f3b",
     "skills/configure-supporting-channel/SKILL.md": "1dc71d85082ad32c070b76b905aa44f13bc91c0d82664b65635f0568dd96c7e0",
