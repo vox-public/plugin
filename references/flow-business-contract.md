@@ -3,7 +3,7 @@
 [Flow 설계](../skills/voice-agent-design/SKILL.md)로 정해진 업무에서만 적용한다. 아래 이름과 값은 가상 예시다. 사용자가 준 작업 명세·API 계약이 있으면 그 필드명과 enum을 그대로 사용한다. 없는 API를 구현했다고 보고하지 않는다.
 
 ## 문항·단계별 결과
-생성 전에 각 문항의 결과 변수와 저장 payload를 표로 정한다. 예: `q1_result`(string: 명세의 enum), `q1_said`(string: 정규화 답), `q1_reprompt_count`(number: 실제 재안내 수), `q1_failure_reason`(string: 명세의 사유), 재안내 결과 `q1_r_result`. 모든 문항에 같은 규칙을 적용하고 복수 상품은 상품별 결과를 보존한다. 명세가 `question_id`, `interpreted_answer`, `validation_result`, `reprompt_count`, `failure_reason`, `callback_required`, `completed`를 요구하면 그 이름으로 매핑한다. 미도달·불명확·명확한 NO·불일치를 성공으로 채우지 않는다.
+생성 전에 각 문항의 결과 변수와 저장 payload를 표로 정한다. 예: `q1_result`(string: 명세의 enum), `q1_said`(string: 정규화 답), `q1_reprompt_count`(number: 실제 재안내 수), `q1_failure_reason`(string: 명세의 사유), 재안내 결과 `q1_r_result`. 모든 문항에 같은 규칙을 적용하고 복수 상품은 상품별 결과를 보존한다. 명세가 `question_id`, `interpreted_answer`, `validation_result`, `reprompt_count`, `failure_reason`, `callback_required`, `completed`를 요구하면 그 이름으로 매핑한다. 기록 범위는 실제 방문한 문항과 선택한 분기에 맞추고, 미도달·불명확·명확한 NO·불일치를 성공으로 채우지 않는다.
 
 전체 기록은 실패 단계(`failure_stage`), 사유(`failure_reason`), 실제 재안내 수(`reprompt_count`), 문항별 결과(`answers`)와 `outcome`을 포함한다. 명세가 `COMPLETED`, `CALLBACK`, `WRONG_NUMBER`라면 대소문자까지 그대로 쓴다. `callback_required`를 outcome 대신 쓰지 않는다. 전체 확인 성공일 때만 완료로 기록한다. 실패 종료 직전에 해당 단계와 사유를 보존하고 마지막 요약 추출로 앞 단계 결과를 덮어쓰지 않는다. 통화 후 분석 문구만으로 통화 중 API 기록을 대체하지 않는다. 저장 응답의 성공 근거도 확인한다.
 
@@ -20,7 +20,19 @@
 logic의 오른쪽 `{{변수}}`는 치환되지 않아 변수끼리 비교가 거짓이 될 수 있다. extraction/API가 만든 상태 코드를 `MATCH`, `MISMATCH`, `NO`, `UNCLEAR` 같은 **리터럴**에 비교한다. 실제 노드·edge·응답 매핑은 최신 MCP schema를 확인한다.
 
 ## 등록값 비교
-주소·날짜처럼 표기가 흔들리는 값은 AI edge에 원문끼리 비교하라는 지시만 넣지 않는다. extraction에서 고객 답과 등록값을 같은 규칙으로 정규화하고 비교 결과와 정규화 답을 함께 추출한다. 가상 주소 `일 동 이 호`와 `1동 2호`는 동·호 구성요소로 정규화하되 address2의 동·호가 빠지면 MATCH로 만들지 않는다. 추출 프롬프트에 등록값과 address2 포함 조건을 명시하고 logic은 결과 리터럴로 분기한다. LLM 추출은 결정적 검증을 보장하지 않으므로 정확한 주소·누락·다른 호수·정정 사례를 시험한다. 검증 API가 실제 계약에 있으면 정규화 답과 등록값을 보내 결과로 분기한다. 없는 검증 API를 연결했다고 하지 않는다.
+주소·날짜처럼 표기가 흔들리는 값은 AI edge에 원문끼리 비교하라는 지시만 넣지 않는다. extraction에서 고객 답과 등록값을 같은 규칙으로 정규화하고 비교 결과와 정규화 답을 함께 추출한다. 비교 대상은 업무 명세가 요구하고 실제 등록값에 존재하는 구성요소로 한정하며, 등록되지 않은 동·호·층 같은 값을 추정해 추가 요구하지 않는다. 필요한 등록 기준 자체가 없거나 조회에 실패하면 빈 기준을 일치로 처리하지 말고 명세의 확인·실패 경로로 보낸다. 추출 프롬프트에 실제 등록값과 명세상 비교 기준을 명시하고 logic은 결과 리터럴로 분기한다. LLM 추출은 결정적 검증을 보장하지 않으므로 정확한 값·누락·불일치·정정 사례를 시험한다. 검증 API가 실제 계약에 있으면 정규화 답과 등록값을 보내 결과로 분기한다. 없는 검증 API를 연결했다고 하지 않는다.
+
+## 비교·재안내 경로
+원문 질문은 dynamic conversation의 `first_message`에 두고 `prompt`에는 그 대화 노드의 응답 역할을 쓴다. 단순한 수집은 완료 조건을 `loop_condition`으로 처리할 수 있다. 비교를 loop에서 직접 한다면 비교에 쓰는 실제 변수가 노드 진입 전에 준비됐는지와 명세의 비교·정규화 기준을 확인한다. 비교나 재안내 횟수 판정이 복잡하면 답 수신 AI edge → 비교 결과 extraction → condition 분기로 나누고, extraction 결과는 명세의 상태 값에 분기한다. 이 경로에서 답 수신을 AI edge가 맡으면 같은 답 수신·비교 판정을 `loop_condition`에 중복하지 않는다.
+
+| 시도 | 판정·잔여 횟수 | 경로 |
+|---|---|---|
+| 각 답변 | 명세의 성공 조건 | 지정된 다음 단계 |
+| 각 답변 | 원문·명세에 있는 명확한 NO/거부 | 기존 NO/실패 출구 |
+| 각 답변 | 그 밖의 비성공 판정, 명세상 재안내 횟수가 남음 | 원문을 보존하는 재안내 경로 |
+| 각 답변 | 그 밖의 비성공 판정, 재안내가 없거나 상한 도달 | 명세의 실패·종료 경로 |
+
+condition 경로를 따로 두면 같은 conversation 노드에서 동일 비교나 재안내를 반복하지 않는다. 원문보다 횟수나 성공 기준을 강화하지 않는다. 답 수신 AI edge와 extraction은 여전히 모델 판정이며, 별도 재안내 노드는 graph 방문 상한만 제한한다. 침묵은 conversation 전환 조건이 아니므로 무응답 종료, history 경계, 실제 답 수신 여부를 따로 확인한다.
 
 ## mock·채팅 시험
 모든 mock/API 노드에 같은 조합 사례 헤더 `X-Fixture-Case: {{fixture_case}}`와 추적 헤더 `X-Trace: {{chat_id}}`를 넣는다. 조회·연결·문자·접수·결과 기록·fallback도 빠짐없이 적용하고 단계별 case 변수로 나누지 않는다. 실제 서비스 API는 헤더 계약을 확인한다.
