@@ -74,7 +74,7 @@ metadata:
 
 ## Flow와 ARS 흐름
 위 ‘에이전트 유형 선택’에서 Flow로 정해졌을 때만 적용한다. 그렇지 않으면 이 절은 건너뛴다. 키패드 메뉴 ARS의 구조·키 표·골격 그래프는 [Flow ARS 패턴](../../references/flow-ars-pattern.md)을 따른다.
-- 노드는 실제 schema가 허용하는 `begin`, `conversation`, `tool`, `condition`, `extraction`, `api`, `sendSms`, `transferCall`, `transferAgent`, `endCall`, `note`로 설계한다. 노드 `data`는 snake_case, 분기는 edge `condition`(`ai`·`logic`·`fallback`)으로 둔다. `prompt_type`: `static`·`static_sentence`로 고정 문구를 두고 `is_allow_interruption`으로 끼어들기를 정한다. F2·F5 질문은 dynamic conversation의 `first_message`에 그대로, 판정·재안내만 `prompt`에(원문 낭독은 미보장); 고지·완료는 `static_sentence`에 둔다.
+- schema 허용 노드: `begin`, `conversation`, `tool`, `condition`, `extraction`, `api`, `sendSms`, `transferCall`, `transferAgent`, `endCall`, `note`. `data`는 snake_case; edge `condition`은 `ai`·`logic`·`fallback`. 고정 문구는 `prompt_type`=`static`·`static_sentence`, 끼어들기는 `is_allow_interruption`으로 정한다. F2·F5 원문 질문은 dynamic conversation `first_message`에 그대로, 판정·재안내는 `prompt`에 둔다(원문 낭독은 미보장).
 - 키패드(DTMF) 메뉴는 키마다 AI edge를 달지 않는다. 눌린 키는 고객 메시지로 들어오므로 분류용 `extraction` 노드 하나가 메뉴 코드를 뽑고, `condition` 노드의 `logic` 조건이 그 코드로 결정적으로 분기한다.
 - 시각·요일·휴일처럼 값으로 갈리는 분기도 `condition` 노드의 `logic` 조건이다. `begin`의 나가는 edge는 `fallback` 조건만 허용하므로 `begin` → `condition` 노드로 분기한다. `current_time`을 logic 변수로 쓸 수 있다. logic edge는 저장 순서대로 평가해 처음 맞는 것을 택하므로 휴일 edge를 영업시간 edge보다 앞에 둔다.
 - `conversation` 노드에는 `fallback` edge를 달 수 없고 저장이 거부된다. ‘그 밖의 입력’은 AI 조건 edge로 쓴다. 실패 후 접수나 대표 연결로 복귀해야 하는 `transferCall`은 반드시 `transfer_type: "warm"`과 실패 `fallback` edge를 쓴다. cold는 이 요구에 쓰지 않는다. 다른 agent로는 `transferAgent`다.
@@ -85,4 +85,4 @@ metadata:
 
 저장 전에는 `validate_flow`를 `level="all"`로 호출해 errors를 고치고 advisories(저장은 막지 않는 실행 경고)도 읽어 반영한다. `save_agent`는 [agents-platform](../agents-platform/SKILL.md)의 Flow agent 절차를 따른다. 흐름을 만들었다는 것이 실제 통화 시험을 마쳤다는 뜻은 아니며, 시험은 고객이 직접 한다.
 
-[Flow 업무 계약](../../references/flow-business-contract.md)을 따른다. 저장 전 질문 목적·답 수신, 분기 전 다른 단계 질문 금지, placeholder별 입력·생산·native 타입·경로, 값 보존·누락 질문, 같은 작업 성공 전 완료 금지를 점검한다. 결과 schema/outcome·모든 API 공통 case/trace·전체 채팅 입력·실패 복귀도 확인한다.
+[Flow 업무 계약](../../references/flow-business-contract.md)을 따른다. 저장 전 질문 목적·답 수신/분기 순서, placeholder별 입력·생산·native 타입·경로, 값 보존·누락 질문, 동일 작업 성공 전 완료 금지와 schema/outcome·API 공통 case/trace·전체 채팅 입력·실패 복귀를 확인한다. 최초·재시도 결과별 edge·목적지를 성공·대체·재안내·종료 명세에 대조하고 fallback의 성공 가로채기·필수 경로 단절도 확인한다.
