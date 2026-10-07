@@ -238,6 +238,9 @@
                 },
                 {
                   "$ref": "#/$defs/SkillTool-Input"
+                },
+                {
+                  "$ref": "#/$defs/ExtractVariablesTool"
                 }
               ]
             },
@@ -423,7 +426,7 @@
               }
             ],
             "title": "Model",
-            "description": "TTS model override. In PATCH, null clears the override; omission preserves the stored model."
+            "description": "TTS model override. For `elevenlabs` voices, use a `model` returned for that voice by `GET /v3/models/voices`; other values are rejected with `VOICE_NOT_FOUND`. New ElevenLabs selections default to eleven_v4_turbo when model is omitted or empty. Flash v2.5 can only be retained on the same existing voice. In PATCH, omission preserves the stored model when provider and voice ID are unchanged; null clears the override."
           },
           "speed": {
             "anyOf": [
@@ -1295,6 +1298,18 @@
             ],
             "title": "Sipheaders",
             "description": "Custom SIP headers sent with the transferred call. Not allowed when every destination is `operator`."
+          },
+          "holdAudio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Holdaudio",
+            "description": "What the customer hears while a `warm` transfer rings the destination. Omit or `ringback` for the default ringback tone, `none` for silence, or the `file_key` of an audio file uploaded with `POST /files` and `purpose=hold_audio`. Ignored for `cold` transfers and `operator` destinations."
           }
         },
         "type": "object",
@@ -1958,6 +1973,84 @@
         "description": "Single skill definition inside a Skill built-in tool.",
         "additionalProperties": false
       },
+      "ExtractVariablesTool": {
+        "properties": {
+          "toolType": {
+            "type": "string",
+            "const": "extract_variables",
+            "title": "Tool type",
+            "description": "Built-in tool type."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "default": "extract_variables",
+            "description": "Human-readable resource name."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "When the agent should call this tool. Omit or null to use the runtime default."
+          },
+          "variables": {
+            "items": {
+              "$ref": "#/$defs/ExtractVariableDefinition"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Variables",
+            "description": "Variables this tool saves. A saved value is used like a dynamic variable in the prompt, tool fields, call records, and webhooks. A value the agent cannot extract keeps its previous value."
+          }
+        },
+        "type": "object",
+        "required": [
+          "toolType",
+          "variables"
+        ],
+        "title": "ExtractVariablesTool",
+        "description": "Saves values from the conversation into variables.\n\nIt completes instantly, so it has no speech, interruption, response-mode, or sound settings.",
+        "additionalProperties": false
+      },
+      "ExtractVariableDefinition": {
+        "properties": {
+          "variableName": {
+            "type": "string",
+            "title": "Variablename",
+            "description": "Variable name, referenced as `{{name}}`. It must start with a letter (Korean allowed) and use only letters, digits, and `_`, up to 40 characters — the same rule as `presetDynamicVariables` keys."
+          },
+          "variableType": {
+            "type": "string",
+            "enum": [
+              "string",
+              "number",
+              "boolean"
+            ],
+            "title": "Variabletype",
+            "description": "Type of the saved value."
+          },
+          "variableDescription": {
+            "type": "string",
+            "title": "Variabledescription",
+            "description": "What value to save. The agent reads this to decide what to extract.",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "variableName",
+          "variableType"
+        ],
+        "title": "ExtractVariableDefinition",
+        "description": "One variable saved by the extract_variables tool (same keys as the flow extraction node).",
+        "additionalProperties": false
+      },
       "PublicManualValue-Input": {
         "properties": {
           "name": {
@@ -2000,6 +2093,9 @@
                 },
                 {
                   "$ref": "#/$defs/SkillTool-Input"
+                },
+                {
+                  "$ref": "#/$defs/ExtractVariablesTool"
                 }
               ]
             },
@@ -2557,6 +2653,7 @@
                 "type": "null"
               }
             ],
+            "description": "Speech mode. When omitted, the runtime uses dynamic. The schema null default represents an unset field, not static speech or silence. Set none, static, or dynamic explicitly to choose the behavior.",
             "title": "Prompt Type"
           },
           "prompt": {
@@ -3342,6 +3439,18 @@
             "title": "Sip Headers",
             "description": "SIP headers attached to the transfer call."
           },
+          "hold_audio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "What the customer hears while a `warm` transfer rings the destination. Omit or `ringback` for the default ringback tone, `none` for silence, or the `file_key` of an audio file uploaded with `POST /files` and `purpose=hold_audio`. Ignored for `cold` transfers and `operator` destinations.",
+            "title": "Hold Audio"
+          },
           "prompt_type": {
             "anyOf": [
               {
@@ -3356,6 +3465,7 @@
                 "type": "null"
               }
             ],
+            "description": "Speech mode. When omitted, the runtime uses dynamic. The schema null default represents an unset field, not static speech or silence. Set none, static, or dynamic explicitly to choose the behavior.",
             "title": "Prompt Type"
           },
           "prompt": {
@@ -3578,6 +3688,7 @@
                 "type": "null"
               }
             ],
+            "description": "Speech mode. When omitted, the runtime uses dynamic. The schema null default represents an unset field, not static speech or silence. Set none, static, or dynamic explicitly to choose the behavior.",
             "title": "Prompt Type"
           },
           "prompt": {
@@ -3996,6 +4107,9 @@
                 },
                 {
                   "$ref": "#/$defs/SkillTool-Input"
+                },
+                {
+                  "$ref": "#/$defs/ExtractVariablesTool"
                 }
               ]
             },
