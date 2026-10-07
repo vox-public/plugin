@@ -6,12 +6,13 @@
       "agent_id": {
         "type": "string",
         "format": "uuid",
-        "title": "Agent Id",
-        "description": "Agent UUID returned as `agent_id`."
+        "description": "Agent UUID returned as `agent_id`.",
+        "title": "Agent Id"
       },
       "manual_id": {
         "type": "string",
         "format": "uuid",
+        "description": "Manual UUID. Use the `manual_id` returned by `GET /v3/agents/{agent_id}/manuals`.",
         "title": "Manual Id"
       }
     },
