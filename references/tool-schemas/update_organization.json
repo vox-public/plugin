@@ -38,7 +38,7 @@
             },
             "type": "array",
             "title": "Webhook Event Subscriptions",
-            "description": "구독할 webhook 이벤트 타입 목록. 현재 `sms_received`, `handoff`, `campaign`, `sms_batch`, `chat_started`, `chat_ended`, `chat_analyzed`가 구독 대상이며, Chat lifecycle 이벤트는 organization의 Call webhook_version과 무관하게 항상 `v2`로 전송된다. 통화 관련 이벤트는 구독과 무관하게 항상 발송된다. 중복은 제거되고, `null`은 거부되며 생략 시 유지."
+            "description": "구독할 webhook 이벤트 타입 목록. 현재 `sms_received`, `sms_sent`, `handoff`, `campaign`, `sms_batch`, `chat_started`, `chat_ended`, `chat_analyzed`가 구독 대상이며, Chat lifecycle 이벤트는 organization의 Call webhook_version과 무관하게 항상 `v2`로 전송된다. 통화 관련 이벤트는 구독과 무관하게 항상 발송된다. 중복은 제거되고, `null`은 거부되며 생략 시 유지. `sms_sent`는 문자의 통신사 최종 결과가 정해질 때 한 번 전송된다. 결과는 보통 몇 초 안에 정해지지만 수신 휴대폰이 꺼져 있으면 최대 24시간이 걸린다. `sms_batch`는 대량 문자 발신의 모든 문자 결과가 정해지거나 마지막 문자를 발신한 지 10분이 지나면 한 번 전송된다."
           },
           "billing_invoice_recipient_emails": {
             "items": {
