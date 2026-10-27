@@ -164,6 +164,7 @@
           "get_customer",
           "get_number",
           "get_sheet",
+          "inject_call_context",
           "launch_campaign",
           "list_calls",
           "list_campaigns",
@@ -187,7 +188,8 @@
       },
       "host_actions": [
         "Before place_call, launch_campaign, or resume_campaign the assistant confirms the target, from number, and agent/version in the conversation and creates a fresh execution_key per intended action.",
-        "On EXECUTION_RESULT_UNKNOWN or EXECUTION_IN_PROGRESS the assistant never retries; it checks get_call/list_calls or get_campaign/list_campaigns."
+        "On EXECUTION_RESULT_UNKNOWN or EXECUTION_IN_PROGRESS the assistant never retries; it checks get_call/list_calls or get_campaign/list_campaigns.",
+        "Before inject_call_context the assistant confirms the ongoing call, context text, and response mode in the conversation. It uses the required idempotency_key, not execution_key; 202 accepted proves delivery only, and application or speech results arrive through the call_context webhook matched by control_id."
       ],
       "designed_unavailable_fallback": "Call transfer and SMS tools are not part of this tool set. If place_call or campaign tools are not exposed, say live operation is unavailable on this connection and do not claim call or campaign execution."
     },

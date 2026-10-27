@@ -116,6 +116,7 @@
           "get_sheet",
           "get_tool",
           "import_knowledge_documents",
+          "inject_call_context",
           "instantiate_agent_template",
           "launch_campaign",
           "list_agent_templates",

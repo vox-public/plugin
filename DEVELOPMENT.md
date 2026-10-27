@@ -37,7 +37,7 @@ CI는 테스트와 빌드를 실행하고 커밋된 bundle manifest가 최신인
 
 ## 연결된 도구와 snapshot
 
-설치 후 연결된 서버의 도구 목록과 입력 스키마를 확인합니다. 번들에는 첫 배포 범위 도구(조직·agent·버전·템플릿·Manual·도구·지식·번호·통화·캠페인·시트·고객)의 schema 후보가 있습니다. 실제 호스트의 노출 도구와 권한은 다를 수 있습니다. workflow별 capability는 [workflow-capabilities.json](references/workflow-capabilities.json), 입력 schema와 출처 상태는 [implemented-tools.snapshot.json](references/implemented-tools.snapshot.json)에 있습니다.
+설치 후 연결된 서버의 도구 목록과 입력 스키마를 확인합니다. 번들에는 공개 도구 55개(조직·agent·버전·템플릿·Manual·도구·지식·번호·통화·캠페인·시트·고객)의 schema 후보가 있으며, 진행 중 통화의 맥락 주입 도구 `inject_call_context`를 포함합니다. 임베디드 전용 `send_sms`와 설계 상태의 `send_sms_batch` 등은 공개 구현 도구에 넣지 않습니다. 실제 호스트의 노출 도구와 권한은 다를 수 있습니다. workflow별 capability는 [workflow-capabilities.json](references/workflow-capabilities.json), 입력 schema와 출처 상태는 [implemented-tools.snapshot.json](references/implemented-tools.snapshot.json)에 있습니다.
 
 ## 로컬에서 시험하기
 
