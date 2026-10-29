@@ -1,7 +1,7 @@
 # vox.ai Plugin
 
 Claude Code, Codex, Grok Build에서 vox.ai에 연결하고 음성 에이전트를 설계·개선하는 플러그인입니다.
-매뉴얼 작성·개선, 버전 게시, 보유 번호 연결, 발신·캠페인 운영, 통화 결과 확인 등 업무별 지침 26개와 원격 MCP 연결 설정을 제공합니다.
+매뉴얼 작성·개선, 버전 게시, 보유 번호 연결, 발신·캠페인 운영, 통화 결과 확인 등 업무별 지침 27개와 원격 MCP 연결 설정을 제공합니다.
 
 실행 가능한 기능은 연결된 서버가 제공하는 도구와 계정 권한에 따라 달라집니다.
 
@@ -128,7 +128,7 @@ grok plugin marketplace remove vox-ai
 
 ## English
 
-The vox.ai plugin connects Claude Code, Codex and Grok Build to vox.ai, a voice AI platform for phone agents that answer and place calls in Korean. It adds 26 skills for designing, building, testing and operating voice agents, and configures two remote MCP servers.
+The vox.ai plugin connects Claude Code, Codex and Grok Build to vox.ai, a voice AI platform for phone agents that answer and place calls in Korean. It adds 27 skills for designing, building, testing and operating voice agents, and configures two remote MCP servers.
 
 - `vox-ai` at <https://mcp.tryvox.co/mcp> reads and changes agents, manuals, knowledge, tools, numbers, calls and campaigns. Sign in with your vox.ai account. Every action runs with the permissions you already have in that workspace.
 - `vox-docs` at <https://docs.tryvox.co/mcp> searches the public vox.ai documentation. No sign-in is needed.

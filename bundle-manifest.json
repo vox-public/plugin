@@ -1,13 +1,14 @@
 {
   "version": "0.2.22",
-  "skills_count": 26,
-  "sha256": "6870459922961b2aa0b05dd87b5994540825f51a228cba92a4f47a124437a195",
+  "skills_count": 27,
+  "sha256": "a0e3829ef1d012d83b3fb9faaf2f6534148b64ab28b8517bf78891284e417116",
   "capability_directories": [
     "/workspace/vox-ai/skills"
   ],
   "files": {
     "references/call-baseline.md": "57f955d16caee3ed90e1fd30d1706a81d27792f8b558e60100922eb32738c1ea",
     "references/decision-slots.json": "51b8a1d87374882df03721583cea1b7cc8efbde6c9e0687d416fed4ad80db8b5",
+    "references/evaluation-examples.md": "fdc2f94d550d4bfe7f54573ee5615aee6fa7accff40506d965e7308305fad159",
     "references/execution-contract.md": "3c1f12ba28487ee341e8bb00adda657f352ac5778c0c01fd1e554ffb92605f76",
     "references/flow-ars-pattern.md": "dd04974f2e9b8a00f84580e6f7a4328a9536e4e7648eed424b08678ee5181972",
     "references/flow-ars-skeleton.json": "3d4a5baadc694bd78cfaa3f7e0831d19099fadbf51feea77e6a5f37e404c6c82",
@@ -73,7 +74,7 @@
     "references/voice-prompt-failure-guidance.md": "abf0a81c125ffdef15479ead8403c4f12ebbde65f8c54a3f5b9c198dec91af8d",
     "references/voice-prompt-guidance.md": "6b5a101725d922658ff0c8703c38a58a36a2201d49da5a2528fb6875d7585fc2",
     "references/voice-test-cases.md": "da8ad4b925a3672d5c4ec3ea3d971f6e5add6dd6c6dcd7761fae629cf0b7d429",
-    "references/workflow-capabilities.json": "244dd7d4d15f0431ede90cda800a97db94ffc04f6cc9f8209a965f0cdce675e5",
+    "references/workflow-capabilities.json": "0c157fa47f6efd47143f7970b433fa163864917724e4afbc4a140f169a6c85b6",
     "references/workflow-examples.md": "dd19e8d1476e357613ac82b23377281d416a01afb5b222b472fd8c2678270e4d",
     "references/workflow-guidance.md": "39eaeba7822fbd61838a4a75aa8df8f0cdbc738d13bf488cac18ad9999a2bb1b",
     "skills/agents-platform/SKILL.md": "597493edb8bebbef6abab4cf2b7899a314fe1ee73568a08551697f239f73aa95",
@@ -85,6 +86,7 @@
     "skills/connect-phone-service/SKILL.md": "b49571dcffecad9b14b39cd2fdae63b11f898f70c74e53cd6a8d7315c28231bd",
     "skills/dashboard-navigation/SKILL.md": "b6bc0c0cf2d2ff8581d0fee3c500352e47a7667e3f9be27a67b444b5d606af40",
     "skills/edit-manual-safely/SKILL.md": "ec8480f6f4a87380dd6349171e26ba3bb7a4fd1ac648c2da6ff4ff746a64a38f",
+    "skills/evaluate-voice-agent/SKILL.md": "b4ba1f7b4ef86ecf113eda981fd66122f2f178a7904c316f4989a12ac604d612",
     "skills/explore-agent-context/SKILL.md": "774d244c36cba2ed9146f7c64ee42bb520fcb8a28fedc681cae8386569aca5de",
     "skills/inspect-call-evidence/SKILL.md": "8222963ca4d7d51a6e40aa649c964b7bd27228080b6c63d80ac031191a6f0189",
     "skills/knowledge-grounding/SKILL.md": "193b52d2cd06ecfad4d9cf9f1d93ec845d202303d9c33057475e01600017e099",

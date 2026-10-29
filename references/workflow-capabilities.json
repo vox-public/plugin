@@ -253,6 +253,41 @@
         "When the host cannot access the original conversation, the user provides prior resource IDs and the latest decision."
       ],
       "designed_unavailable_fallback": "Resume from same-host history or a user-provided handoff, then verify supplied IDs and current revisions. Never infer that another thread or host was searched. After an unknown execution, look up state with the read tools instead of re-running."
+    },
+    {
+      "id": "evaluation",
+      "implemented": {
+        "required_tools": [],
+        "optional_tools": [
+          "get_agent",
+          "get_call",
+          "get_manual",
+          "get_schema",
+          "get_tool",
+          "list_agent_versions",
+          "list_manuals"
+        ]
+      },
+      "designed": {
+        "required_tools": [],
+        "optional_tools": [
+          "delete_test",
+          "get_test",
+          "get_test_batch",
+          "get_test_run",
+          "list_test_batches",
+          "list_test_runs",
+          "list_tests",
+          "run_tests",
+          "save_scenario_test",
+          "save_unit_test"
+        ]
+      },
+      "host_actions": [
+        "The user confirms each run_tests call after the assistant summarizes the evaluation, agent, version and total count; writing an evaluation is not a run approval.",
+        "A run receipt is not a result: the assistant reads execution_status and result separately and does not report pending billing as zero."
+      ],
+      "designed_unavailable_fallback": "Say the connected server has no evaluation tools, do not claim anything was written or run, and point to the customer's own voice test in the product UI."
     }
   ],
   "scope_note": "The bundle documents the first-release tool schema candidates. This does not prove a connected host exposes them. Inspect the live tool list and schemas."
