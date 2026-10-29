@@ -294,7 +294,7 @@
       "name": "prepare-voice-test",
       "layer": "architect",
       "path": "skills/prepare-voice-test/SKILL.md",
-      "description": "고객이 vox.ai 에이전트를 직접 음성 시험하도록 준비하고 기대 결과와 고객 보고 또는 조회 가능한 통화 근거를 구분할 때 사용한다. 유닛 테스트·시나리오 테스트 같은 자동 평가는 evaluate-voice-agent가 담당한다.",
+      "description": "고객이 vox.ai 에이전트를 직접 음성 시험하도록 준비하고 기대 결과와 고객 보고 또는 조회 가능한 통화 근거를 구분할 때 사용한다. 유닛 테스트와 시나리오 테스트는 evaluate-voice-agent가 담당한다.",
       "tools": {
         "implemented": [
           "get_agent",

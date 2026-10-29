@@ -1,7 +1,7 @@
 {
   "version": "0.2.22",
   "skills_count": 27,
-  "sha256": "7a53732dc82e79c8dff9c7669f881b32b0a28cbbdcf72b8b0471772802c9bd69",
+  "sha256": "32dba4bb3abc4f54c0fa2f7ea488d13f83ca3217e7f6c9831ed823d915e5670e",
   "capability_directories": [
     "/workspace/vox-ai/skills"
   ],
@@ -76,8 +76,8 @@
     "references/voice-test-cases.md": "23c7517d6bb2f1701712205893574448fb827c606b1836fef269b9188df4214f",
     "references/workflow-capabilities.json": "0c157fa47f6efd47143f7970b433fa163864917724e4afbc4a140f169a6c85b6",
     "references/workflow-examples.md": "dd19e8d1476e357613ac82b23377281d416a01afb5b222b472fd8c2678270e4d",
-    "references/workflow-guidance.md": "3a155c6b4980566e65f5ce9d8175028357ce3a58ea8bb855ea19c9e57b6630bf",
-    "skills/agents-platform/SKILL.md": "a8cfc497454555f8759548acf964d3213c977decc89b79df09f3377aa806cff2",
+    "references/workflow-guidance.md": "f336aeee55921f06c2d2baf0e074ea5760cbbd3fad488bf1ccb26c6ab4d43b52",
+    "skills/agents-platform/SKILL.md": "313b90e34f2e8b14a5078bf46d38078ad7a74b75fb034db25fe31b12fba51879",
     "skills/build-first-voice-agent/SKILL.md": "140f5d2caa55554c00806580fa99306827d4de46b18212fec0b1956fe197984e",
     "skills/cli-authoring/SKILL.md": "2e2a7d292172144400bec6be029c0b8bb31d0bd8c96b20b45d87e8e504f757f1",
     "skills/configure-call-results/SKILL.md": "8b6022729456ad15f04f2d40f0f8405aa387548faa009529e29e9550073b0deb",
@@ -93,7 +93,7 @@
     "skills/manual-authoring/SKILL.md": "327c456579e270a35b09f836f169c939a295d236263ffee95ebe58722289003a",
     "skills/operate-outbound-and-followup/SKILL.md": "6ae04dd480e00ea34b41d36d5410b48b16aa7bf470996eacad6f57485e079713",
     "skills/post-call-result-design/SKILL.md": "72e2e0f7c832d4fbf482eb1b4091ace2d2643c50fa7966809c4911564f61b07e",
-    "skills/prepare-voice-test/SKILL.md": "2e33639cea484c5943c4cf065591012c1a4ae26a550a6dd8af6a158f96994377",
+    "skills/prepare-voice-test/SKILL.md": "b621ed6d58544a287a5e4892647a7c743e86bbbdf637e64e13d8877f020d30bc",
     "skills/product-documentation/SKILL.md": "20f0c16b4572f17ddfbea8839171da5fb27c043b487a4ec0875c418f379f2a23",
     "skills/resume-agent-work/SKILL.md": "e18d0d801ce3d6ffcac586db60229936193c77232600cc89cc6331281f58e41d",
     "skills/review-call-performance/SKILL.md": "2b820e5f4304a27362ff409baa2e9b4e141a299ba3639876435520a70ee2564a",
