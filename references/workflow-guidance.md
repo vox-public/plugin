@@ -49,4 +49,4 @@
 
 완료 근거를 구성 저장 / 음성 시험 / 결과 저장 확인 / 실제 전화 운영 / 외부 업무 완료로 구분한다. 현재 요청에 필요한 근거를 충족했으면 불필요한 운영 확장을 시작하지 않는다. 목표가 바뀌면 확인 기준을 바꾸되 이미 확인된 결과를 버리지 않는다.
 
-실제 동작은 관련 Architect 스킬을 따른다. 재시험은 prepare-voice-test/try-and-improve-voice-agent, 변경 범위는 review-shared-impact, 중단 복귀는 resume-agent-work를 사용한다. 스킬 연결은 작업을 선택하는 안내이며 모든 파일을 순서대로 읽는 절차가 아니다.
+실제 동작은 관련 Architect 스킬을 따른다. 재시험은 prepare-voice-test/try-and-improve-voice-agent, 저장해 반복하는 자동 평가는 evaluate-voice-agent, 변경 범위는 review-shared-impact, 중단 복귀는 resume-agent-work를 사용한다. 스킬 연결은 작업을 선택하는 안내이며 모든 파일을 순서대로 읽는 절차가 아니다.

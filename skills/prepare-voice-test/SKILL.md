@@ -1,6 +1,6 @@
 ---
 name: prepare-voice-test
-description: "고객이 vox.ai 에이전트를 직접 음성 시험하도록 준비하고 기대 결과와 고객 보고 또는 조회 가능한 통화 근거를 구분할 때 사용한다. 고객용 자동 시뮬레이션 플랫폼은 생성하지 않는다."
+description: "고객이 vox.ai 에이전트를 직접 음성 시험하도록 준비하고 기대 결과와 고객 보고 또는 조회 가능한 통화 근거를 구분할 때 사용한다. 유닛 테스트·시나리오 테스트 같은 자동 평가는 evaluate-voice-agent가 담당한다."
 metadata:
   product: vox.ai
   layer: architect
@@ -10,6 +10,8 @@ metadata:
 # prepare-voice-test
 
 제품 호출에는 [공통 실행 계약](../../references/execution-contract.md)을 적용한다. 내장/외부의 질문·음성·파일 차이는 [호스트 연결](../../references/host-adapters.md)을 따른다. 도구는 연결된 서버가 제공하는 실제 이름과 스키마를 확인한 뒤 사용한다.
+
+이 스킬은 고객이 직접 하는 음성 시험만 다룬다. 저장해 두고 반복 실행하는 유닛 테스트·시나리오 테스트는 [평가](../evaluate-voice-agent/SKILL.md)가 담당한다.
 
 ## 준비
 agent·대상 버전·해당 Single의 agent-scoped Manual을 확인한다. `get_agent`·`list_agent_versions`·`list_manuals`로 시험할 버전과 본문을 읽고, 읽지 못한 정보는 사용자가 준 것임을 표시한다. 자료가 아웃바운드 업무면 합성 사전 정보를 사용해 도입/거절을 시험할 수 있는지 현재 진입 경로를 확인한다. 실고객 데이터나 실제 발신을 기본값으로 쓰지 않는다.
