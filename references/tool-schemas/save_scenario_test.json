@@ -1,0 +1,230 @@
+{
+  "name": "save_scenario_test",
+  "inputSchema": {
+    "oneOf": [
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "type": "string",
+            "const": "create"
+          },
+          "payload": {
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1,
+                "title": "Name",
+                "description": "시나리오 이름입니다."
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Description",
+                "description": "Human-readable description."
+              },
+              "user_prompt": {
+                "type": "string",
+                "minLength": 1,
+                "title": "User Prompt",
+                "description": "시뮬레이션 고객의 목표와 행동입니다."
+              },
+              "rubric": {
+                "type": "string",
+                "minLength": 1,
+                "title": "Rubric",
+                "description": "대화 전체를 평가할 기준입니다."
+              },
+              "max_turns": {
+                "type": "integer",
+                "maximum": 30.0,
+                "minimum": 3.0,
+                "title": "Max Turns",
+                "description": "최대 대화 횟수입니다. 기본 15, 3~30의 정수입니다.",
+                "default": 15
+              },
+              "dynamic_variables": {
+                "anyOf": [
+                  {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Dynamic Variables",
+                "description": "Dynamic variables made available to the agent during a call."
+              },
+              "tool_mocks": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "additionalProperties": true,
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Tool Mocks"
+              },
+              "custom_properties": {
+                "anyOf": [
+                  {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Custom Properties"
+              }
+            },
+            "type": "object",
+            "required": [
+              "name",
+              "user_prompt",
+              "rubric"
+            ],
+            "title": "CreateScenarioTestRequest",
+            "additionalProperties": false,
+            "examples": [
+              {
+                "name": "이용 안내 확인",
+                "user_prompt": "이용 방법을 묻고 답변에서 불명확한 부분을 한 번 더 질문한다.",
+                "rubric": "문서에 근거해 답하고 모르는 조건은 추측하지 않는다.",
+                "max_turns": 3
+              }
+            ]
+          }
+        },
+        "required": [
+          "mode",
+          "payload"
+        ]
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "type": "string",
+            "const": "update"
+          },
+          "test_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Test Id"
+          },
+          "payload": {
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1,
+                "title": "Name",
+                "description": "Human-readable resource name."
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Description",
+                "description": "Human-readable description."
+              },
+              "user_prompt": {
+                "type": "string",
+                "minLength": 1,
+                "title": "User Prompt"
+              },
+              "rubric": {
+                "type": "string",
+                "minLength": 1,
+                "title": "Rubric"
+              },
+              "max_turns": {
+                "type": "integer",
+                "maximum": 30.0,
+                "minimum": 3.0,
+                "title": "Max Turns"
+              },
+              "dynamic_variables": {
+                "anyOf": [
+                  {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Dynamic Variables",
+                "description": "Dynamic variables made available to the agent during a call."
+              },
+              "tool_mocks": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "additionalProperties": true,
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Tool Mocks"
+              },
+              "custom_properties": {
+                "anyOf": [
+                  {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Custom Properties"
+              }
+            },
+            "type": "object",
+            "minProperties": 1,
+            "title": "UpdateScenarioTestRequest",
+            "additionalProperties": false,
+            "examples": [
+              {
+                "user_prompt": "이용 방법을 묻고 답변에서 불명확한 부분을 한 번 더 질문한다.",
+                "rubric": "문서에 근거해 답하고 모르는 조건은 추측하지 않는다.",
+                "max_turns": 3
+              }
+            ]
+          }
+        },
+        "required": [
+          "mode",
+          "test_id",
+          "payload"
+        ]
+      }
+    ]
+  }
+}

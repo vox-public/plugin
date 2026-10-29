@@ -1,0 +1,212 @@
+{
+  "name": "run_tests",
+  "inputSchema": {
+    "oneOf": [
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "unit"
+          },
+          "payload": {
+            "properties": {
+              "runs": {
+                "items": {
+                  "$ref": "#/$defs/UnitTestRunPlan"
+                },
+                "type": "array",
+                "minItems": 1,
+                "title": "Runs",
+                "description": "단건과 여러 건 모두 실행 계획 배열로 접수합니다."
+              }
+            },
+            "type": "object",
+            "required": [
+              "runs"
+            ],
+            "title": "CreateUnitTestBatchRequest",
+            "additionalProperties": false
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional idempotency key for safely retrying the same POST request for 24 hours. Must be non-empty when provided; values up to 255 characters.",
+            "title": "Idempotency-Key"
+          }
+        },
+        "required": [
+          "kind",
+          "payload"
+        ]
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "scenario"
+          },
+          "payload": {
+            "properties": {
+              "runs": {
+                "items": {
+                  "$ref": "#/$defs/ScenarioTestRunPlan"
+                },
+                "type": "array",
+                "minItems": 1,
+                "title": "Runs",
+                "description": "단건과 여러 건 모두 실행 계획 배열로 접수합니다."
+              }
+            },
+            "type": "object",
+            "required": [
+              "runs"
+            ],
+            "title": "CreateScenarioTestBatchRequest",
+            "additionalProperties": false
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional idempotency key for safely retrying the same POST request for 24 hours. Must be non-empty when provided; values up to 255 characters.",
+            "title": "Idempotency-Key"
+          }
+        },
+        "required": [
+          "kind",
+          "payload"
+        ]
+      }
+    ],
+    "$defs": {
+      "UnitTestRunPlan": {
+        "properties": {
+          "test_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Test Id",
+            "description": "실행할 UT 정의 UUID입니다."
+          },
+          "agent": {
+            "$ref": "#/$defs/AgentMapping",
+            "description": "Agent mapping object with `agent_id` and `agent_version`. Used by cross-resource references (calls / campaigns / telephone_numbers) and by `builtInTools.transfer_agent` / flow `transferAgent` node `data.agent` per v3 §2.7 AgentMapping."
+          },
+          "count": {
+            "type": "integer",
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Count",
+            "description": "같은 테스트의 실행 횟수입니다.",
+            "default": 1
+          },
+          "custom_properties": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custom Properties"
+          }
+        },
+        "type": "object",
+        "required": [
+          "test_id",
+          "agent"
+        ],
+        "title": "UnitTestRunPlan",
+        "additionalProperties": false
+      },
+      "AgentMapping": {
+        "additionalProperties": false,
+        "description": "agent_id + agent_version 매핑.\n\n요청·응답 모두에서 에이전트 매핑이 필요한 경우 이 타입을 사용한다.\n요청 중 version 지정이 불필요한 엔드포인트는 flat `agent_id: UUID` 를 직접 받고,\n`AgentMapping` 을 쓰지 않는다.",
+        "properties": {
+          "agent_id": {
+            "description": "Agent UUID.",
+            "format": "uuid",
+            "title": "Agent Id",
+            "type": "string",
+            "x-vox-effect": "wiring"
+          },
+          "agent_version": {
+            "default": "current",
+            "description": "에이전트 버전. 허용값: \"current\", \"production\", 또는 \"v{n}\" (n≥1). 미전송 시 \"current\"로 처리됩니다. null 전송은 거부.",
+            "title": "Agent Version",
+            "type": "string",
+            "x-vox-effect": "wiring",
+            "pattern": "^(current|production|v[1-9][0-9]*)$",
+            "examples": [
+              "current",
+              "production",
+              "v1"
+            ]
+          }
+        },
+        "required": [
+          "agent_id"
+        ],
+        "title": "AgentMapping",
+        "type": "object"
+      },
+      "ScenarioTestRunPlan": {
+        "properties": {
+          "test_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Test Id",
+            "description": "실행할 ST 정의 UUID입니다."
+          },
+          "agent": {
+            "$ref": "#/$defs/AgentMapping",
+            "description": "Agent mapping object with `agent_id` and `agent_version`. Used by cross-resource references (calls / campaigns / telephone_numbers) and by `builtInTools.transfer_agent` / flow `transferAgent` node `data.agent` per v3 §2.7 AgentMapping."
+          },
+          "count": {
+            "type": "integer",
+            "maximum": 3.0,
+            "minimum": 1.0,
+            "title": "Count",
+            "description": "같은 시나리오의 실행 횟수입니다.",
+            "default": 1
+          },
+          "custom_properties": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custom Properties"
+          }
+        },
+        "type": "object",
+        "required": [
+          "test_id",
+          "agent"
+        ],
+        "title": "ScenarioTestRunPlan",
+        "additionalProperties": false
+      }
+    }
+  }
+}

@@ -259,22 +259,17 @@
       "implemented": {
         "required_tools": [],
         "optional_tools": [
+          "delete_test",
           "get_agent",
           "get_call",
           "get_manual",
           "get_schema",
-          "get_tool",
-          "list_agent_versions",
-          "list_manuals"
-        ]
-      },
-      "designed": {
-        "required_tools": [],
-        "optional_tools": [
-          "delete_test",
           "get_test",
           "get_test_batch",
           "get_test_run",
+          "get_tool",
+          "list_agent_versions",
+          "list_manuals",
           "list_test_batches",
           "list_test_runs",
           "list_tests",
@@ -282,6 +277,10 @@
           "save_scenario_test",
           "save_unit_test"
         ]
+      },
+      "designed": {
+        "required_tools": [],
+        "optional_tools": []
       },
       "host_actions": [
         "The user confirms each run_tests call after the assistant summarizes the evaluation, agent, version and total count; writing an evaluation is not a run approval.",

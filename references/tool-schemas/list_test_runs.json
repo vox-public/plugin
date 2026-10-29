@@ -1,0 +1,129 @@
+{
+  "name": "list_test_runs",
+  "inputSchema": {
+    "oneOf": [
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "unit"
+          },
+          "batch_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Batch Id"
+          },
+          "test_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Test Id"
+          },
+          "execution_status": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "queued",
+                "running",
+                "completed",
+                "error"
+              ],
+              "type": "string"
+            },
+            "title": "Execution Status"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "passed",
+                "failed",
+                "error"
+              ],
+              "type": "string"
+            },
+            "title": "Result"
+          },
+          "cursor": {
+            "type": "string",
+            "title": "Cursor",
+            "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page."
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "default": 50,
+            "title": "Limit",
+            "description": "Maximum number of items to return. v3 list endpoints accept 1-100."
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "scenario"
+          },
+          "batch_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Batch Id"
+          },
+          "test_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Test Id"
+          },
+          "execution_status": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "queued",
+                "running",
+                "completed",
+                "error"
+              ],
+              "type": "string"
+            },
+            "title": "Execution Status"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "passed",
+                "failed",
+                "error"
+              ],
+              "type": "string"
+            },
+            "title": "Result"
+          },
+          "cursor": {
+            "type": "string",
+            "title": "Cursor",
+            "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page."
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "default": 50,
+            "title": "Limit",
+            "description": "Maximum number of items to return. v3 list endpoints accept 1-100."
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      }
+    ]
+  }
+}
