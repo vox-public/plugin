@@ -899,7 +899,8 @@
             "type": "boolean",
             "title": "Optoutsensitivedatastorage",
             "default": false,
-            "description": "Whether transcripts, recordings, and analysis outputs should avoid sensitive data storage."
+            "deprecated": true,
+            "description": "Deprecated. Equals `dataRetention.durationSeconds == 0` (immediate deletion). Sending `true` sets that retention."
           },
           "dataRetention": {
             "anyOf": [

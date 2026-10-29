@@ -1,0 +1,45 @@
+{
+  "name": "get_test_batch",
+  "inputSchema": {
+    "oneOf": [
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "unit"
+          },
+          "batch_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Batch Id"
+          }
+        },
+        "required": [
+          "kind",
+          "batch_id"
+        ]
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "scenario"
+          },
+          "batch_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Batch Id"
+          }
+        },
+        "required": [
+          "kind",
+          "batch_id"
+        ]
+      }
+    ]
+  }
+}

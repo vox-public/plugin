@@ -2,8 +2,8 @@
   "snapshot_date": "2026-10-01",
   "scope": "Local MCP source contract candidate. The source worktree state is recorded below; this is not a deployed-server inventory. A connected host may expose fewer tools or permissions; inspect its live tools and schemas before acting.",
   "source": {
-    "mcp_commit": "2c199c5fe8e2062191ebb484681eab0c3958515d",
-    "manifest_sha256": "e423ec9affb65ae8a86b0fab62de0187665e98df900a78ae46f6e36cd89de1e8",
+    "mcp_commit": "b22e29e72f793ef128b792568cc6eb13a743a2ea",
+    "manifest_sha256": "2322217e51ed1cdab40678f6d080c4b6e27c0c296e3ec2401c73f95fcf51bf73",
     "source_manifest_sha256": "f7c583c38b19d9d910233c285f012783acb840f0aa027dd9821e42d919224c3c",
     "source_state": "clean_commit",
     "dirty_contracts": []
@@ -20,6 +20,7 @@
     "create_sheet",
     "create_voice_model",
     "delete_knowledge_document",
+    "delete_test",
     "find_customer",
     "get_agent",
     "get_agent_template",
@@ -32,6 +33,9 @@
     "get_organization",
     "get_schema",
     "get_sheet",
+    "get_test",
+    "get_test_batch",
+    "get_test_run",
     "get_tool",
     "import_knowledge_documents",
     "inject_call_context",
@@ -53,17 +57,23 @@
     "list_organizations",
     "list_schemas",
     "list_sheets",
+    "list_test_batches",
+    "list_test_runs",
+    "list_tests",
     "list_tools",
     "pause_campaign",
     "place_call",
     "publish_agent_version",
     "resolve_customer",
     "resume_campaign",
+    "run_tests",
     "save_agent",
     "save_customer",
     "save_customer_attribute_definition",
     "save_manual",
+    "save_scenario_test",
     "save_tool",
+    "save_unit_test",
     "set_number_agents",
     "set_organization",
     "update_number",
@@ -94,6 +104,10 @@
     "delete_knowledge_document": {
       "path": "tool-schemas/delete_knowledge_document.json",
       "sha256": "bbd49debf2412185226be9d8317969cb7d75819bd2f4fe24ba3ee94fd9fdd8d6"
+    },
+    "delete_test": {
+      "path": "tool-schemas/delete_test.json",
+      "sha256": "cd20f7f69ba50c30c310907d2bf9d9a267bc78f3da93624207f9f558478d3db5"
     },
     "find_customer": {
       "path": "tool-schemas/find_customer.json",
@@ -142,6 +156,18 @@
     "get_sheet": {
       "path": "tool-schemas/get_sheet.json",
       "sha256": "005a714a28085a7a3baec4f32e5dd0af4f142354626ccc02ef8fad4ebf679f5a"
+    },
+    "get_test": {
+      "path": "tool-schemas/get_test.json",
+      "sha256": "cd20f7f69ba50c30c310907d2bf9d9a267bc78f3da93624207f9f558478d3db5"
+    },
+    "get_test_batch": {
+      "path": "tool-schemas/get_test_batch.json",
+      "sha256": "9df0e702dd5e8141e90a6106156205d0df0d0d46967b7d88c769aa8ebf0dda8b"
+    },
+    "get_test_run": {
+      "path": "tool-schemas/get_test_run.json",
+      "sha256": "5ce4fc6889c1732fa50ed891c4ebf9c75e37c72a5e3a18140dc4d39bfa4ad5f1"
     },
     "get_tool": {
       "path": "tool-schemas/get_tool.json",
@@ -227,6 +253,18 @@
       "path": "tool-schemas/list_sheets.json",
       "sha256": "7a0c918ad971fed6cb91522816c54801409a8f2c2d1b4b47412a8191e5283847"
     },
+    "list_test_batches": {
+      "path": "tool-schemas/list_test_batches.json",
+      "sha256": "5cd664fd904cb6b3539bc706599eebc9f7529158147e13d73d6e4dd78389722a"
+    },
+    "list_test_runs": {
+      "path": "tool-schemas/list_test_runs.json",
+      "sha256": "219be1838f6aa0095f027dc7a8983b926aa16ac5c3a1b0991b9bd0d28739ed86"
+    },
+    "list_tests": {
+      "path": "tool-schemas/list_tests.json",
+      "sha256": "5cd664fd904cb6b3539bc706599eebc9f7529158147e13d73d6e4dd78389722a"
+    },
     "list_tools": {
       "path": "tool-schemas/list_tools.json",
       "sha256": "7a0c918ad971fed6cb91522816c54801409a8f2c2d1b4b47412a8191e5283847"
@@ -251,9 +289,13 @@
       "path": "tool-schemas/resume_campaign.json",
       "sha256": "013d55a39ff1c8c0db4b8caf25778c44cec709a59f12bd53cafca7dafeb14847"
     },
+    "run_tests": {
+      "path": "tool-schemas/run_tests.json",
+      "sha256": "dfb721e40f0b85b80316188c760e334cc6821c8245083cb21dff1ae7545d8a35"
+    },
     "save_agent": {
       "path": "tool-schemas/save_agent.json",
-      "sha256": "976ca333bfb213be2c9b37b37d12dbbd85e79f37148a78a8c9ecaca3deed1de1"
+      "sha256": "5ff49a7c3018a1866df6abf9b190f11eec87c01c49d636f5fa74b1d23edba806"
     },
     "save_customer": {
       "path": "tool-schemas/save_customer.json",
@@ -267,9 +309,17 @@
       "path": "tool-schemas/save_manual.json",
       "sha256": "a7f6a4b9dcc7693f8626ff539f9e3e0c5e7d533da8c96de7632f08aedfeb0acf"
     },
+    "save_scenario_test": {
+      "path": "tool-schemas/save_scenario_test.json",
+      "sha256": "569fa148c387731f8b6c9a6655ee941bda7545503c7c6e49524de736a5ab2b64"
+    },
     "save_tool": {
       "path": "tool-schemas/save_tool.json",
       "sha256": "71d7bd1ed952d654e757f689969e87f7f03271062c60d294042f0962629e7b7a"
+    },
+    "save_unit_test": {
+      "path": "tool-schemas/save_unit_test.json",
+      "sha256": "ca9ce037f6a2ee68203b2ba0f221bebd013d1b86b28bd5d68ad9abd0e42c28bc"
     },
     "set_number_agents": {
       "path": "tool-schemas/set_number_agents.json",
