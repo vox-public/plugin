@@ -284,7 +284,7 @@
       },
       "host_actions": [
         "The user confirms each run_tests call after the assistant summarizes the evaluation, agent, version and total count; writing an evaluation is not a run approval.",
-        "A run receipt is not a result: the assistant reads execution_status and result separately and does not report pending billing as zero."
+        "A run receipt is not a result: the assistant reads status and result separately and does not report a pending run_cost as zero."
       ],
       "designed_unavailable_fallback": "Say the connected server has no evaluation tools, do not claim anything was written or run, and point to the customer's own voice test in the product UI."
     }
