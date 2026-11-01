@@ -10,7 +10,7 @@
 | --- | --- |
 | `user` | `content` |
 | `agent` | `content`, 마지막 항목이면 `eval` |
-| `tool_call_invocation` | `tool_call_id`(선택), `name`, `arguments`(객체), 마지막 항목이면 `eval`. 검사 항목에서는 `name`·`arguments`를 생략할 수 있다. |
+| `tool_call_invocation` | `tool_call_id`(선택), `name`, `arguments`(객체), 마지막 항목이면 `eval`. `eval`이 붙은 항목에서는 `name`·`arguments`를 생략할 수 있다. |
 | `tool_call_result` | `tool_call_id`(선택), `content`(문자열) |
 
 - `eval`은 마지막 항목에만 두고 `expected_behavior`를 쓴다. Flow 전환을 검사하는 `agent` 항목만 `to_node_id`를 더하며, 응답 검사에는 이 키를 null이나 빈 문자열로도 넣지 않는다. `eval` 안에 다른 키를 쓰면 거절된다.
@@ -21,7 +21,7 @@
 
 ## 유닛 테스트: 통화에서 잘라 만들기
 
-`get_call(include_transcript=true)`가 돌려준 `transcript`에서 검사할 응답까지 잘라 붙이고 마지막 항목에 `eval`만 더한 `save_unit_test` 인자다. 복사한 항목의 `start_at`·`end_at`과 `tool_call_id`는 그대로 두어도 된다. 실제 통화의 응답이 잘못됐다면 그 응답을 기대로 옮기지 않고 `expected_behavior`에 올바른 행동을 쓴다.
+`get_call(include_transcript=true)`가 돌려준 `transcript`에서 확인할 응답까지 잘라 붙이고 마지막 항목에 `eval`만 더한 `save_unit_eval` 인자다. 복사한 항목의 `start_at`·`end_at`과 `tool_call_id`는 그대로 두어도 된다. 실제 통화의 응답이 잘못됐다면 그 응답을 기대로 옮기지 않고 `expected_behavior`에 올바른 행동을 쓴다.
 
 ```json
 {
@@ -132,7 +132,7 @@ Flow는 `flow_agent_id`와 `flow_start_node_id`를 함께 쓰고, 전환은 마�
 
 ## 실행 접수
 
-사용자가 진행을 확인한 뒤의 `run_tests` 인자다. 유닛 테스트는 `count` 1~10, 시나리오 테스트는 1~3이고, 한 요청의 `count` 합은 100 이하다. `idempotency_key`는 같은 시도의 재전송에만 같은 값을 쓴다.
+사용자가 진행을 확인한 뒤의 `run_evals` 인자다. 유닛 테스트는 `count` 1~10, 시나리오 테스트는 1~3이고, 한 요청의 `count` 합은 100 이하다. `idempotency_key`는 같은 시도의 재전송에만 같은 값을 쓴다.
 
 ```json
 {
@@ -150,4 +150,4 @@ Flow는 `flow_agent_id`와 `flow_start_node_id`를 함께 쓰고, 전환은 마�
 }
 ```
 
-접수 응답의 batch와 run id로 `get_test_batch`·`get_test_run`을 간격을 두고 조회한다. `status`가 `queued`·`running`이면 기다리고, 판정은 `result`, 비용은 `run_cost`에서 읽는다.
+접수 응답의 batch와 run id로 `get_eval_batch`·`get_eval_run`을 간격을 두고 조회한다. `status`가 `queued`·`running`이면 기다리고, 판정은 `result`, 비용은 `run_cost`에서 읽는다.

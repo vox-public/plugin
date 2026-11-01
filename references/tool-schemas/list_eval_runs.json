@@ -1,5 +1,5 @@
 {
-  "name": "list_test_runs",
+  "name": "list_eval_runs",
   "inputSchema": {
     "oneOf": [
       {
@@ -13,13 +13,13 @@
           "batch_id": {
             "type": "string",
             "format": "uuid",
-            "description": "배치 id 필터입니다. GET /v3/evals/unit/batches 응답의 id를 사용합니다.",
+            "description": "Batch identifier filter. Use the id from GET /v3/evals/unit/batches.",
             "title": "Batch Id"
           },
           "test_id": {
             "type": "string",
             "format": "uuid",
-            "description": "유닛 테스트 id 필터입니다. GET /v3/evals/unit 응답의 id를 사용합니다.",
+            "description": "Unit test identifier filter. Use the id from GET /v3/evals/unit.",
             "title": "Test Id"
           },
           "status": {
@@ -46,7 +46,7 @@
               ],
               "type": "string"
             },
-            "description": "판정 결과 필터입니다. 여러 값을 보내려면 `result`를 반복합니다.",
+            "description": "Grading result filter. Repeat `result` to send several values.",
             "title": "Result"
           },
           "sort_order": {
@@ -88,13 +88,13 @@
           "batch_id": {
             "type": "string",
             "format": "uuid",
-            "description": "배치 id 필터입니다. GET /v3/evals/scenario/batches 응답의 id를 사용합니다.",
+            "description": "Batch identifier filter. Use the id from GET /v3/evals/scenario/batches.",
             "title": "Batch Id"
           },
           "test_id": {
             "type": "string",
             "format": "uuid",
-            "description": "시나리오 테스트 id 필터입니다. GET /v3/evals/scenario 응답의 id를 사용합니다.",
+            "description": "Scenario test identifier filter. Use the id from GET /v3/evals/scenario.",
             "title": "Test Id"
           },
           "status": {
@@ -121,7 +121,7 @@
               ],
               "type": "string"
             },
-            "description": "판정 결과 필터입니다. 여러 값을 보내려면 `result`를 반복합니다.",
+            "description": "Grading result filter. Repeat `result` to send several values.",
             "title": "Result"
           },
           "sort_order": {

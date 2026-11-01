@@ -1,5 +1,5 @@
 {
-  "name": "list_tests",
+  "name": "list_eval_batches",
   "inputSchema": {
     "oneOf": [
       {

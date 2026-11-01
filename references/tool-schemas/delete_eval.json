@@ -1,5 +1,5 @@
 {
-  "name": "delete_test",
+  "name": "delete_eval",
   "inputSchema": {
     "oneOf": [
       {
@@ -13,7 +13,7 @@
           "test_id": {
             "type": "string",
             "format": "uuid",
-            "description": "유닛 테스트 id입니다. GET /v3/evals/unit 응답의 id를 사용합니다.",
+            "description": "Unit test identifier. Use the id from GET /v3/evals/unit.",
             "title": "Test Id"
           }
         },
@@ -33,7 +33,7 @@
           "test_id": {
             "type": "string",
             "format": "uuid",
-            "description": "시나리오 테스트 id입니다. GET /v3/evals/scenario 응답의 id를 사용합니다.",
+            "description": "Scenario test identifier. Use the id from GET /v3/evals/scenario.",
             "title": "Test Id"
           }
         },

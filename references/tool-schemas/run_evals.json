@@ -1,5 +1,5 @@
 {
-  "name": "run_tests",
+  "name": "run_evals",
   "inputSchema": {
     "oneOf": [
       {

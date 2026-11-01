@@ -391,6 +391,23 @@
             ],
             "title": "Thinkingbudget",
             "description": "Reasoning token budget. Null clears the override."
+          },
+          "option": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "standard",
+                  "priority",
+                  "korea_region"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Option",
+            "description": "Model option. Use an `option` listed for the model by `GET /v3/models/llms`. Null or `standard` selects standard."
           }
         },
         "type": "object",

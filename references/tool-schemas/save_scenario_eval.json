@@ -1,5 +1,5 @@
 {
-  "name": "save_scenario_test",
+  "name": "save_scenario_eval",
   "inputSchema": {
     "oneOf": [
       {
@@ -35,7 +35,7 @@
                 "type": "string",
                 "minLength": 1,
                 "title": "User Prompt",
-                "description": "시뮬레이션 고객의 목표와 말투입니다."
+                "description": "AI 고객의 목표와 말투입니다."
               },
               "rubric": {
                 "type": "string",
@@ -95,7 +95,7 @@
                   }
                 ],
                 "title": "Tool Mocks",
-                "description": "실행할 때 실제 도구 대신 쓸 mock 응답입니다. 같은 도구나 Flow 노드는 한 번만 지정합니다. null이면 mock이 없습니다."
+                "description": "실행할 때 실제 도구 대신 돌려줄 도구 응답입니다. 같은 도구나 Flow 노드는 한 번만 지정합니다. null이면 정해 둔 응답이 없습니다."
               },
               "metadata": {
                 "anyOf": [
@@ -145,7 +145,7 @@
           "test_id": {
             "type": "string",
             "format": "uuid",
-            "description": "시나리오 테스트 id입니다. GET /v3/evals/scenario 응답의 id를 사용합니다.",
+            "description": "Scenario test identifier. Use the id from GET /v3/evals/scenario.",
             "title": "Test Id"
           },
           "payload": {
@@ -173,7 +173,7 @@
                 "type": "string",
                 "minLength": 1,
                 "title": "User Prompt",
-                "description": "시뮬레이션 고객의 목표와 말투입니다."
+                "description": "AI 고객의 목표와 말투입니다."
               },
               "rubric": {
                 "type": "string",
@@ -232,7 +232,7 @@
                   }
                 ],
                 "title": "Tool Mocks",
-                "description": "실행할 때 실제 도구 대신 쓸 mock 응답입니다. 같은 도구나 Flow 노드는 한 번만 지정합니다. null이면 mock이 없습니다."
+                "description": "실행할 때 실제 도구 대신 돌려줄 도구 응답입니다. 같은 도구나 Flow 노드는 한 번만 지정합니다. null이면 정해 둔 응답이 없습니다."
               },
               "metadata": {
                 "anyOf": [
@@ -275,13 +275,13 @@
             "type": "string",
             "const": "api",
             "title": "Type",
-            "description": "API 도구 mock입니다."
+            "description": "응답을 정해 둘 API 도구입니다."
           },
           "tool_id": {
             "type": "string",
             "format": "uuid",
             "title": "Tool Id",
-            "description": "mock할 API 도구 id입니다. GET /v3/tools 응답의 id를 사용합니다."
+            "description": "응답을 정해 둘 API 도구 id입니다. GET /v3/tools 응답의 id를 사용합니다."
           },
           "response": {
             "oneOf": [
@@ -360,13 +360,13 @@
             "type": "string",
             "const": "mcp",
             "title": "Type",
-            "description": "MCP 서버 mock입니다."
+            "description": "응답을 정해 둘 MCP 서버입니다."
           },
           "tool_id": {
             "type": "string",
             "format": "uuid",
             "title": "Tool Id",
-            "description": "mock할 MCP 연결 도구 id입니다. GET /v3/tools 응답의 id를 사용합니다."
+            "description": "응답을 정해 둘 MCP 연결 도구 id입니다. GET /v3/tools 응답의 id를 사용합니다."
           },
           "tools": {
             "items": {
@@ -392,7 +392,7 @@
             "type": "string",
             "minLength": 1,
             "title": "Name",
-            "description": "mock할 MCP 도구 이름입니다."
+            "description": "응답을 정해 둘 MCP 도구 이름입니다."
           },
           "description": {
             "type": "string",
@@ -439,7 +439,7 @@
             "type": "string",
             "const": "flow_api",
             "title": "Type",
-            "description": "Flow API 노드 mock입니다."
+            "description": "응답을 정해 둘 Flow API 노드입니다."
           },
           "agent_id": {
             "type": "string",
@@ -451,7 +451,7 @@
             "type": "string",
             "minLength": 1,
             "title": "Node Id",
-            "description": "mock할 Flow API 노드 id입니다."
+            "description": "응답을 정해 둘 Flow API 노드 id입니다."
           },
           "response": {
             "oneOf": [

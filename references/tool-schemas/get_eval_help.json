@@ -1,5 +1,5 @@
 {
-  "name": "get_test_help",
+  "name": "get_eval_help",
   "inputSchema": {
     "type": "object",
     "properties": {},

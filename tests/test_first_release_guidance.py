@@ -146,7 +146,7 @@ class FirstReleaseGuidanceTests(unittest.TestCase):
     def test_snapshot_covers_public_tools_and_known_native_tools(self):
         snapshot = json.loads(read("references/implemented-tools.snapshot.json"))
         implemented = set(snapshot["implemented_tools"])
-        self.assertEqual(snapshot["native_tools"], ["get_test_help", "list_organizations", "set_organization"])
+        self.assertEqual(snapshot["native_tools"], ["get_eval_help", "list_organizations", "set_organization"])
         self.assertEqual(snapshot["public_excluded"], [])
         self.assertTrue({"validate_flow", "create_voice_model", "inject_call_context", *snapshot["native_tools"]} <= implemented)
         self.assertEqual(len(implemented), 66)
