@@ -1,6 +1,6 @@
 {
-  "mcp_commit": "14c02ead298e0eb094dea83fbeb818cdb8092959",
-  "manifest_sha256": "7571a2795f2912f61c39d119fa9057e76464a51e337cf361c7f40a49639e9145",
+  "mcp_commit": "033fd35e727e9a6a3b437510c01a763fa1ac3475",
+  "manifest_sha256": "a87dd13bcdd53e071b7114903863b65b30528359a6c989132b9b6794958a4687",
   "source_manifest_sha256": "f7c583c38b19d9d910233c285f012783acb840f0aa027dd9821e42d919224c3c",
   "source_state": "clean_commit",
   "dirty_contracts": [],
