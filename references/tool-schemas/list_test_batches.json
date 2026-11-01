@@ -10,18 +10,28 @@
             "type": "string",
             "const": "unit"
           },
+          "sort_order": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "description": "Sort direction. Allowed values are `asc` and `desc`.",
+            "default": "desc",
+            "title": "Sort Order"
+          },
           "cursor": {
             "type": "string",
-            "title": "Cursor",
-            "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page."
+            "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page.",
+            "title": "Cursor"
           },
           "limit": {
             "type": "integer",
             "maximum": 100,
             "minimum": 1,
+            "description": "Maximum number of items to return. v3 list endpoints accept 1-100.",
             "default": 50,
-            "title": "Limit",
-            "description": "Maximum number of items to return. v3 list endpoints accept 1-100."
+            "title": "Limit"
           }
         },
         "required": [
@@ -36,18 +46,28 @@
             "type": "string",
             "const": "scenario"
           },
+          "sort_order": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "description": "Sort direction. Allowed values are `asc` and `desc`.",
+            "default": "desc",
+            "title": "Sort Order"
+          },
           "cursor": {
             "type": "string",
-            "title": "Cursor",
-            "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page."
+            "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page.",
+            "title": "Cursor"
           },
           "limit": {
             "type": "integer",
             "maximum": 100,
             "minimum": 1,
+            "description": "Maximum number of items to return. v3 list endpoints accept 1-100.",
             "default": 50,
-            "title": "Limit",
-            "description": "Maximum number of items to return. v3 list endpoints accept 1-100."
+            "title": "Limit"
           }
         },
         "required": [

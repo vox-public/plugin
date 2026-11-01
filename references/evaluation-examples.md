@@ -13,7 +13,7 @@
 | `tool_call_invocation` | `tool_call_id`(선택), `name`, `arguments`(객체), 마지막 항목이면 `eval`. 검사 항목에서는 `name`·`arguments`를 생략할 수 있다. |
 | `tool_call_result` | `tool_call_id`(선택), `content`(문자열) |
 
-- `eval`은 `expected_behavior`와 선택 `to_node_id`이며 마지막 항목에만 둔다. `eval` 안에 다른 키를 쓰면 거절된다.
+- `eval`은 마지막 항목에만 두고 `expected_behavior`를 쓴다. Flow 전환을 검사하는 `agent` 항목만 `to_node_id`를 더하며, 응답 검사에는 이 키를 null이나 빈 문자열로도 넣지 않는다. `eval` 안에 다른 키를 쓰면 거절된다.
 - 마지막 `agent`의 `content`는 참고용이며 비워 둘 수 있다. 판정은 실행 때 에이전트가 낸 응답을 `expected_behavior`와 비교한다.
 - 마지막 `tool_call_invocation`도 판정은 `expected_behavior` 문장으로 한다. `name`·`arguments`를 적든 생략하든 기대하는 도구와 인자를 그 문장에 쓴다.
 - 이력의 `tool_call_invocation` 바로 뒤에는 그 `tool_call_result`가 온다. 이 쌍은 여러 번 이어도 된다. 호출에 `tool_call_id`를 쓰면 결과는 같은 id를 쓰거나 생략하고, 모두 생략하면 저장할 때 호출 순서대로 `call_1`, `call_2`가 붙는다.

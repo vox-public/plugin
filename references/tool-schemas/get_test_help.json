@@ -1,0 +1,9 @@
+{
+  "name": "get_test_help",
+  "inputSchema": {
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+  }
+}

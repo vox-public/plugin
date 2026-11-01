@@ -26,8 +26,8 @@ metadata:
 `get_call(include_transcript=true)`의 `transcript`와 같은 항목 형식이다. `user`(`content`), `agent`(`content`), `tool_call_invocation`(`tool_call_id` 선택, `name`, 객체 `arguments`), `tool_call_result`(`tool_call_id` 선택, 문자열 `content`)를 `role`로 구분한다. 예시는 [입력 예시](../../references/evaluation-examples.md)에 있다.
 
 - 가장 쉬운 작성법: 근거 통화가 있으면 그 `transcript`를 검사할 지점까지 자르고 마지막 항목에 `eval`을 붙인다. 항목은 그대로 붙여도 되며 `start_at` 같은 다른 키는 저장되지 않는다. 잘못된 실제 응답을 기대 행동으로 옮기지 않는다.
-- 검사는 마지막 항목 하나다. `eval`(`expected_behavior`, 선택 `to_node_id`)은 그 항목에만 두고, `eval` 안의 다른 키는 거절된다.
-- 마지막이 `agent`면 그 자리의 응답을 검사한다. Flow는 정의에 `flow_agent_id`·`flow_start_node_id`를 쓰고, 전환은 `eval.to_node_id`에 목적지 노드 id를 쓴다.
+- 검사는 마지막 항목 하나다. `eval`은 그 항목에만 두고 `expected_behavior`(Flow 전환 검사는 `to_node_id`도)만 쓰며, 다른 키는 거절된다.
+- 마지막이 `agent`면 그 자리의 응답을 검사한다. Flow는 정의에 `flow_agent_id`·`flow_start_node_id`를 쓰고, 전환 검사는 `eval.to_node_id`에 목적지 노드 id를 쓰며 응답 검사에는 이 키를 넣지 않는다.
 - 마지막이 `tool_call_invocation`이면 그 자리의 도구 호출을 검사하고 뒤에 결과를 두지 않는다. `name`·`arguments`는 생략할 수 있고 판정은 `expected_behavior` 문장으로 하므로, 기대하는 도구와 인자를 그 문장에 쓴다.
 - 이력의 `tool_call_invocation` 바로 뒤에는 그 `tool_call_result`가 온다. 이 쌍은 여러 번 이어도 된다. 호출에 `tool_call_id`를 쓰면 결과는 같은 id를 쓰거나 생략한다.
 - Manual 시작 이력은 `name`이 정확히 `StartManual`, `arguments.id`가 실제 Manual UUID인 호출과 `status`(`loaded`·`already_loaded`·`rejected`·`error`)를 담은 JSON 객체 문자열 결과의 쌍이다.
@@ -55,7 +55,7 @@ metadata:
 - `count`로 여러 번 돌려 일부만 통과하면 통과 비율과 실패 run을 함께 보고한다. `get_test`는 현재 정의이며 과거 실행 당시의 설정이 아니다.
 
 ## 도구 응답(mock)
-API·MCP 사용자 도구와 Flow API 노드는 실제로 호출되지 않고 `tool_mocks`(도구·노드마다 하나)가 응답을 대신한다. 형식은 `get_schema(namespace="contract", schema_type="save_unit_test")`의 `tool_mocks`, 실제 도구 ID·입출력은 `get_tool`로 읽는다. 응답 값은 사용자 자료나 도구 명세의 응답 예시에서 가져오고 만들어 채우지 않는다. mock 평가의 통과는 실제 외부 API의 동작 확인이 아니라고 보고한다.
+API·MCP 사용자 도구와 Flow API 노드는 실제로 호출되지 않고 `tool_mocks`(도구·노드마다 하나)가 응답을 대신한다. 형식은 `get_schema(namespace="contract", schema_type="save_unit_test#payload.tool_mocks")`, 실제 도구 ID·입출력은 `get_tool`로 읽는다. 응답 값은 사용자 자료나 도구 명세의 응답 예시에서 가져오고 만들어 채우지 않는다. mock 평가의 통과는 실제 외부 API의 동작 확인이 아니라고 보고한다.
 
 ## 완료 표시
 ‘정의 저장’·‘유효성 확인’·‘실행 접수’·‘판정 확인’·‘에이전트 수정 반영’은 다른 단계이며, 앞 단계가 끝났다고 뒤 단계를 완료로 표시하지 않는다.

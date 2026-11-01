@@ -19,7 +19,7 @@
                 "type": "array",
                 "minItems": 1,
                 "title": "Runs",
-                "description": "단건과 여러 건 모두 실행 계획 배열로 접수합니다."
+                "description": "실행 계획 목록입니다. 한 건만 실행해도 배열로 보냅니다. 한 요청의 실행 수 합계(각 `count`의 합)는 100건까지입니다."
               }
             },
             "type": "object",
@@ -64,7 +64,7 @@
                 "type": "array",
                 "minItems": 1,
                 "title": "Runs",
-                "description": "단건과 여러 건 모두 실행 계획 배열로 접수합니다."
+                "description": "실행 계획 목록입니다. 한 건만 실행해도 배열로 보냅니다. 한 요청의 실행 수 합계(각 `count`의 합)는 100건까지입니다."
               }
             },
             "type": "object",
@@ -100,21 +100,21 @@
             "type": "string",
             "format": "uuid",
             "title": "Test Id",
-            "description": "실행할 UT 정의 UUID입니다."
+            "description": "실행할 유닛 테스트 id입니다. GET /v3/evals/unit 응답의 id를 사용합니다."
           },
           "agent": {
             "$ref": "#/$defs/AgentMapping",
-            "description": "Agent mapping object with `agent_id` and `agent_version`. Used by cross-resource references (calls / campaigns / telephone_numbers) and by `builtInTools.transfer_agent` / flow `transferAgent` node `data.agent` per v3 §2.7 AgentMapping."
+            "description": "실행할 에이전트와 버전입니다. `agent_version`을 생략하면 편집 중인 현재 설정으로 실행합니다."
           },
           "count": {
             "type": "integer",
             "maximum": 10.0,
             "minimum": 1.0,
             "title": "Count",
-            "description": "같은 테스트의 실행 횟수입니다.",
+            "description": "같은 유닛 테스트를 반복 실행할 횟수입니다. 1~10의 정수입니다.",
             "default": 1
           },
-          "custom_properties": {
+          "metadata": {
             "anyOf": [
               {
                 "additionalProperties": true,
@@ -124,7 +124,8 @@
                 "type": "null"
               }
             ],
-            "title": "Custom Properties"
+            "title": "Metadata",
+            "description": "이 실행 계획으로 만든 실행마다 붙여 두는 사용자 정의 정보입니다."
           }
         },
         "type": "object",
@@ -172,21 +173,21 @@
             "type": "string",
             "format": "uuid",
             "title": "Test Id",
-            "description": "실행할 ST 정의 UUID입니다."
+            "description": "실행할 시나리오 테스트 id입니다. GET /v3/evals/scenario 응답의 id를 사용합니다."
           },
           "agent": {
             "$ref": "#/$defs/AgentMapping",
-            "description": "Agent mapping object with `agent_id` and `agent_version`. Used by cross-resource references (calls / campaigns / telephone_numbers) and by `builtInTools.transfer_agent` / flow `transferAgent` node `data.agent` per v3 §2.7 AgentMapping."
+            "description": "실행할 에이전트와 버전입니다. `agent_version`을 생략하면 편집 중인 현재 설정으로 실행합니다."
           },
           "count": {
             "type": "integer",
             "maximum": 3.0,
             "minimum": 1.0,
             "title": "Count",
-            "description": "같은 시나리오의 실행 횟수입니다.",
+            "description": "같은 시나리오 테스트를 반복 실행할 횟수입니다. 1~3의 정수입니다.",
             "default": 1
           },
-          "custom_properties": {
+          "metadata": {
             "anyOf": [
               {
                 "additionalProperties": true,
@@ -196,7 +197,8 @@
                 "type": "null"
               }
             ],
-            "title": "Custom Properties"
+            "title": "Metadata",
+            "description": "이 실행 계획으로 만든 실행마다 붙여 두는 사용자 정의 정보입니다."
           }
         },
         "type": "object",

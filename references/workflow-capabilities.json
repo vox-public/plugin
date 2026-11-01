@@ -266,6 +266,7 @@
           "get_schema",
           "get_test",
           "get_test_batch",
+          "get_test_help",
           "get_test_run",
           "get_tool",
           "list_agent_versions",
