@@ -143,13 +143,13 @@ class FirstReleaseGuidanceTests(unittest.TestCase):
         self.assertTrue(any("customer performs the voice test" in a
                             for a in workflows["customer_direct_test"]["host_actions"]))
 
-    def test_snapshot_covers_public_tools_and_native_org_tools_only(self):
+    def test_snapshot_covers_public_tools_and_known_native_tools(self):
         snapshot = json.loads(read("references/implemented-tools.snapshot.json"))
         implemented = set(snapshot["implemented_tools"])
-        self.assertEqual(snapshot["native_tools"], ["list_organizations", "set_organization"])
+        self.assertEqual(snapshot["native_tools"], ["get_eval_help", "list_organizations", "set_organization"])
         self.assertEqual(snapshot["public_excluded"], [])
         self.assertTrue({"validate_flow", "create_voice_model", "inject_call_context", *snapshot["native_tools"]} <= implemented)
-        self.assertEqual(len(implemented), 55)
+        self.assertEqual(len(implemented), 66)
         self.assertTrue(implemented.isdisjoint({"send_sms", "send_sms_batch", "get_sms", "get_sms_batch", "transfer_call"}))
         for skill in json.loads(read("catalog.json"))["skills"]:
             self.assertTrue(set(skill["tools"]["implemented"]) <= implemented, skill["name"])

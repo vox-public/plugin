@@ -23,7 +23,7 @@ metadata:
 ## 검증 예
 합성 사례: 날짜를 수요일에서 금요일로 정정했다면 최종 저장 결과와 요약이 일치해야 한다. 연락처를 거절했으면 임의 번호를 생성하지 않는다. 외부 예약 도구가 실패했으면 정보 수집이 성공해도 예약 성공으로 분류하지 않는다.
 
-제품에 해당 평가 기능이 없으면 개발용 판정표로 남긴다. 별도 고객용 Tests 프로젝트를 만들지 않는다.
+이 사례는 [평가](../evaluate-voice-agent/SKILL.md)의 유닛 테스트·시나리오 테스트로 저장해 반복 확인할 수 있다. 연결에 평가 도구가 없으면 개발용 판정표로 남긴다.
 
 실제 설정 저장은 [configure-call-results](../configure-call-results/SKILL.md), 운영 수치 해석은 [review-call-performance](../review-call-performance/SKILL.md)로 연결한다.
 

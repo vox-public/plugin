@@ -1,0 +1,487 @@
+{
+  "name": "save_scenario_eval",
+  "inputSchema": {
+    "oneOf": [
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "type": "string",
+            "const": "create"
+          },
+          "payload": {
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1,
+                "title": "Name",
+                "description": "테스트 이름입니다."
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Description",
+                "description": "테스트 설명입니다. null이면 설명이 없습니다."
+              },
+              "user_prompt": {
+                "type": "string",
+                "minLength": 1,
+                "title": "User Prompt",
+                "description": "AI 고객의 목표와 말투입니다."
+              },
+              "rubric": {
+                "type": "string",
+                "minLength": 1,
+                "title": "Rubric",
+                "description": "대화 전체를 판정할 기준입니다."
+              },
+              "max_turns": {
+                "type": "integer",
+                "maximum": 30.0,
+                "minimum": 3.0,
+                "title": "Max Turns",
+                "description": "대화 길이 상한입니다. 고객과 에이전트의 메시지를 각각 한 번으로 세며, 마지막 응답을 마치려고 한 번 넘길 수 있습니다. 기본 15, 3~30의 정수입니다.",
+                "default": 15
+              },
+              "dynamic_variables": {
+                "anyOf": [
+                  {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Dynamic Variables",
+                "description": "실행할 때 에이전트에 넣을 동적 변수입니다."
+              },
+              "tool_mocks": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/$defs/EvalApiToolMock"
+                        },
+                        {
+                          "$ref": "#/$defs/EvalMcpToolMock"
+                        },
+                        {
+                          "$ref": "#/$defs/EvalFlowApiToolMock"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "api": "#/components/schemas/EvalApiToolMock",
+                          "flow_api": "#/components/schemas/EvalFlowApiToolMock",
+                          "mcp": "#/components/schemas/EvalMcpToolMock"
+                        }
+                      }
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Tool Mocks",
+                "description": "실행할 때 실제 도구 대신 돌려줄 도구 응답입니다. 같은 도구나 Flow 노드는 한 번만 지정합니다. null이면 정해 둔 응답이 없습니다."
+              },
+              "metadata": {
+                "anyOf": [
+                  {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Metadata",
+                "description": "테스트에 붙여 두는 사용자 정의 정보입니다. 실행에는 쓰이지 않습니다."
+              }
+            },
+            "type": "object",
+            "required": [
+              "name",
+              "user_prompt",
+              "rubric"
+            ],
+            "title": "CreateScenarioTestRequest",
+            "additionalProperties": false,
+            "examples": [
+              {
+                "name": "이용 안내 확인",
+                "user_prompt": "이용 방법을 묻고 답변에서 불명확한 부분을 한 번 더 질문한다.",
+                "rubric": "문서에 근거해 답하고 모르는 조건은 추측하지 않는다.",
+                "max_turns": 3
+              }
+            ]
+          }
+        },
+        "required": [
+          "mode",
+          "payload"
+        ]
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "type": "string",
+            "const": "update"
+          },
+          "test_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Scenario test identifier. Use the id from GET /v3/evals/scenario.",
+            "title": "Test Id"
+          },
+          "payload": {
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1,
+                "title": "Name",
+                "description": "테스트 이름입니다."
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Description",
+                "description": "테스트 설명입니다. null이면 설명이 없습니다."
+              },
+              "user_prompt": {
+                "type": "string",
+                "minLength": 1,
+                "title": "User Prompt",
+                "description": "AI 고객의 목표와 말투입니다."
+              },
+              "rubric": {
+                "type": "string",
+                "minLength": 1,
+                "title": "Rubric",
+                "description": "대화 전체를 판정할 기준입니다."
+              },
+              "max_turns": {
+                "type": "integer",
+                "maximum": 30.0,
+                "minimum": 3.0,
+                "title": "Max Turns",
+                "description": "대화 길이 상한입니다. 고객과 에이전트의 메시지를 각각 한 번으로 세며, 마지막 응답을 마치려고 한 번 넘길 수 있습니다. 기본 15, 3~30의 정수입니다."
+              },
+              "dynamic_variables": {
+                "anyOf": [
+                  {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Dynamic Variables",
+                "description": "실행할 때 에이전트에 넣을 동적 변수입니다."
+              },
+              "tool_mocks": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/$defs/EvalApiToolMock"
+                        },
+                        {
+                          "$ref": "#/$defs/EvalMcpToolMock"
+                        },
+                        {
+                          "$ref": "#/$defs/EvalFlowApiToolMock"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "type",
+                        "mapping": {
+                          "api": "#/components/schemas/EvalApiToolMock",
+                          "flow_api": "#/components/schemas/EvalFlowApiToolMock",
+                          "mcp": "#/components/schemas/EvalMcpToolMock"
+                        }
+                      }
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Tool Mocks",
+                "description": "실행할 때 실제 도구 대신 돌려줄 도구 응답입니다. 같은 도구나 Flow 노드는 한 번만 지정합니다. null이면 정해 둔 응답이 없습니다."
+              },
+              "metadata": {
+                "anyOf": [
+                  {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Metadata",
+                "description": "테스트에 붙여 두는 사용자 정의 정보입니다. 실행에는 쓰이지 않습니다."
+              }
+            },
+            "type": "object",
+            "minProperties": 1,
+            "title": "UpdateScenarioTestRequest",
+            "additionalProperties": false,
+            "examples": [
+              {
+                "user_prompt": "이용 방법을 묻고 답변에서 불명확한 부분을 한 번 더 질문한다.",
+                "rubric": "문서에 근거해 답하고 모르는 조건은 추측하지 않는다.",
+                "max_turns": 3
+              }
+            ]
+          }
+        },
+        "required": [
+          "mode",
+          "test_id",
+          "payload"
+        ]
+      }
+    ],
+    "$defs": {
+      "EvalApiToolMock": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "api",
+            "title": "Type",
+            "description": "응답을 정해 둘 API 도구입니다."
+          },
+          "tool_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Tool Id",
+            "description": "응답을 정해 둘 API 도구 id입니다. GET /v3/tools 응답의 id를 사용합니다."
+          },
+          "response": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/EvalToolMockJsonResponse"
+              },
+              {
+                "$ref": "#/$defs/EvalToolMockTextResponse"
+              }
+            ],
+            "title": "Response",
+            "description": "도구 대신 돌려줄 응답입니다. 생략하면 빈 JSON 객체 `{}`를 돌려주며, null은 쓸 수 없습니다.",
+            "discriminator": {
+              "propertyName": "type",
+              "mapping": {
+                "json": "#/components/schemas/EvalToolMockJsonResponse",
+                "text": "#/components/schemas/EvalToolMockTextResponse"
+              }
+            }
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "tool_id"
+        ],
+        "title": "EvalApiToolMock"
+      },
+      "EvalToolMockJsonResponse": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "json",
+            "title": "Type",
+            "description": "JSON 응답입니다."
+          },
+          "value": {
+            "title": "Value",
+            "description": "도구 대신 돌려줄 JSON 값입니다. null도 쓸 수 있습니다."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "value"
+        ],
+        "title": "EvalToolMockJsonResponse"
+      },
+      "EvalToolMockTextResponse": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "text",
+            "title": "Type",
+            "description": "문자열 응답입니다."
+          },
+          "value": {
+            "type": "string",
+            "title": "Value",
+            "description": "도구 대신 돌려줄 문자열입니다."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "value"
+        ],
+        "title": "EvalToolMockTextResponse"
+      },
+      "EvalMcpToolMock": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "mcp",
+            "title": "Type",
+            "description": "응답을 정해 둘 MCP 서버입니다."
+          },
+          "tool_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Tool Id",
+            "description": "응답을 정해 둘 MCP 연결 도구 id입니다. GET /v3/tools 응답의 id를 사용합니다."
+          },
+          "tools": {
+            "items": {
+              "$ref": "#/$defs/EvalMcpTool"
+            },
+            "type": "array",
+            "title": "Tools",
+            "description": "이 MCP 서버에서 쓸 도구 목록입니다. 도구 이름은 서로 달라야 합니다."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "tool_id",
+          "tools"
+        ],
+        "title": "EvalMcpToolMock"
+      },
+      "EvalMcpTool": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Name",
+            "description": "응답을 정해 둘 MCP 도구 이름입니다."
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "에이전트에 보여 줄 도구 설명입니다. 생략할 수 있으며 null은 쓸 수 없습니다."
+          },
+          "input_schema": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Input Schema",
+            "description": "도구 입력의 JSON Schema입니다. `type`은 `object`여야 합니다."
+          },
+          "response": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/EvalToolMockJsonResponse"
+              },
+              {
+                "$ref": "#/$defs/EvalToolMockTextResponse"
+              }
+            ],
+            "title": "Response",
+            "description": "도구 대신 돌려줄 응답입니다. 생략하면 빈 JSON 객체 `{}`를 돌려주며, null은 쓸 수 없습니다.",
+            "discriminator": {
+              "propertyName": "type",
+              "mapping": {
+                "json": "#/components/schemas/EvalToolMockJsonResponse",
+                "text": "#/components/schemas/EvalToolMockTextResponse"
+              }
+            }
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "input_schema"
+        ],
+        "title": "EvalMcpTool"
+      },
+      "EvalFlowApiToolMock": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "flow_api",
+            "title": "Type",
+            "description": "응답을 정해 둘 Flow API 노드입니다."
+          },
+          "agent_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Agent Id",
+            "description": "Agent UUID."
+          },
+          "node_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Node Id",
+            "description": "응답을 정해 둘 Flow API 노드 id입니다."
+          },
+          "response": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/EvalToolMockJsonResponse"
+              },
+              {
+                "$ref": "#/$defs/EvalToolMockTextResponse"
+              }
+            ],
+            "title": "Response",
+            "description": "도구 대신 돌려줄 응답입니다. 생략하면 빈 JSON 객체 `{}`를 돌려주며, null은 쓸 수 없습니다.",
+            "discriminator": {
+              "propertyName": "type",
+              "mapping": {
+                "json": "#/components/schemas/EvalToolMockJsonResponse",
+                "text": "#/components/schemas/EvalToolMockTextResponse"
+              }
+            }
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "agent_id",
+          "node_id"
+        ],
+        "title": "EvalFlowApiToolMock"
+      }
+    }
+  }
+}

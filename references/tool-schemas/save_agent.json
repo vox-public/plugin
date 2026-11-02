@@ -391,6 +391,23 @@
             ],
             "title": "Thinkingbudget",
             "description": "Reasoning token budget. Null clears the override."
+          },
+          "option": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "standard",
+                  "priority",
+                  "korea_region"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Option",
+            "description": "Model option. Use an `option` listed for the model by `GET /v3/models/llms`. Null or `standard` selects standard."
           }
         },
         "type": "object",
@@ -587,7 +604,7 @@
             ],
             "title": "Calltimeoutinseconds",
             "default": 900,
-            "description": "Maximum call duration in seconds before timeout handling."
+            "description": "Maximum call duration in seconds (30-3600)."
           },
           "silenceCallTimeoutInSeconds": {
             "anyOf": [
@@ -899,7 +916,8 @@
             "type": "boolean",
             "title": "Optoutsensitivedatastorage",
             "default": false,
-            "description": "Whether transcripts, recordings, and analysis outputs should avoid sensitive data storage."
+            "deprecated": true,
+            "description": "Deprecated. Equals `dataRetention.durationSeconds == 0` (immediate deletion). Sending `true` sets that retention."
           },
           "dataRetention": {
             "anyOf": [

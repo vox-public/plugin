@@ -1,0 +1,47 @@
+{
+  "name": "get_eval_run",
+  "inputSchema": {
+    "oneOf": [
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "unit"
+          },
+          "run_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Run identifier. Use the id from GET /v3/evals/unit/runs.",
+            "title": "Run Id"
+          }
+        },
+        "required": [
+          "kind",
+          "run_id"
+        ]
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "scenario"
+          },
+          "run_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Run identifier. Use the id from GET /v3/evals/scenario/runs.",
+            "title": "Run Id"
+          }
+        },
+        "required": [
+          "kind",
+          "run_id"
+        ]
+      }
+    ]
+  }
+}

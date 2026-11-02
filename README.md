@@ -1,7 +1,7 @@
 # vox.ai Plugin
 
 Claude Code, Codex, Grok Build에서 vox.ai에 연결하고 음성 에이전트를 설계·개선하는 플러그인입니다.
-매뉴얼 작성·개선, 버전 게시, 보유 번호 연결, 발신·캠페인 운영, 통화 결과 확인 등 업무별 지침 26개와 원격 MCP 연결 설정을 제공합니다.
+매뉴얼 작성·개선, 버전 게시, 보유 번호 연결, 발신·캠페인 운영, 통화 결과 확인 등 업무별 지침 27개와 원격 MCP 연결 설정을 제공합니다.
 
 실행 가능한 기능은 연결된 서버가 제공하는 도구와 계정 권한에 따라 달라집니다.
 
@@ -70,6 +70,7 @@ Codex는 `codex mcp login vox-ai`까지 실행해야 vox.ai 도구를 쓸 수 �
 - “템플릿으로 에이전트를 만들고 버전을 게시한 뒤 보유 번호에 연결해줘.”
 - “이 번호로 시험 발신을 걸고 통화 결과를 확인해줘.”
 - “동네 치과 예약 전화를 받는 에이전트를 만들어줘. 초진/재진·연락처·희망 시간을 받고, 많이 아프다고 하면 데스크로 연결해줘.” (Single + Manual로 만듭니다.)
+- “날짜를 정정하면 수요일 예약이 아니라 금요일로 진행하는지 유닛 테스트를 만들어줘.”
 - “1번 영업시간, 2번 오시는 길, 9번 직원 연결인 키패드 메뉴 ARS를 Flow 에이전트로 만들고 검증해줘.”
 
 에이전트 유형은 기본이 Single + Manual입니다. 키패드 메뉴 ARS나 원문 낭독처럼 규칙이 분명한 업무일 때만 Flow를 쓰며, 만들기 전에 고른 유형과 이유를 먼저 알려 줍니다.
@@ -80,6 +81,7 @@ Claude Code에서는 `/vox-ai:voice-agent-design`처럼 스킬을 직접 호출�
 
 - 실제 전화 발신·캠페인 실행·게시·번호 연결 변경 전에는 대화에서 내용을 요약해 확인을 받습니다.
 - 발신·캠페인 결과가 불명이면 다시 실행하지 않고 `get_call`/`get_campaign`으로 조회합니다.
+- 유닛 테스트·시나리오 테스트 실행은 비용이 들므로 평가 이름·대상 버전·횟수를 요약해 확인을 받은 뒤 실행합니다.
 - 지식은 텍스트·URL만 등록하며, 번호 획득·해지는 웹에서 합니다.
 - 음성 시험 도구는 없으므로 제품 UI에서 직접 시험합니다.
 
@@ -128,7 +130,7 @@ grok plugin marketplace remove vox-ai
 
 ## English
 
-The vox.ai plugin connects Claude Code, Codex and Grok Build to vox.ai, a voice AI platform for phone agents that answer and place calls in Korean. It adds 26 skills for designing, building, testing and operating voice agents, and configures two remote MCP servers.
+The vox.ai plugin connects Claude Code, Codex and Grok Build to vox.ai, a voice AI platform for phone agents that answer and place calls in Korean. It adds 27 skills for designing, building, testing and operating voice agents, and configures two remote MCP servers.
 
 - `vox-ai` at <https://mcp.tryvox.co/mcp> reads and changes agents, manuals, knowledge, tools, numbers, calls and campaigns. Sign in with your vox.ai account. Every action runs with the permissions you already have in that workspace.
 - `vox-docs` at <https://docs.tryvox.co/mcp> searches the public vox.ai documentation. No sign-in is needed.

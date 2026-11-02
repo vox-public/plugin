@@ -1,0 +1,157 @@
+{
+  "name": "list_eval_runs",
+  "inputSchema": {
+    "oneOf": [
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "unit"
+          },
+          "batch_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Batch identifier filter. Use the id from GET /v3/evals/unit/batches.",
+            "title": "Batch Id"
+          },
+          "test_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unit test identifier filter. Use the id from GET /v3/evals/unit.",
+            "title": "Test Id"
+          },
+          "status": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "queued",
+                "running",
+                "completed",
+                "error"
+              ],
+              "type": "string"
+            },
+            "description": "Status filter. Repeat the query parameter to filter by multiple statuses when the endpoint supports multiple values.",
+            "title": "Status"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "passed",
+                "failed",
+                "error"
+              ],
+              "type": "string"
+            },
+            "description": "Grading result filter. Repeat `result` to send several values.",
+            "title": "Result"
+          },
+          "sort_order": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "description": "Sort direction. Allowed values are `asc` and `desc`.",
+            "default": "desc",
+            "title": "Sort Order"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page.",
+            "title": "Cursor"
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of items to return. v3 list endpoints accept 1-100.",
+            "default": 50,
+            "title": "Limit"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "scenario"
+          },
+          "batch_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Batch identifier filter. Use the id from GET /v3/evals/scenario/batches.",
+            "title": "Batch Id"
+          },
+          "test_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Scenario test identifier filter. Use the id from GET /v3/evals/scenario.",
+            "title": "Test Id"
+          },
+          "status": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "queued",
+                "running",
+                "completed",
+                "error"
+              ],
+              "type": "string"
+            },
+            "description": "Status filter. Repeat the query parameter to filter by multiple statuses when the endpoint supports multiple values.",
+            "title": "Status"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "passed",
+                "failed",
+                "error"
+              ],
+              "type": "string"
+            },
+            "description": "Grading result filter. Repeat `result` to send several values.",
+            "title": "Result"
+          },
+          "sort_order": {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "description": "Sort direction. Allowed values are `asc` and `desc`.",
+            "default": "desc",
+            "title": "Sort Order"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page.",
+            "title": "Cursor"
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of items to return. v3 list endpoints accept 1-100.",
+            "default": 50,
+            "title": "Limit"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      }
+    ]
+  }
+}
