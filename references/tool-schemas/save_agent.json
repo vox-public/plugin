@@ -604,7 +604,7 @@
             ],
             "title": "Calltimeoutinseconds",
             "default": 900,
-            "description": "Maximum call duration in seconds before timeout handling."
+            "description": "Maximum call duration in seconds (30-3600)."
           },
           "silenceCallTimeoutInSeconds": {
             "anyOf": [

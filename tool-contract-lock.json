@@ -1,5 +1,5 @@
 {
-  "mcp_commit": "033fd35e727e9a6a3b437510c01a763fa1ac3475",
+  "mcp_commit": "db7dd1ed32933c7071a03809562f2600a980af56",
   "manifest_sha256": "a87dd13bcdd53e071b7114903863b65b30528359a6c989132b9b6794958a4687",
   "source_manifest_sha256": "f7c583c38b19d9d910233c285f012783acb840f0aa027dd9821e42d919224c3c",
   "source_state": "clean_commit",
@@ -133,7 +133,7 @@
     "resolve_customer": "e9a9cb6440d2b97756d3a5b40f2ed086e999b90cfe0d5097193f274e3d2e51f4",
     "resume_campaign": "013d55a39ff1c8c0db4b8caf25778c44cec709a59f12bd53cafca7dafeb14847",
     "run_evals": "9ba12e5941c6999e24a81901ba3630c9ffa3b245cc0f44d0895d0d9d73b75869",
-    "save_agent": "4c33ce9a6626f12145dc5f6c061ec83a33909b52c0e9b3da3c44323a9149ed33",
+    "save_agent": "7569c6fa3ac20337fcf086b724e0711996be05dc07c779cf4cb2173934244bf1",
     "save_customer": "66a41781581eef0961ea3f03b572e4bb8927b3cc4b0604867ee75ed17480872b",
     "save_customer_attribute_definition": "f6f964fbac7d91421d55eb9ce99fac8af481c2225ac623fc404388e9fff15521",
     "save_manual": "a7f6a4b9dcc7693f8626ff539f9e3e0c5e7d533da8c96de7632f08aedfeb0acf",
