@@ -50,6 +50,7 @@
           "create_knowledge",
           "delete_knowledge_document",
           "get_agent",
+          "get_knowledge_document",
           "import_knowledge_documents",
           "list_knowledge_documents",
           "list_knowledges",
@@ -109,6 +110,7 @@
           "get_call",
           "get_campaign",
           "get_customer",
+          "get_knowledge_document",
           "get_manual",
           "get_number",
           "get_organization",
@@ -162,6 +164,7 @@
         "implemented": [
           "get_agent",
           "get_call",
+          "get_knowledge_document",
           "get_manual",
           "get_number",
           "get_tool",

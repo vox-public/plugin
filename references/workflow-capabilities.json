@@ -16,6 +16,7 @@
           "create_voice_model",
           "delete_knowledge_document",
           "get_agent_template",
+          "get_knowledge_document",
           "get_organization",
           "get_schema",
           "get_tool",
@@ -63,6 +64,7 @@
         ],
         "optional_tools": [
           "create_knowledge",
+          "get_knowledge_document",
           "get_schema",
           "get_tool",
           "list_agent_versions",
