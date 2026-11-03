@@ -48,8 +48,8 @@
   "urgent":{"kind":"semi","means":"위급 표현과 안내. 기본은 전화 종류에 맞춘다","affects":["manuals"]},
   "voice":{"kind":"feel","means":"목소리","from":["tools"],"affects":["voice"],"listen":true},
   "tone":{"kind":"feel","means":"첫 인사와 응대 느낌","affects":["prompt.firstLine","prompt.prompt"],"listen":true},
-  "outbound_defaults":{"kind":"semi","means":"통화 가능 확인, 제3자에게 용건 비공개, 음성사서함이면 종료, 수신거부 즉시 기록·종료, 침묵 두 번이면 종료, AI냐고 물으면 밝힘, 필요하면 녹음 고지, 야간 금지, 숫자·금액 읽기, 지어내지 않기","affects":["prompt.prompt","manuals","postCall"]},
-  "inbound_defaults":{"kind":"semi","means":"문의 유형 기록, 통화 요약, AI·녹음 고지, 두 번 못 알아들으면 연결이나 콜백","affects":["prompt.prompt","postCall"]}
+  "outbound_defaults":{"kind":"semi","means":"통화 가능 확인, 제3자에게 용건 비공개, 음성사서함이면 종료, 수신거부 즉시 기록·종료, 침묵 두 번이면 종료, AI냐고 물으면 밝힘, 야간 금지, 숫자·금액 읽기, 지어내지 않기","affects":["prompt.prompt","manuals","postCall"]},
+  "inbound_defaults":{"kind":"semi","means":"문의 유형 기록, 통화 요약, 두 번 못 알아들으면 연결이나 콜백","affects":["prompt.prompt","postCall"]}
  },
  "campaign_slots":{
   "value":{"key_message":"꼭 전할 핵심 한두 문장","deadline":"행사·혜택 마감일","booking_slots":"예약 받을 수 있는 일정과 지점","check_items":"확인할 항목과 순서","pay_methods":"납부 방법","due":"처리 기한","contact_point":"문의처","consent_target":"무엇에 대한 수신 동의인가","survey_items":"질문 두세 개와 척도","offer_terms":"제시할 조건과 승인 범위"},
