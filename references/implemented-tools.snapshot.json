@@ -2,8 +2,8 @@
   "snapshot_date": "2026-10-01",
   "scope": "Local MCP source contract candidate. The source worktree state is recorded below; this is not a deployed-server inventory. A connected host may expose fewer tools or permissions; inspect its live tools and schemas before acting.",
   "source": {
-    "mcp_commit": "bd3673cf42de9f33c487cba25417ed9534e1c7d1",
-    "manifest_sha256": "e0abb54f1294869b409ce023b1ee29902e1299fe40e7ee59dda50e7d517ce72c",
+    "mcp_commit": "50d8a0d89f025a61efecbd22f1b4f2d728b99637",
+    "manifest_sha256": "e592e07750c2b89a7238960531d10dac8eec9a9432550fb617778243e0cdf425",
     "source_manifest_sha256": "f7c583c38b19d9d910233c285f012783acb840f0aa027dd9821e42d919224c3c",
     "source_state": "clean_commit",
     "dirty_contracts": []
@@ -40,6 +40,7 @@
     "get_schema",
     "get_sheet",
     "get_tool",
+    "get_voice",
     "import_knowledge_documents",
     "inject_call_context",
     "instantiate_agent_template",
@@ -64,6 +65,7 @@
     "list_schemas",
     "list_sheets",
     "list_tools",
+    "list_voices",
     "pause_campaign",
     "place_call",
     "publish_agent_version",
@@ -184,6 +186,10 @@
       "path": "tool-schemas/get_tool.json",
       "sha256": "61d37e0459ca47bcc42876205d5e2bded5afb0b48756e0cabded8801b78f8fc6"
     },
+    "get_voice": {
+      "path": "tool-schemas/get_voice.json",
+      "sha256": "7a77fc9587d908768106eccc82a2c14f95a77a53a2ebb82d2b92bff875dfbbd6"
+    },
     "import_knowledge_documents": {
       "path": "tool-schemas/import_knowledge_documents.json",
       "sha256": "5feea33c832ab8e98e2eb6c033bff55e01b512b7c496f593efe0e8d8b62e10e4"
@@ -210,7 +216,7 @@
     },
     "list_agents": {
       "path": "tool-schemas/list_agents.json",
-      "sha256": "b45e2bc5e04b7dcfdbb6fb03e42fa4d0d428bf8acde9fcc0a998833ae11c7ec9"
+      "sha256": "a005a45529eac680fd5cb8b703ac91ffe6b19b8b247e9dc3f0df47b3f8b8abd5"
     },
     "list_calls": {
       "path": "tool-schemas/list_calls.json",
@@ -254,7 +260,7 @@
     },
     "list_models": {
       "path": "tool-schemas/list_models.json",
-      "sha256": "be7b97654fe852d59a474a26a9118ac2f56fbb71befb76459f2d2803e5b7e1c0"
+      "sha256": "e2ec1d6c2c44d6fe276ac3b4019f864f410584e14dec03f53fbd60a411259eb0"
     },
     "list_numbers": {
       "path": "tool-schemas/list_numbers.json",
@@ -279,6 +285,10 @@
     "list_tools": {
       "path": "tool-schemas/list_tools.json",
       "sha256": "7a0c918ad971fed6cb91522816c54801409a8f2c2d1b4b47412a8191e5283847"
+    },
+    "list_voices": {
+      "path": "tool-schemas/list_voices.json",
+      "sha256": "3d0d7c80f8f8e169147755986638b9f3c3815832fc1c01484586381beb2f4810"
     },
     "pause_campaign": {
       "path": "tool-schemas/pause_campaign.json",

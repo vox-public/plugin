@@ -1,0 +1,57 @@
+{
+  "name": "list_voices",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "provider": {
+        "type": "string",
+        "description": "Voice provider filter. Allowed values include `google`, `elevenlabs`, `cartesia`, and `openai`.",
+        "title": "Provider"
+      },
+      "language": {
+        "type": "string",
+        "description": "Voice language filter. Use values returned by this endpoint, such as `ko-KR` or `*`.",
+        "title": "Language"
+      },
+      "q": {
+        "type": "string",
+        "description": "음성 `name` 부분일치 검색어입니다. 대소문자를 구분하지 않습니다.",
+        "title": "Q"
+      },
+      "gender": {
+        "enum": [
+          "male",
+          "female"
+        ],
+        "type": "string",
+        "description": "음성 성별 필터입니다: `male` 또는 `female`.",
+        "title": "Gender"
+      },
+      "is_public": {
+        "type": "boolean",
+        "description": "`true` 는 공개 음성만, `false` 는 비공개 음성만 조회합니다.",
+        "title": "Is Public"
+      },
+      "model": {
+        "type": "string",
+        "description": "TTS 모델 필터입니다. 응답 항목의 `model` 값을 사용합니다 (예: `eleven_v4_turbo`).",
+        "title": "Model"
+      },
+      "cursor": {
+        "type": "string",
+        "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page.",
+        "title": "Cursor"
+      },
+      "limit": {
+        "type": "integer",
+        "maximum": 100,
+        "minimum": 1,
+        "description": "Maximum number of items to return. v3 list endpoints accept 1-100.",
+        "default": 50,
+        "title": "Limit"
+      }
+    },
+    "required": []
+  }
+}
