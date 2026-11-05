@@ -24,6 +24,16 @@
         "description": "Repeatable agent type filter: `?type=single_prompt&type=flow`.",
         "title": "Type"
       },
+      "folder_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "description": "폴더 필터입니다. 이 폴더와 모든 하위 폴더에 속한 에이전트만 조회합니다. 에이전트 응답에 담긴 `folder_id` 값을 사용합니다. 존재하지 않는 폴더를 지정하면 빈 목록을 반환합니다.",
+        "title": "Folder Id"
+      },
       "sort_order": {
         "type": "string",
         "description": "Sort direction. Allowed values are `asc` and `desc`.",

@@ -117,6 +117,7 @@
           "get_schema",
           "get_sheet",
           "get_tool",
+          "get_voice",
           "import_knowledge_documents",
           "inject_call_context",
           "instantiate_agent_template",
@@ -137,6 +138,7 @@
           "list_schemas",
           "list_sheets",
           "list_tools",
+          "list_voices",
           "pause_campaign",
           "place_call",
           "publish_agent_version",
@@ -287,7 +289,9 @@
           "get_agent",
           "get_call",
           "get_schema",
+          "get_voice",
           "list_models",
+          "list_voices",
           "save_agent"
         ],
         "designed_only": []

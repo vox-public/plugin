@@ -1,0 +1,17 @@
+{
+  "name": "get_voice",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "voice_id": {
+        "type": "string",
+        "description": "음성 식별자입니다. `GET /v3/models/voices` 응답 항목의 `id` 값을 사용합니다.",
+        "title": "Voice Id"
+      }
+    },
+    "required": [
+      "voice_id"
+    ]
+  }
+}
