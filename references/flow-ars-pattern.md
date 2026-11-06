@@ -45,11 +45,11 @@ begin ─fb→ [hours gate] ─logic→ 메인(영업중: 9 포함) / 메인(영
   - `requested_menu`(string): 이번 입력이 가리키는 메뉴 코드
   - `last_menu`(string): 마지막으로 실제 안내한 메뉴 코드
   - `unknown_count`(number): 연속 미분류 횟수
-- 에이전트 `data.presetDynamicVariables`에 `{"last_menu": "MAIN", "unknown_count": "0"}`을 둔다. 값은 문자열이어야 한다.
+- 에이전트 `data.presetDynamicVariables`에 `{"last_menu": "MAIN", "unknown_count": "0"}`을 둔다. 값은 문자열이어야 한다. 이 기본값(preset)은 대시보드 웹 시험에서만 쓰이고 실제 전화에는 적용되지 않는다. 실제 전화는 두 변수가 비어 있는 채로 시작하므로 아래 추출 프롬프트가 비어 있는 값을 처리해야 한다. 늘 같은 값은 프롬프트 글에 직접 쓰고, 통화마다 다른 값은 발신 변수나 시트 칸으로 넣는다.
 - 메뉴 코드는 대문자 영문으로 고정한다(예: `MAIN`, `HOURS`, `VISIT_MENU`, `DIRECTIONS`, `PARKING`, `TRANSFER`, `UNKNOWN_REPROMPT`, `END`). 라우터의 `equals` 값과 글자 하나까지 같아야 한다.
 - 추출 프롬프트 템플릿(메뉴 표만 업무에 맞게 바꾼다):
 ```
-직전 메뉴: {{last_menu}} / 직전 미분류 횟수: {{unknown_count}} (비어 있으면 0)
+직전 메뉴: {{last_menu}} (비어 있으면 MAIN) / 직전 미분류 횟수: {{unknown_count}} (비어 있으면 0)
 가장 최근 USER 입력 하나만 분류한다. 과거 입력·도구 결과는 새 입력이 아니다.
 requested_menu, last_menu, unknown_count를 항상 모두 출력한다. 코드는 아래 표의 값만 쓴다.
 [입력 종류] <entered_dtmf_digits>…</entered_dtmf_digits> 또는 '[DTMF] '로 시작하면 키패드 입력이다. 그 밖은 음성이다.
@@ -126,7 +126,7 @@ static 문구(안내·전환·종료)에는 아라비아 숫자와 기호를 쓰
   - `dtmfTerminationEnabled: false`
   - `silenceCallTimeoutInSeconds: 45~60`: 재안내 설정을 생략하면 2~3회 뒤 종료된다(추정).
 - `speech.isAllowInterruption: true`. 노드마다 `is_allow_interruption: true`도 함께 둔다.
-- `presetDynamicVariables`: §2의 초깃값.
+- `presetDynamicVariables`: §2의 초깃값. 대시보드 웹 시험에서만 쓰이고 실제 전화에는 적용되지 않으므로, 실제 전화에서 빈 값으로 시작해도 동작하게 §2의 추출 프롬프트가 비어 있는 값을 처리한다.
 - `prompt.prompt`: "한국어 존댓말. 변수·노드·코드 이름을 고객에게 읽지 않는다."
 - 새 agent 모델은 [모델 선택 규칙](../skills/build-first-voice-agent/SKILL.md#모델-고르기)에 따라 정한다. `llm`을 보낼 때는 `model`이 필수이며, 선택된 `model` 값을 `data.llm.model`에 명시한다. 구 API처럼 `list_models(kind=llm)` 결과에 `featured` 필드가 없으면 `llm`을 생략해 서버 추천 기본값을 쓴다. `temperature: 0`을 권장한다.
 - 노드 `data` 키는 snake_case, agent `data` 키는 camelCase다. 섞어 쓰지 않는다.
