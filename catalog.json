@@ -103,6 +103,7 @@
           "create_knowledge",
           "create_sheet",
           "create_voice_model",
+          "delete_call",
           "delete_knowledge_document",
           "find_customer",
           "get_agent",

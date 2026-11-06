@@ -1,0 +1,18 @@
+{
+  "name": "delete_call",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "call_id": {
+        "type": "string",
+        "format": "uuid",
+        "title": "Call Id",
+        "description": "Call identifier."
+      }
+    },
+    "required": [
+      "call_id"
+    ]
+  }
+}

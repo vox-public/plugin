@@ -29,7 +29,7 @@ metadata:
 - 번호: `list_numbers`, `get_number`, `set_number_agents`, `update_number`. 이미 가진 번호만 다루며 번호 획득·해지는 웹에서만 한다. → [번호 연결](../connect-phone-service/SKILL.md)
 - 발신·캠페인: `place_call`, 시트 `list_sheets`/`get_sheet`/`create_sheet`, `launch_campaign`, `list_campaigns`/`get_campaign`, `pause_campaign`/`resume_campaign`/`cancel_campaign`. → [발신 운영](../operate-outbound-and-followup/SKILL.md)
 - 평가: 유닛 테스트·시나리오 테스트의 작성·실행·결과 확인. 도구와 순서는 [평가](../evaluate-voice-agent/SKILL.md)를 따른다.
-- 결과 확인: `list_calls`, `get_call`(원문은 명시 요청 시만), 고객 `list_customers`/`get_customer`/`find_customer`/`save_customer`/`resolve_customer`와 속성 정의 3개. → [통화 근거](../inspect-call-evidence/SKILL.md)
+- 결과 확인: `list_calls`, `get_call`(원문은 명시 요청 시만), `delete_call`(사용자가 지우라고 한 통화 하나의 내용만 지운다), 고객 `list_customers`/`get_customer`/`find_customer`/`save_customer`/`resolve_customer`와 속성 정의 3개. → [통화 근거](../inspect-call-evidence/SKILL.md)
 - 이 범위 밖(음성 시험 시작, 독립 SMS 발송, 채팅·위젯, 번호 구매, 파일 업로드)은 도구가 없다. 통화 중 문자와 전환은 별도 MCP 도구가 아니라 agent 안의 내장 도구(`send_sms`, `transfer_call`)나 Flow 노드(`sendSms`, `transferCall`)로 설정한다. 음성 시험은 고객이 제품 UI에서 직접 하고 결과를 보고하며, 저장해 반복하는 유닛 테스트·시나리오 테스트는 위 ‘평가’를 쓴다. 호스트가 추가 tool을 실제로 노출하면 그 입력 schema를 확인한 뒤 사용한다. 예제와 schema 검증은 [합성 고객 여정](../../references/workflow-examples.md)을 따른다.
 
 ## Flow 저장 전 점검

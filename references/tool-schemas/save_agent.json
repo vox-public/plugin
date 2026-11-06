@@ -204,7 +204,7 @@
             },
             "type": "object",
             "title": "Preset dynamic variables",
-            "description": "Preset dynamic variables available to the agent."
+            "description": "Default values for dynamic variables, used only in dashboard web tests. Real calls do not apply them: put values that never change in the prompt text, and pass per-call values as outbound call variables or sheet columns."
           },
           "toolIds": {
             "items": {
@@ -3962,7 +3962,7 @@
             },
             "type": "object",
             "title": "Preset dynamic variables",
-            "description": "Preset dynamic variables available to the agent."
+            "description": "Default values for dynamic variables, used only in dashboard web tests. Real calls do not apply them: put values that never change in the prompt text, and pass per-call values as outbound call variables or sheet columns."
           },
           "toolIds": {
             "items": {
