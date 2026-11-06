@@ -41,7 +41,7 @@
   "result_delivery":{"kind":"semi","means":"결과를 받을 곳","affects":["webhookSettings"],"choices":"result_delivery","default":"대시보드만"},
   "scope":{"kind":"structure","means":"이 번호로 오는 전화 종류","from":["source","request"],"affects":["manuals","postCall"],"choices":"inbound_scope"},
   "staffed_hours":{"kind":"value","means":"사람이 받을 수 있는 시간과 없는 시간","from":["source"],"affects":["manuals","builtInTools.transfer_call"],"choices":"hours_branch","never_invent":true},
-  "handoff":{"kind":"value","means":"넘길 곳(부서 번호·콜백 접수·문자 안내)","affects":["builtInTools.transfer_call","manuals"],"never_invent":true},
+  "handoff":{"kind":"value","means":"넘기는 방식(바로 연결할 부서 번호·접수 후 담당자 전화·문자 안내). 번호는 바로 연결일 때만 연결 대상이고, 접수 후 전화면 담당자 쪽 연락처로만 둔다","affects":["builtInTools.transfer_call","manuals"],"never_invent":true},
   "intake_fields":{"kind":"semi","means":"통화에서 받아 둘 것","from":["source"],"affects":["manuals","postCall"],"choices":"intake_fields"},
   "lookup":{"kind":"semi","means":"발신번호로 고객을 조회할 수 있는가","affects":["toolIds"]},
   "sms_links":{"kind":"value","means":"문자로 보낼 위치·서류·예약 링크","from":["source"],"affects":["builtInTools.send_sms"],"never_invent":true},
