@@ -2,8 +2,8 @@
   "snapshot_date": "2026-10-01",
   "scope": "Local MCP source contract candidate. The source worktree state is recorded below; this is not a deployed-server inventory. A connected host may expose fewer tools or permissions; inspect its live tools and schemas before acting.",
   "source": {
-    "mcp_commit": "934bcacfaad6261e3f95214a0bb717dd755d54a2",
-    "manifest_sha256": "08d2762696d3c6f11d521733ffebbda5ad893c216bacc0e0d5327dea865e4ea3",
+    "mcp_commit": "f33d9e70d039ce5546ac37288476b2dcc74be351",
+    "manifest_sha256": "1a3bdc934f0947caa3f9af00174263407c6daa722f985271974030d0f14fbd5f",
     "source_manifest_sha256": "f7c583c38b19d9d910233c285f012783acb840f0aa027dd9821e42d919224c3c",
     "source_state": "clean_commit",
     "dirty_contracts": []
@@ -20,6 +20,7 @@
     "create_knowledge",
     "create_sheet",
     "create_voice_model",
+    "delete_call",
     "delete_eval",
     "delete_knowledge_document",
     "find_customer",
@@ -105,6 +106,10 @@
     "create_voice_model": {
       "path": "tool-schemas/create_voice_model.json",
       "sha256": "5009dcabf9b06286d5428f938a9129aa2756bb7a4224cf6696aaa1cf645df4b0"
+    },
+    "delete_call": {
+      "path": "tool-schemas/delete_call.json",
+      "sha256": "71ec7ce70a57d6ce8f4e171677cbd2cea65140aff1eb7416059bb7f14ba2f3a6"
     },
     "delete_eval": {
       "path": "tool-schemas/delete_eval.json",
@@ -316,7 +321,7 @@
     },
     "save_agent": {
       "path": "tool-schemas/save_agent.json",
-      "sha256": "7569c6fa3ac20337fcf086b724e0711996be05dc07c779cf4cb2173934244bf1"
+      "sha256": "1d838827f0d39a251220fc0a3e539ea6fdcfb1a22426dd99f1f5a8373a52e013"
     },
     "save_customer": {
       "path": "tool-schemas/save_customer.json",

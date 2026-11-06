@@ -205,6 +205,7 @@
           "list_calls"
         ],
         "optional_tools": [
+          "delete_call",
           "find_customer",
           "get_agent",
           "get_campaign",
