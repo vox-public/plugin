@@ -20,10 +20,10 @@
 {"tool":"get_organization","arguments":{}}
 ```
 
-새 agent 모델을 고를 때는 먼저 `list_models(kind=llm)`을 호출한다. 이 예시는 사용자가 모델·계열을 지정하지 않은 경우의 흐름만 보인다. 정확한 모델·계열·공급사 지정과 구 API fallback 우선 규칙은 [모델 선택 규칙](../skills/build-first-voice-agent/SKILL.md#모델-고르기)을 따른다. `featured=true`이고 `deprecated=false`인 결과 중 `display_order`가 가장 작은 항목의 `model`을 사용한다. 아래 모델 값은 placeholder이며 실제 호출에서는 조회 결과의 `model` 값으로 바꾼다. 결과에 `featured` 필드가 없는 구 API에서는 `data.llm`을 생략하고, 서버 기본값을 사용한다고 알린다.
+새 agent 모델을 고를 때는 먼저 `list_models`를 호출한다. 이 예시는 사용자가 모델·계열을 지정하지 않은 경우의 흐름만 보인다. 정확한 모델·계열·공급사 지정과 구 API fallback 우선 규칙은 [모델 선택 규칙](../skills/build-first-voice-agent/SKILL.md#모델-고르기)을 따른다. `featured=true`이고 `deprecated=false`인 결과 중 `display_order`가 가장 작은 항목의 `model`을 사용한다. 아래 모델 값은 placeholder이며 실제 호출에서는 조회 결과의 `model` 값으로 바꾼다. 결과에 `featured` 필드가 없는 구 API에서는 `data.llm`을 생략하고, 서버 기본값을 사용한다고 알린다.
 
 ```mcp-call
-{"tool":"list_models","arguments":{"kind":"llm"}}
+{"tool":"list_models","arguments":{}}
 ```
 
 ```mcp-call

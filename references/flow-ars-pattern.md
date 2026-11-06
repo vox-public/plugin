@@ -128,7 +128,7 @@ static 문구(안내·전환·종료)에는 아라비아 숫자와 기호를 쓰
 - `speech.isAllowInterruption: true`. 노드마다 `is_allow_interruption: true`도 함께 둔다.
 - `presetDynamicVariables`: §2의 초깃값. 대시보드 웹 시험에서만 쓰이고 실제 전화에는 적용되지 않으므로, 실제 전화에서 빈 값으로 시작해도 동작하게 §2의 추출 프롬프트가 비어 있는 값을 처리한다.
 - `prompt.prompt`: "한국어 존댓말. 변수·노드·코드 이름을 고객에게 읽지 않는다."
-- 새 agent 모델은 [모델 선택 규칙](../skills/build-first-voice-agent/SKILL.md#모델-고르기)에 따라 정한다. `llm`을 보낼 때는 `model`이 필수이며, 선택된 `model` 값을 `data.llm.model`에 명시한다. 구 API처럼 `list_models(kind=llm)` 결과에 `featured` 필드가 없으면 `llm`을 생략해 서버 추천 기본값을 쓴다. `temperature: 0`을 권장한다.
+- 새 agent 모델은 [모델 선택 규칙](../skills/build-first-voice-agent/SKILL.md#모델-고르기)에 따라 정한다. `llm`을 보낼 때는 `model`이 필수이며, 선택된 `model` 값을 `data.llm.model`에 명시한다. 구 API처럼 `list_models` 결과에 `featured` 필드가 없으면 `llm`을 생략해 서버 추천 기본값을 쓴다. `temperature: 0`을 권장한다.
 - 노드 `data` 키는 snake_case, agent `data` 키는 camelCase다. 섞어 쓰지 않는다.
 
 ## 10. 지금 안 되는 것: 무입력 → 재안내 → 직원 연결
