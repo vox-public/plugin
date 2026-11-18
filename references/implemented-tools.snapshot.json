@@ -2,8 +2,8 @@
   "snapshot_date": "2026-10-01",
   "scope": "Local MCP source contract candidate. The source worktree state is recorded below; this is not a deployed-server inventory. A connected host may expose fewer tools or permissions; inspect its live tools and schemas before acting.",
   "source": {
-    "mcp_commit": "b38a86cd5a60edcd684aa9c7fc3c16065af5b662",
-    "manifest_sha256": "1a3bdc934f0947caa3f9af00174263407c6daa722f985271974030d0f14fbd5f",
+    "mcp_commit": "15aa0993cd37f7a18f2a0293cc0274ad78f5a857",
+    "manifest_sha256": "4c489f6add93d424f31baf13ad7ebd10ccd402bb49ac9584af04e55ef3d86a17",
     "source_manifest_sha256": "f7c583c38b19d9d910233c285f012783acb840f0aa027dd9821e42d919224c3c",
     "source_state": "clean_commit",
     "dirty_contracts": []
@@ -17,17 +17,22 @@
   "implemented_tools": [
     "cancel_campaign",
     "create_agent_version",
+    "create_chat",
+    "create_chat_message",
     "create_knowledge",
     "create_sheet",
     "create_voice_model",
     "delete_call",
     "delete_eval",
     "delete_knowledge_document",
+    "end_chat",
     "find_customer",
     "get_agent",
     "get_agent_template",
     "get_call",
     "get_campaign",
+    "get_chat",
+    "get_concurrency",
     "get_customer",
     "get_customer_attribute_definition",
     "get_eval",
@@ -40,7 +45,11 @@
     "get_organization",
     "get_schema",
     "get_sheet",
+    "get_sms",
+    "get_sms_batch",
+    "get_subscription",
     "get_tool",
+    "get_usage",
     "get_voice",
     "import_knowledge_documents",
     "inject_call_context",
@@ -51,6 +60,7 @@
     "list_agents",
     "list_calls",
     "list_campaigns",
+    "list_chats",
     "list_customer_attribute_definitions",
     "list_customers",
     "list_eval_batches",
@@ -63,8 +73,10 @@
     "list_numbers",
     "list_organization_members",
     "list_organizations",
+    "list_received_sms",
     "list_schemas",
     "list_sheets",
+    "list_sms",
     "list_tools",
     "list_voices",
     "pause_campaign",
@@ -80,8 +92,11 @@
     "save_scenario_eval",
     "save_tool",
     "save_unit_eval",
+    "send_sms",
     "set_number_agents",
     "set_organization",
+    "transfer_call",
+    "update_campaign",
     "update_number",
     "update_organization",
     "validate_flow"
@@ -94,6 +109,14 @@
     "create_agent_version": {
       "path": "tool-schemas/create_agent_version.json",
       "sha256": "80d127ab280496c237ad96aa626b9efa082e00f79fa6d5748333947a7137d35e"
+    },
+    "create_chat": {
+      "path": "tool-schemas/create_chat.json",
+      "sha256": "2a45a791d5771c22193298b5968d2c276f22dcb4044df588543497f238c90e53"
+    },
+    "create_chat_message": {
+      "path": "tool-schemas/create_chat_message.json",
+      "sha256": "7046131fb2b90d7e3258bd864ebb4734e41a1fda48cf269c5854e3bca6530738"
     },
     "create_knowledge": {
       "path": "tool-schemas/create_knowledge.json",
@@ -119,6 +142,10 @@
       "path": "tool-schemas/delete_knowledge_document.json",
       "sha256": "bbd49debf2412185226be9d8317969cb7d75819bd2f4fe24ba3ee94fd9fdd8d6"
     },
+    "end_chat": {
+      "path": "tool-schemas/end_chat.json",
+      "sha256": "37952b45ebc282759dcdebabac5480964d64056319073c741c48b2b5e89d9b3b"
+    },
     "find_customer": {
       "path": "tool-schemas/find_customer.json",
       "sha256": "82bf9c4269cc8b904b2e61fea3260beacc88b0e4966840dab3cc41bec0d8b353"
@@ -138,6 +165,14 @@
     "get_campaign": {
       "path": "tool-schemas/get_campaign.json",
       "sha256": "649f422ab34f10a97189b8051474994d8d11b6865f2851184e3f53594e7ca3ab"
+    },
+    "get_chat": {
+      "path": "tool-schemas/get_chat.json",
+      "sha256": "37952b45ebc282759dcdebabac5480964d64056319073c741c48b2b5e89d9b3b"
+    },
+    "get_concurrency": {
+      "path": "tool-schemas/get_concurrency.json",
+      "sha256": "5bf93bdbc898b38311c4feeaaeeb5961ad50cc651d9dae5fc007dc5bc8be34a6"
     },
     "get_customer": {
       "path": "tool-schemas/get_customer.json",
@@ -187,9 +222,25 @@
       "path": "tool-schemas/get_sheet.json",
       "sha256": "005a714a28085a7a3baec4f32e5dd0af4f142354626ccc02ef8fad4ebf679f5a"
     },
+    "get_sms": {
+      "path": "tool-schemas/get_sms.json",
+      "sha256": "68f6b01525bac28aba0618eb64caceccbe21f1a8ea7a3d12ab961cd95c659495"
+    },
+    "get_sms_batch": {
+      "path": "tool-schemas/get_sms_batch.json",
+      "sha256": "8e723b424c8d0cc26a00086d482fb8cac6d3b2ab8a98f844a2927dc42c22f173"
+    },
+    "get_subscription": {
+      "path": "tool-schemas/get_subscription.json",
+      "sha256": "d746974fa9afd5e951f76f9af38954b0ad7f436f2120dc974da65e5ee39f856f"
+    },
     "get_tool": {
       "path": "tool-schemas/get_tool.json",
       "sha256": "61d37e0459ca47bcc42876205d5e2bded5afb0b48756e0cabded8801b78f8fc6"
+    },
+    "get_usage": {
+      "path": "tool-schemas/get_usage.json",
+      "sha256": "55fd9c72cc958740a1e2b4420ff584d3192c4ebf16002c1c54323961fb506548"
     },
     "get_voice": {
       "path": "tool-schemas/get_voice.json",
@@ -230,6 +281,10 @@
     "list_campaigns": {
       "path": "tool-schemas/list_campaigns.json",
       "sha256": "60bd7f2b276c3db345044edee3abbbefecc3bccc29edea71b2b12cc74f988290"
+    },
+    "list_chats": {
+      "path": "tool-schemas/list_chats.json",
+      "sha256": "f212e1432eaa26f3cbe151e1616d707fdc072bc7090b24638eb6792ad2797d37"
     },
     "list_customer_attribute_definitions": {
       "path": "tool-schemas/list_customer_attribute_definitions.json",
@@ -279,6 +334,10 @@
       "path": "tool-schemas/list_organizations.json",
       "sha256": "d746974fa9afd5e951f76f9af38954b0ad7f436f2120dc974da65e5ee39f856f"
     },
+    "list_received_sms": {
+      "path": "tool-schemas/list_received_sms.json",
+      "sha256": "eadc62281fc32e9c2c9c3bf9dc3ec01b10c16f772c3bd1a099f816ab1243120f"
+    },
     "list_schemas": {
       "path": "tool-schemas/list_schemas.json",
       "sha256": "8d81377d1ae2f903515f0e3b98a1ad38f09136d88bb96fcdc13ba62b3dde4124"
@@ -286,6 +345,10 @@
     "list_sheets": {
       "path": "tool-schemas/list_sheets.json",
       "sha256": "7a0c918ad971fed6cb91522816c54801409a8f2c2d1b4b47412a8191e5283847"
+    },
+    "list_sms": {
+      "path": "tool-schemas/list_sms.json",
+      "sha256": "156c5514e16cf608f10032464fda667c83541f2aece09f73baa4d658a418ece4"
     },
     "list_tools": {
       "path": "tool-schemas/list_tools.json",
@@ -347,6 +410,10 @@
       "path": "tool-schemas/save_unit_eval.json",
       "sha256": "c62f15a77e580141b4eb5f6ab7374f425b166e02105f8e105df119a49d5059d0"
     },
+    "send_sms": {
+      "path": "tool-schemas/send_sms.json",
+      "sha256": "88402c50bf769bcd435d926df5a1f444bb95b6c72261a8c9bef42d8dc4f6037e"
+    },
     "set_number_agents": {
       "path": "tool-schemas/set_number_agents.json",
       "sha256": "2ed40604eae7ab66cf87b6a031138c00f5dba8851f8c88b35efb1867a84b3b5b"
@@ -354,6 +421,14 @@
     "set_organization": {
       "path": "tool-schemas/set_organization.json",
       "sha256": "b12310a95ff2b797dbb045b0b53cff7fc013b2412e69be193778d2755df00031"
+    },
+    "transfer_call": {
+      "path": "tool-schemas/transfer_call.json",
+      "sha256": "3a046fde49eeaccff9a5953ef95c31ef83376f45120635c575f78ded0c75f121"
+    },
+    "update_campaign": {
+      "path": "tool-schemas/update_campaign.json",
+      "sha256": "a1fd25faf611d5983a30a800765622ae94e65f9850bd81892f3a8f82ffc8a384"
     },
     "update_number": {
       "path": "tool-schemas/update_number.json",

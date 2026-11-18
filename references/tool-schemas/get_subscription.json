@@ -1,0 +1,9 @@
+{
+  "name": "get_subscription",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {},
+    "required": []
+  }
+}

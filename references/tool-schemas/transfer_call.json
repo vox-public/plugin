@@ -1,0 +1,106 @@
+{
+  "name": "transfer_call",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "call_id": {
+        "type": "string",
+        "format": "uuid",
+        "title": "Call Id",
+        "description": "Call identifier."
+      },
+      "idempotency_key": {
+        "type": "string",
+        "description": "Required key for safely retrying this side-effecting request for 24 hours. Values must be non-empty and at most 255 characters.",
+        "minLength": 1,
+        "maxLength": 255,
+        "title": "Idempotency-Key"
+      },
+      "payload": {
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "cold",
+              "warm"
+            ],
+            "title": "Mode",
+            "description": "전환 방식입니다. `cold`는 바로, `warm`은 안내 후 넘깁니다."
+          },
+          "destination": {
+            "$ref": "#/$defs/TransferDestination",
+            "description": "`type`과 `target`으로 정하는 전환 대상입니다."
+          },
+          "timeout_seconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 90.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timeout Seconds",
+            "description": "`warm` 전환 대상의 응답 대기 시간(초)입니다. 1~90, 기본 30초이며 도구의 `ringDurationInSeconds`와 별개입니다. `cold`에 보내면 400입니다."
+          },
+          "displayed_caller_id": {
+            "type": "string",
+            "enum": [
+              "agent",
+              "user"
+            ],
+            "title": "Displayed Caller Id",
+            "description": "전환 대상에게 보일 발신 번호입니다. 기본값 `agent`는 워크스페이스·에이전트 번호, `user`는 고객 번호이며 실제 번호는 통화 방향에 따라 정해집니다. 통화 전환 도구의 `displayedCallerId`와 같습니다.",
+            "default": "agent"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "mode",
+          "destination"
+        ],
+        "title": "TransferCallRequest",
+        "description": "전화 통화 전환 요청입니다."
+      }
+    },
+    "required": [
+      "call_id",
+      "idempotency_key",
+      "payload"
+    ],
+    "$defs": {
+      "TransferDestination": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "phone",
+              "sip"
+            ],
+            "title": "Type",
+            "description": "전환 대상의 종류입니다. 전화번호는 `phone`, SIP URI는 `sip`입니다."
+          },
+          "target": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Target",
+            "description": "전환 대상 값입니다. `phone`은 국내 번호, `sip`은 완전한 SIP URI를 쓰며 보낸 문자열을 그대로 둡니다."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "target"
+        ],
+        "title": "TransferDestination",
+        "description": "진행 중인 통화를 넘길 전환 대상의 종류와 값입니다."
+      }
+    }
+  }
+}

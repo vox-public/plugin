@@ -1,0 +1,100 @@
+{
+  "name": "list_chats",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "agent_id": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "description": "Agent UUID filter. Repeat the query parameter to filter by multiple agents.",
+        "title": "Agent Id"
+      },
+      "customer_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "귀속 고객 UUID 필터입니다.",
+        "title": "Customer Id"
+      },
+      "channel": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "채팅 channel 필터 (반복 가능)입니다. api, widget, sms, kakao, navertalk, instagram, line, wechat, channeltalk 중에서 고릅니다.",
+        "title": "Channel"
+      },
+      "status": {
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/ChatStatusEnum"
+        },
+        "description": "Status filter. Repeat the query parameter to filter by multiple statuses when the endpoint supports multiple values.",
+        "title": "Status"
+      },
+      "start_at_after": {
+        "type": "integer",
+        "description": "채팅 session 시작 시각 하한 (unix ms, inclusive)입니다.",
+        "title": "Start At After"
+      },
+      "start_at_before": {
+        "type": "integer",
+        "description": "채팅 session 시작 시각 상한 (unix ms, 지정한 시각 이하)입니다. 같은 millisecond 안에서 이 시각보다 늦게 시작한 session은 제외됩니다.",
+        "title": "Start At Before"
+      },
+      "sort_order": {
+        "enum": [
+          "asc",
+          "desc"
+        ],
+        "type": "string",
+        "description": "Sort direction. Allowed values are `asc` and `desc`.",
+        "default": "desc",
+        "title": "Sort Order"
+      },
+      "cursor": {
+        "type": "string",
+        "title": "Cursor",
+        "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page."
+      },
+      "limit": {
+        "type": "integer",
+        "maximum": 100,
+        "minimum": 1,
+        "default": 50,
+        "title": "Limit",
+        "description": "Maximum number of items to return. v3 list endpoints accept 1-100."
+      },
+      "external_id": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 255,
+        "description": "고객 external_id 필터입니다. 이 워크스페이스에서 external_id가 정확히 일치하는(앞뒤 공백은 무시) 고객의 채팅만 돌려줍니다. 그런 고객이 없으면 빈 목록입니다. customer_id와 함께 주면 둘 다 맞아야 합니다.",
+        "title": "External Id"
+      },
+      "chat_channel_id": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "description": "채널(`/v3/chat-channels`) ID 필터 (반복 가능)입니다. 그 채널로 들어온 채팅만 돌려줍니다. 이 워크스페이스에 없는 ID면 빈 목록입니다.",
+        "title": "Chat Channel Id"
+      }
+    },
+    "required": [],
+    "$defs": {
+      "ChatStatusEnum": {
+        "type": "string",
+        "enum": [
+          "active",
+          "ended"
+        ],
+        "title": "ChatStatusEnum"
+      }
+    }
+  }
+}

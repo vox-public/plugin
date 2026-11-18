@@ -1,0 +1,65 @@
+{
+  "name": "list_received_sms",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "call_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "통화 UUID 필터입니다.",
+        "title": "Call Id"
+      },
+      "customer_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "귀속 고객 UUID 필터입니다. 해당 고객에 귀속된 문자만 반환합니다.",
+        "title": "Customer Id"
+      },
+      "from_number": {
+        "type": "string",
+        "description": "발신번호 정확 일치 필터입니다. 하이픈 없는 국내 번호입니다.",
+        "title": "From Number"
+      },
+      "to_number": {
+        "type": "string",
+        "description": "수신번호 정확 일치 필터입니다. 하이픈 없는 국내 번호입니다.",
+        "title": "To Number"
+      },
+      "received_at_after": {
+        "type": "integer",
+        "description": "수신 시각 하한입니다(unix ms, 이 시각 이상). 10~11자리 unix 초 입력도 허용하며 자동으로 ms로 변환됩니다.",
+        "title": "Received At After"
+      },
+      "received_at_before": {
+        "type": "integer",
+        "description": "수신 시각 상한입니다(unix ms, 이 시각 이하). 10~11자리 unix 초 입력도 허용하며 자동으로 ms로 변환됩니다.",
+        "title": "Received At Before"
+      },
+      "sort_order": {
+        "enum": [
+          "asc",
+          "desc"
+        ],
+        "type": "string",
+        "description": "Sort direction. Allowed values are `asc` and `desc`.",
+        "default": "desc",
+        "title": "Sort Order"
+      },
+      "cursor": {
+        "type": "string",
+        "title": "Cursor",
+        "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page."
+      },
+      "limit": {
+        "type": "integer",
+        "maximum": 100,
+        "minimum": 1,
+        "default": 50,
+        "title": "Limit",
+        "description": "Maximum number of items to return. v3 list endpoints accept 1-100."
+      }
+    },
+    "required": []
+  }
+}

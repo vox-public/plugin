@@ -1,0 +1,17 @@
+{
+  "name": "get_sms_batch",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "batch_id": {
+        "type": "string",
+        "description": "대량 문자 발신의 UUID입니다.",
+        "title": "Batch Id"
+      }
+    },
+    "required": [
+      "batch_id"
+    ]
+  }
+}
