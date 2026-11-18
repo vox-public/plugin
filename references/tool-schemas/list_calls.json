@@ -66,7 +66,8 @@
             "daily_call_limit_reached",
             "hourly_call_limit_reached",
             "blocked_number",
-            "operator_hangup"
+            "operator_hangup",
+            "inbound_webhook_reject"
           ],
           "type": "string"
         },
