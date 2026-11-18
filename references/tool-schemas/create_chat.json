@@ -1,0 +1,114 @@
+{
+  "name": "create_chat",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "idempotency_key": {
+        "type": "string",
+        "description": "Required key for safely retrying this side-effecting request for 24 hours. Values must be non-empty and at most 255 characters.",
+        "minLength": 1,
+        "maxLength": 255,
+        "title": "Idempotency-Key"
+      },
+      "payload": {
+        "properties": {
+          "agent": {
+            "$ref": "#/$defs/AgentMapping",
+            "description": "Agent mapping object with `agent_id` and `agent_version`. Used by cross-resource references (calls / campaigns / telephone_numbers) and by `builtInTools.transfer_agent` / flow `transferAgent` node `data.agent` per v3 §2.7 AgentMapping."
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "description": "저장용 메타데이터입니다. 에이전트 처리에는 사용하지 않습니다."
+          },
+          "dynamic_variables": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Dynamic Variables",
+            "description": "에이전트 프롬프트에 주입할 동적 변수입니다."
+          },
+          "external_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Id",
+            "description": "고객 식별용 external_id. 주면 이 external_id로 고객을 resolve(get-or-create)해 채팅을 즉시 그 고객에 엮습니다."
+          },
+          "opening_message": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opening Message",
+            "description": "채널 전용 첫 메시지입니다. 지정하면 Agent의 aiFirst opening보다 우선하며 Agent brain은 첫 사용자 입력 전 실행되지 않습니다."
+          },
+          "initial_responder_type": {
+            "type": "string",
+            "enum": [
+              "agent",
+              "operator"
+            ],
+            "title": "Initial Responder Type",
+            "description": "새 Chat에 처음 응답하는 쪽입니다. agent는 AI 에이전트, operator는 사람 상담원입니다. operator면 AI opening과 AI 턴을 실행하지 않고, opening_message는 안내 메시지로 저장합니다.",
+            "default": "agent"
+          }
+        },
+        "type": "object",
+        "required": [
+          "agent"
+        ],
+        "title": "CreateChatRequest",
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "idempotency_key",
+      "payload"
+    ],
+    "$defs": {
+      "AgentMapping": {
+        "additionalProperties": false,
+        "description": "agent_id + agent_version 매핑.\n\n요청·응답 모두에서 에이전트 매핑이 필요한 경우 이 타입을 사용한다.\n요청 중 version 지정이 불필요한 엔드포인트는 flat `agent_id: UUID` 를 직접 받고,\n`AgentMapping` 을 쓰지 않는다.",
+        "properties": {
+          "agent_id": {
+            "description": "Agent UUID.",
+            "format": "uuid",
+            "title": "Agent Id",
+            "type": "string"
+          },
+          "agent_version": {
+            "default": "current",
+            "description": "에이전트 버전. 허용값: \"current\", \"production\", 또는 \"v{n}\" (n≥1). 미전송 시 \"current\"로 처리됩니다. null 전송은 거부.",
+            "title": "Agent Version",
+            "type": "string",
+            "pattern": "^(current|production|v[1-9][0-9]*)$",
+            "examples": [
+              "current",
+              "production",
+              "v1"
+            ]
+          }
+        },
+        "required": [
+          "agent_id"
+        ],
+        "title": "AgentMapping",
+        "type": "object"
+      }
+    }
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "name": "update_campaign",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "campaign_id": {
+        "type": "string",
+        "title": "Campaign Id",
+        "description": "Campaign identifier."
+      },
+      "payload": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name",
+            "description": "캠페인 이름. 생략 시 변경 안함. null 또는 빈 문자열/공백-only 전송 시 400."
+          },
+          "call_time_window": {
+            "$ref": "#/$defs/CallTimeWindowV3",
+            "description": "통화 허용 시간대 설정. 생략 시 변경 안함. null 전송 시 400."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "minProperties": 1,
+        "title": "UpdateCampaignV3Request",
+        "description": "v3 캠페인 수정 요청. draft/pending/paused 상태에서만 가능.\n\n변경할 필드만 보내면 됩니다. `name`은 1~255자여야 하고,\n`call_time_window`를 보내면 전체 시간대 설정이 교체됩니다."
+      }
+    },
+    "required": [
+      "campaign_id",
+      "payload"
+    ],
+    "$defs": {
+      "CallTimeWindowV3": {
+        "properties": {
+          "windows": {
+            "items": {
+              "$ref": "#/$defs/TimeWindowItem"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Windows",
+            "description": "허용 시간대 목록 (최소 1개)."
+          },
+          "timezone": {
+            "type": "string",
+            "title": "Timezone",
+            "description": "IANA timezone name, for example `Asia/Seoul`.",
+            "default": "Asia/Seoul"
+          },
+          "auto_resume": {
+            "type": "boolean",
+            "title": "Auto Resume",
+            "description": "허용 시간대 진입 시 자동 재개 여부. 기본 true.",
+            "default": true
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "windows"
+        ],
+        "title": "CallTimeWindowV3",
+        "description": "캠페인 통화 허용 시간대 설정."
+      },
+      "TimeWindowItem": {
+        "properties": {
+          "start_min": {
+            "type": "integer",
+            "exclusiveMaximum": 1440.0,
+            "minimum": 0.0,
+            "title": "Start Min",
+            "description": "시작 시각 (자정 기준 분, 0~1439). 예: 540 = 09:00."
+          },
+          "end_min": {
+            "type": "integer",
+            "maximum": 1440.0,
+            "exclusiveMinimum": 0.0,
+            "title": "End Min",
+            "description": "종료 시각 (자정 기준 분, 1~1440). 예: 1080 = 18:00."
+          },
+          "days": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday"
+              ]
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Days",
+            "description": "Capitalized day names: Monday through Sunday."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "start_min",
+          "end_min",
+          "days"
+        ],
+        "title": "TimeWindowItem",
+        "description": "통화 허용 시간대 단위. 자정 기준 분 + 요일 목록."
+      }
+    }
+  }
+}

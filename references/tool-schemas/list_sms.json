@@ -1,0 +1,101 @@
+{
+  "name": "list_sms",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "call_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "통화 UUID 필터입니다.",
+        "title": "Call Id"
+      },
+      "chat_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "채팅 UUID 필터입니다. 문자 채팅의 에이전트 답변이나 outbound 메시지로 발신한 문자만 반환합니다.",
+        "title": "Chat Id"
+      },
+      "customer_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "귀속 고객 UUID 필터입니다. 해당 고객에 귀속된 문자만 반환합니다.",
+        "title": "Customer Id"
+      },
+      "from_number": {
+        "type": "string",
+        "description": "발신번호 정확 일치 필터입니다. 하이픈 없는 국내 번호입니다.",
+        "title": "From Number"
+      },
+      "to_number": {
+        "type": "string",
+        "description": "수신번호 정확 일치 필터입니다. 하이픈 없는 국내 번호입니다.",
+        "title": "To Number"
+      },
+      "delivery_status": {
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/SMSDeliveryStatus"
+        },
+        "description": "발신 상태 필터입니다(반복 가능). 허용값: pending, queued, sent, failed, blocked, canceled, legacy.",
+        "title": "Delivery Status"
+      },
+      "created_at_after": {
+        "type": "integer",
+        "description": "생성 시각 하한입니다(unix ms, 이 시각 이상). 10~11자리 unix 초 입력도 허용하며 자동으로 ms로 변환됩니다.",
+        "title": "Created At After"
+      },
+      "created_at_before": {
+        "type": "integer",
+        "description": "생성 시각 상한입니다(unix ms, 이 시각 이하). 10~11자리 unix 초 입력도 허용하며 자동으로 ms로 변환됩니다.",
+        "title": "Created At Before"
+      },
+      "sort_order": {
+        "enum": [
+          "asc",
+          "desc"
+        ],
+        "type": "string",
+        "description": "Sort direction. Allowed values are `asc` and `desc`.",
+        "default": "desc",
+        "title": "Sort Order"
+      },
+      "cursor": {
+        "type": "string",
+        "title": "Cursor",
+        "description": "Opaque pagination cursor returned as `next_cursor`. Pass it back unchanged to fetch the next page."
+      },
+      "limit": {
+        "type": "integer",
+        "maximum": 100,
+        "minimum": 1,
+        "default": 50,
+        "title": "Limit",
+        "description": "Maximum number of items to return. v3 list endpoints accept 1-100."
+      },
+      "batch_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "대량 문자 발신 UUID 필터입니다. 해당 대량 문자 발신에 속한 문자만 반환합니다.",
+        "title": "Batch Id"
+      }
+    },
+    "required": [],
+    "$defs": {
+      "SMSDeliveryStatus": {
+        "type": "string",
+        "enum": [
+          "pending",
+          "queued",
+          "sent",
+          "failed",
+          "blocked",
+          "canceled",
+          "legacy"
+        ],
+        "title": "SMSDeliveryStatus",
+        "description": "발신 상태입니다. pending은 발신 처리 중, queued는 통신사 최종 결과를 기다리는 상태(아직 요금 부과 전),\nsent는 요금이 부과되는 성공, failed는 발신 실패, blocked는 제한된 내용이 포함되어 발신하지 않은 상태,\ncanceled는 대량 문자 발신 취소로 발신하지 않은 상태, legacy는 발신 상태를 기록하기 전의 과거 기록입니다."
+      }
+    }
+  }
+}

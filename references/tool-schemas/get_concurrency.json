@@ -1,0 +1,16 @@
+{
+  "name": "get_concurrency",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "timezone": {
+        "type": "string",
+        "description": "시간별 및 일별 통화 수의 집계 경계에 적용할 IANA timezone입니다.",
+        "default": "Asia/Seoul",
+        "title": "Timezone"
+      }
+    },
+    "required": []
+  }
+}
