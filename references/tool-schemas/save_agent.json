@@ -624,14 +624,14 @@
               {
                 "type": "integer",
                 "maximum": 300.0,
-                "minimum": 10.0
+                "minimum": 4.0
               },
               {
                 "type": "null"
               }
             ],
             "title": "Silenceremindertimeoutinseconds",
-            "description": "Seconds to wait after the agent's last audio before each silence reminder (10-300). Must be shorter than silenceCallTimeoutInSeconds. null or omitted keeps the legacy cadence (10 seconds, then 3 seconds longer per consecutive silence, up to 25 seconds)."
+            "description": "Seconds to wait after the agent's last audio before each silence reminder (4-300). Must be shorter than silenceCallTimeoutInSeconds. null or omitted keeps the legacy cadence (10 seconds, then 3 seconds longer per consecutive silence, up to 25 seconds)."
           },
           "silenceReminderMaxCount": {
             "anyOf": [
